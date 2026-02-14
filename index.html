@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -29,14 +29,17 @@
         
         @keyframes floatAnim { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(10px, 10px); } }
         @keyframes fallAnim { to { transform: translateY(110vh) rotate(360deg); } }
+        @keyframes bloodStream { 0% { transform: translateY(-100%); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(100vh); opacity: 0; } }
+        .blood-line { position: absolute; color: red; font-size: 10px; white-space: nowrap; animation: bloodStream 1s linear infinite; }
 
         .content-box { border: 1px solid var(--main); padding: 15px; background: rgba(0,0,0,0.05); margin-bottom: 20px; line-height: 1.4; font-size: 13px; position: relative; }
         .decode-text { white-space: pre-wrap; word-break: break-word; color: var(--font); }
         
         #loader-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 9999; justify-content: center; align-items: center; background: var(--bg); flex-direction: column;
+            z-index: 9999; justify-content: center; align-items: center; background: #000; overflow: hidden;
         }
+        input, textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--main); color: var(--font); padding: 10px; margin: 5px 0; font-family: inherit; }
     </style>
 </head>
 <body id="body-tag" class="theme-blood">
@@ -46,8 +49,8 @@
 
     <div id="login-screen" class="page active">
         <div style="position: relative; z-index: 20; text-align: center; padding-top: 50px;">
-            <div class="hooligan-header">HOOLIGAN AER</div>
-            <input type="password" id="passInput" placeholder="CODE: 2727" maxlength="4" style="width:160px; text-align:center; font-size: 20px; margin-top: 20px; background: none; border: 1px solid var(--main); color: var(--font);">
+            <div class="hooligan-header">Hooligan's AER</div>
+            <input type="password" id="passInput" placeholder="CODE: 2727" maxlength="4" style="width:160px; text-align:center; font-size: 20px; margin-top: 20px;">
             <button class="menu-btn" style="width: 200px;" onclick="checkPass()">ACCESS</button>
             <div style="margin-top: 30px;">
                 <button class="menu-btn" style="width:75px; font-size:8px;" onclick="setTheme('blood')">RED</button>
@@ -59,7 +62,7 @@
     </div>
 
     <div id="main-menu" class="page">
-        <div class="hooligan-header">HOOLIGAN AER</div>
+        <div class="hooligan-header">Hooligan's AER</div>
         <button class="menu-btn" onclick="triggerLoad('rules-page')">📜 ПРАВИЛА AER</button>
         <button class="menu-btn" onclick="triggerLoad('forms-list-page')">📝 АНКЕТЫ</button>
         <button class="menu-btn" onclick="triggerLoad('help-page')">❓ ПОМОЩЬ</button>
@@ -69,7 +72,6 @@
     <div id="shame-page" class="page">
         <div class="hooligan-header">DATABASE: SHAME</div>
         <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
-        <p style="text-align:center; font-size:10px;">ВЫБЕРИТЕ ОБЪЕКТ ДЛЯ ДЕШИФРОВКИ:</p>
         <button class="menu-btn" onclick="decodeFrik('vinal')">1. VINAL</button>
         <button class="menu-btn" onclick="decodeFrik('grigey')">2. ГРИГЕЙ</button>
         <button class="menu-btn" onclick="decodeFrik('reltin')">3. РЕЛТИН</button>
@@ -87,42 +89,58 @@
 
     <div id="rules-page" class="page">
         <div class="hooligan-header">RULES</div>
-        <button class="menu-btn" onclick="triggerLoad('main-menu')">BACK</button>
-        <div class="content-box">📜 Правила AER в полном объеме: [Вставь сюда полный текст правил из предыдущего шага]</div>
+        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
+        <div class="content-box">
+            <p>‼️ Данный AER является сводом правил чата. Незнание не освобождает от ответственности.</p>
+            <p><b>1. Дискриминация:</b> Любая ксенофобия, расизм и травля участников запрещена.<br><i>Наказание: Мут 20–45 мин.</i></p>
+            <p><b>2. Спам:</b> Массовая отправка одинаковых сообщений или ссылок.<br><i>Наказание: Мут 120 мин / Бан.</i></p>
+            <p><b>3. Флуд:</b> Отправка более 4 сообщений подряд (включая «лестницу»).<br><i>Наказание: Мут 30 мин – 3 часа.</i></p>
+            <p><b>4. Политика:</b> Любые политические обсуждения и провокации запрещены.<br><i>Наказание: Провокация — 220 мин. Политика — Бан навсегда.</i></p>
+            <p><b>II. БАНЫ:</b> Обход мута через твинки и распространение 18+ контента караются баном всех аккаунтов навсегда.</p>
+        </div>
     </div>
-    
+
     <div id="forms-list-page" class="page">
         <div class="hooligan-header">FORMS</div>
-        <button class="menu-btn" onclick="triggerLoad('main-menu')">BACK</button>
-        <button class="menu-btn" onclick="triggerLoad('form-admin')">АРМИЯ АДМИНОВ</button>
+        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
+        <button class="menu-btn" onclick="triggerLoad('form-admin')">АНКЕТА: АДМИН</button>
+        <button class="menu-btn" onclick="triggerLoad('form-vice')">АНКЕТА: ВИЦЕ/ВЕТЕРАН</button>
     </div>
 
     <div id="form-admin" class="page">
-        <button class="menu-btn" onclick="triggerLoad('forms-list-page')">BACK</button>
+        <div class="hooligan-header">ADMIN FORM</div>
+        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('forms-list-page')">BACK</button>
         <div class="content-box">
-            <p>1. Ник, @, ID, возраст:</p><textarea readonly></textarea>
-            <p>2. Пояс и время работы:</p><input type="text" readonly>
+            <p>1. Ник, @, ID, возраст, активность (сколько времени в чате):</p><textarea readonly placeholder="Пример: Satana, @satanaclub, 12345, 18 лет, 5ч/день"></textarea>
+            <p>2. Ваш часовой пояс и в какое время будете работать:</p><input type="text" readonly placeholder="Пример: МСК, с 18:00 до 22:00">
+            <p>3. Ваши действия при виде нарушений:</p><textarea readonly placeholder="Подробное описание по AER"></textarea>
+            <p>4. Ваш опыт работы админом (500+ участников):</p><input type="text" readonly>
+            <p>5. Краткий пересказ правил AER:</p><textarea readonly></textarea>
         </div>
     </div>
 
     <div id="help-page" class="page">
         <div class="hooligan-header">SUPPORT</div>
-        <button class="menu-btn" onclick="triggerLoad('main-menu')">BACK</button>
-        <div class="content-box" style="text-align:center;">CONTACT: @SatanaCIub</div>
+        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
+        <div class="content-box" style="text-align:center;">
+            <p>CONTACT: @SatanaCIub</p>
+            <p>OWNER: SATANA</p>
+            <p>PROJECT: SatanaCIub Project</p>
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         let currentTheme = 'blood';
         let secretCounter = 0;
-        const phrases = ["@satanacIub", "Кириешка", "27", "42", "228", "Hooligan chat"];
+        const phrases = ["@satanacIub", "Кириешка", "27", "42", "228", "Hooligan chat", "AER SYSTEM"];
 
         const frikData = {
-            vinal: "1. Место Vinal – Просил союз с нашим чатом, при получении отказа начал говорить что будет рейдить наши кланы. Записывал гс где оскробил Украину и выставил Россию лучшей, постоянно в гс говорил планы по рейдам наших клубов. Итог: В бане, 2 раза мы зарейдили его чат, снесли около 5 клубов.",
-            grigey: "2. Место Григей (Настоящее имя) – 18 Летний русофоб педофил играющий в нулс. Боится общаться с русскими людьми которым 10-15 лет. Итог: Создал чат где 3 онлайна и 80 ботов.",
-            reltin: "3. Место Релтин – Самый худший админ в мире. Получил мут на 1 час и вышел с чата навсегда. Итог: Находится в чате нищих оппов (В чате григея).",
-            ded: "4. Место Дед – Крутой доксер в чате, сливал информацию про участников. Успокоился после того как другие нашли фото его мамы. Итог: Находится в нашем чате.",
-            psycho: "5. Место Психокид – Агрессивный но тихий фрик. Оскроблял всех участников в чате. Итог: Забанен."
+            vinal: "1. Место Vinal – Просил союз с нашим чатом, при получении отказа начал говорить что будет рейдить наши кланы. Записывал гс где оскробил Украину и выставил Россию лучшей, постоянно в гс говорил планы по рейдам наших клубов.\n\nИтог: В бане, 2 раза мы зарейдили его чат, снесли около 5 клубов, был забанен в чате григея.",
+            grigey: "2. Место Григей (Настоящее имя) – 18 Летний русофоб педофил играющий в нулс. Ныл в 2-3 конфликтах, звал свою свиную стаю. Боится общаться с русскими людьми которым 10-15 лет. ( 7-9 лет это для него нормальный возраст для общения)\n\nИтог: Создал чат где 3 онлайна и 80 ботов.",
+            reltin: "3. Место Релтин – Самый худший админ в мире, даже 2 летний ребёнок меньше ноет чем он. Был админом группы 5 уровня, оскроблял обычных участников. Получил мут на 1 час и вышел с чата навсегда.\n\nИтог: Находится в чате григея.",
+            ded: "4. Место Дед – Крутой доксер в чате, сливал информацию про участников просто так. Успокоился после того как другие нашли его фото и страницу в вк его мамы.\n\nИтог: Стал нормальным (вроде), находится в нашем чате..",
+            psycho: "5. Место Психокид – Агрессивный но тихий фрик. Оскроблял всех участников в чате, разданивался несколько раз (жалели его).\n\nИтог: Забанен в чате, находится в чате нищих оппов."
         };
 
         function decodeFrik(key) {
@@ -131,24 +149,18 @@
             nameEl.innerText = key.toUpperCase();
             textEl.innerText = '';
             showPage('frik-details');
-
             const fullText = frikData[key];
             const chars = "#$&@3%?!*+=[]";
             let iteration = 0;
-            const stepTime = 50;
-            const totalSteps = 2700 / stepTime;
-            const increment = fullText.length / totalSteps;
-
             const interval = setInterval(() => {
                 textEl.innerText = fullText.split("").map((char, index) => {
                     if (index < iteration) return fullText[index];
                     if (char === " " || char === "\n") return char;
                     return chars[Math.floor(Math.random() * chars.length)];
                 }).join("");
-                
                 if (iteration >= fullText.length) clearInterval(interval);
-                iteration += increment;
-            }, stepTime);
+                iteration += fullText.length / 54; 
+            }, 50);
         }
 
         function updateBackground() {
@@ -166,28 +178,35 @@
                     const s = document.createElement('span'); s.className = 'floating-text';
                     s.innerText = phrases[Math.floor(Math.random()*phrases.length)];
                     s.style.color = 'var(--main)'; s.style.left = Math.random() * 90 + 'vw';
-                    s.style.top = Math.random() * 90 + 'vh'; s.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                    s.style.top = Math.random() * 90 + 'vh';
                     bg.appendChild(s);
                 }
             }
-        }
-
-        function setTheme(t) {
-            currentTheme = t; document.getElementById('body-tag').className = 'theme-' + t;
-            updateBackground();
         }
 
         function triggerLoad(target) {
             const loader = document.getElementById('loader-overlay');
             loader.style.display = 'flex'; loader.innerHTML = '';
             if (currentTheme === 'blood') {
-                loader.style.alignItems = 'flex-start';
-                for(let i=0; i<25; i++) loader.innerHTML += `<span style="color:red;font-size:10px;">DECRYPT_OBJECT_0x${Math.random().toString(16).slice(2,8)}</span><br>`;
+                for(let i=0; i<40; i++) {
+                    const line = document.createElement('div');
+                    line.className = 'blood-line';
+                    line.innerText = `ACCESSING_FILE_0x${Math.random().toString(16).slice(2,8)}`;
+                    line.style.left = Math.random() * 100 + 'vw';
+                    line.style.animationDelay = Math.random() * 2 + 's';
+                    loader.appendChild(line);
+                }
             } else if (currentTheme === 'pickme') {
-                loader.innerHTML = '<span style="font-size:60px;">🥕</span>';
-            } else { loader.innerHTML = '<p>CONNECTING...</p>'; }
-            
+                loader.innerHTML = '<span style="font-size:80px; animation: floatAnim 1s infinite;">🥕</span>';
+            } else {
+                loader.innerHTML = '<p style="color:var(--main)">LOADING...</p>';
+            }
             setTimeout(() => { loader.style.display = 'none'; showPage(target); updateBackground(); }, 2500);
+        }
+
+        function setTheme(t) {
+            currentTheme = t; document.getElementById('body-tag').className = 'theme-' + t;
+            updateBackground();
         }
 
         function checkPass() {
@@ -208,3 +227,4 @@
     </script>
 </body>
 </html>
+      
