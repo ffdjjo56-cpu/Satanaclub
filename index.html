@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SatanaCIub Project</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root { --bg: #000; --acc: #ff0000; --text: #fff; --card: #111; }
+        body.theme-default { --bg: #000; --acc: #ff0000; --text: #fff; --card: #111; }
+        body.theme-pickmi { --bg: #fff0f5; --acc: #ff69b4; --text: #d87093; --card: #ffe4e1; }
+        body.theme-classic { --bg: #f0f2f5; --acc: #007bff; --text: #1c1e21; --card: #fff; }
+        body.theme-eco { --bg: #fff; --acc: #000; --text: #000; --card: #fff; }
+
+        body {
+            background: var(--bg); color: var(--text);
+            font-family: 'Segoe UI', sans-serif; transition: 0.3s;
+            margin: 0; padding: 20px; padding-bottom: 80px; overflow-x: hidden;
+        }
+
+        .header { text-align: center; margin-bottom: 25px; }
+        .card { 
+            background: var(--card); padding: 18px; border-radius: 15px; 
+            margin-bottom: 15px; border-left: 4px solid var(--acc);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Навигация */
+        .nav { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; }
+        .nav-btn { 
+            padding: 8px 15px; border: 1px solid var(--acc); background: none; 
+            color: var(--acc); border-radius: 20px; cursor: pointer; white-space: nowrap;
+        }
+
+        /* Текстовые эффекты */
+        .char { display: inline-block; cursor: pointer; user-select: none; }
+
+        /* Кнопка с кровью */
+        .btn-box { position: relative; margin-top: 20px; }
+        .main-btn {
+            width: 100%; padding: 15px; border-radius: 30px;
+            border: 2px solid var(--acc); background: var(--card);
+            color: var(--acc); font-weight: bold; cursor: pointer;
+            z-index: 5; position: relative;
+        }
+        body.theme-default .main-btn:active { transform: scale(0.95); }
+        .blood-drip {
+            position: absolute; top: 100%; left: 50%; width: 25px; height: 0;
+            background: var(--acc); border-radius: 0 0 15px 15px;
+            transform: translateX(-50%); pointer-events: none;
+        }
+        body.theme-default .main-btn:active + .blood-drip { animation: drip 0.8s forwards; }
+
+        /* Морковка Пикми */
+        #carrot { 
+            display: none; position: fixed; font-size: 50px; 
+            z-index: 1000; touch-action: none; cursor: grab;
+        }
+        body.theme-pickmi #carrot { display: block; }
+
+        /* Стили для авторизации */
+        .auth-overlay {
+            position: fixed; inset: 0; background: var(--bg);
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; z-index: 10000;
+        }
+        input { 
+            background: var(--card); border: 1px solid var(--acc); color: var(--text);
+            padding: 12px; border-radius: 10px; text-align: center; margin-bottom: 10px;
+        }
+
+        /* Тема переключатель */
+        .switcher {
+            position: fixed; bottom: 15px; right: 15px; display: flex; gap: 5px;
+            background: rgba(0,0,0,0.3); padding: 8px; border-radius: 20px;
+        }
+        .dot { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 1px solid #fff; }
+
+        @keyframes drip { 0% { height: 0; } 100% { height: 150px; opacity: 0; } }
+    </style>
+</head>
+<body class="theme-default">
+
+    <div id="auth-screen" class="auth-overlay">
+        <h2>Для начала авторизуйся...</h2>
+        <input type="text" id="pass" placeholder="ВВЕДИТЕ КОД">
+        <button class="main-btn" style="width: 150px;" onclick="checkAuth()">ВХОД</button>
+    </div>
+
+    <div id="carrot" onclick="carrotHit()">🥕</div>
+
+    <div id="main-content" style="display:none;">
+        <div class="nav">
+            <button class="nav-btn" onclick="showSec('rules')">AER</button>
+            <button class="nav-btn" onclick="showSec('anketa')">АНКЕТА</button>
+            <button class="nav-btn" onclick="showSec('help')">ПОМОЩЬ</button>
+        </div>
+
+        <div id="rules" class="section">
+            <div class="header"><h1>SatanaCIub AER</h1></div>
+            <div class="card"><p>Данный AER является основным сводом правил. Незнание не освобождает от ответственности.</p></div>
+            <div class="card"><b>Раздел I</b><p>Запрещены ксенофобия, расизм, агрессия. Наказание: Мут 20-45 мин.</p></div>
+            <div class="card"><b>Раздел II</b><p>Спам, флуд, лестница (4+). Наказание: Мут до 3 часов или Бан.</p></div>
+            <div class="card"><b>Раздел III</b><p>NSFW, деанон, шантаж. Наказание: Перманентный бан.</p></div>
+        </div>
+
+        <div id="anketa" class="section" style="display:none;">
+            <div class="header"><h1>АНКЕТА</h1></div>
+            <div class="card" id="anketa-text">
+                1. Твой ник, @, айди, возраст и активность за неделю<br><br>
+                2. Твой часовой пояс и количество рабочих часов<br><br>
+                3. Что делать если не можешь выдать бан/мут?<br><br>
+                4. Опыт админства (500+ человек)<br><br>
+                5. Краткий пересказ AER [Правило - наказание]
+            </div>
+            <button class="main-btn" onclick="copyAnketa()">СКОПИРОВАТЬ</button>
+        </div>
+
+        <div id="help" class="section" style="display:none;">
+            <div class="header"><h1>ПОМОЩЬ</h1></div>
+            <div class="card">
+                <b>ЖАЛОБА:</b><br>1. Скрины<br>2. Данные нарушителя
+            </div>
+            <div class="card">
+                Отвечают до 12-ти часов. Лестница 4+ сообщений - 20 минут мута. Вопросы не по чату - мут 1 час.
+            </div>
+            <button class="main-btn" onclick="tg.openLink('https://t.me/HGDYFL/1667530')">ОТКРЫТЬ ТЕМУ</button>
+        </div>
+
+        <div class="btn-box">
+            <button class="main-btn" onclick="tg.close()">ЗАКРЫТЬ</button>
+            <div class="blood-drip"></div>
+        </div>
+    </div>
+
+    <div class="switcher">
+        <div class="dot" style="background:red" onclick="setT('default')"></div>
+        <div class="dot" style="background:pink" onclick="setT('pickmi')"></div>
+        <div class="dot" style="background:blue" onclick="setT('classic')"></div>
+        <div class="dot" style="background:grey" onclick="setT('eco')"></div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        let clicks = 0;
+        tg.expand();
+
+        function checkAuth() {
+            if(document.getElementById('pass').value.toLowerCase() === 'hoolgans') {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                initBleeding();
+            } else { alert("Неверный код"); }
+        }
+
+        function showSec(id) {
+            document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function setT(t) {
+            document.body.className = 'theme-' + t;
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        function initBleeding() {
+            document.querySelectorAll('p, .card').forEach(el => {
+                if(el.children.length === 0) {
+                    el.innerHTML = el.innerText.split('').map(c => `<span class="char" onclick="doBleed(this)">${c}</span>`).join('');
+                }
+            });
+        }
+
+        function doBleed(el) {
+            if(document.body.classList.contains('theme-default')) {
+                el.style.color = 'transparent';
+                el.style.textShadow = '0 0 5px red';
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        function copyAnketa() {
+            const t = document.getElementById('anketa-text').innerText;
+            navigator.clipboard.writeText(t);
+            tg.HapticFeedback.notificationOccurred('success');
+            alert("Скопировано");
+        }
+
+        function carrotHit() {
+            clicks++;
+            tg.HapticFeedback.impactOccurred('medium');
+            if(clicks === 27) {
+                document.body.innerHTML = '<div style="background:#000;color:red;height:100vh;display:flex;align-items:center;justify-content:center;font-size:30px;text-align:center;animation:shake 0.1s infinite">СИСТЕМА ВЗЛОМАНА<br>УБЕЙ МОРКОВЬ<br><br><span style="font-size:100px" onclick="location.reload()">🩸</span></div><style>@keyframes shake {0%{transform:translate(2px,2px)} 50%{transform:translate(-2px,-2px)} 100%{transform:translate(2px,2px)}}</style>';
+            }
+        }
+
+        // Перетаскивание морковки
+        const c = document.getElementById('carrot');
+        c.ontouchmove = (e) => {
+            c.style.left = e.touches[0].clientX - 25 + 'px';
+            c.style.top = e.touches[0].clientY - 25 + 'px';
+        };
+    </script>
+</body>
+</html>
