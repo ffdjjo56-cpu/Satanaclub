@@ -6,143 +6,177 @@
     <title>SatanaCIub Project</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-3px, 2px); }
-            40% { transform: translate(-3px, -2px); }
-            60% { transform: translate(3px, 2px); }
-            80% { transform: translate(3px, -2px); }
-            100% { transform: translate(0); }
-        }
+        :root { --main: #ff0000; --bg: #000; --font: #fff; --btn-clip: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%); }
+        .theme-pickme { --main: #ff69b4; --bg: #fff0f5; --font: #d02090; --btn-clip: none; }
+        .theme-blue { --main: #0088cc; --bg: #f0faff; --font: #004466; --btn-clip: none; }
+        .theme-pixel { --main: #000; --bg: #8bac0f; --font: #000; --btn-clip: none; }
 
-        body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        /* Экран лага (ошибки) */
-        #error-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: rgba(20, 0, 0, 0.95);
-            z-index: 9999;
-            color: #ff0000;
-            padding: 10px;
-            font-size: 10px;
-            overflow: hidden;
-            word-break: break-all;
-            pointer-events: none;
-        }
-
-        .page {
-            display: none;
-            width: 100vw;
-            height: 100vh;
-            padding: 25px;
-            box-sizing: border-box;
-            background: #000;
-        }
-
+        body { font-family: 'Courier New', monospace; background: var(--bg); color: var(--font); margin: 0; overflow: hidden; transition: 0.3s; }
+        .page { display: none; width: 100vw; height: 100vh; padding: 20px; box-sizing: border-box; overflow-y: auto; position: relative; }
         .active { display: block; }
 
         .menu-btn {
-            width: 100%;
-            padding: 18px;
-            margin: 15px 0;
-            background: #0a0a0a;
-            border: 1px solid #ff0000;
-            color: #ff0000;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            font-size: 16px;
+            width: 100%; padding: 15px; margin: 10px 0; background: rgba(0,0,0,0.1); 
+            border: 2px solid var(--main); color: var(--main); font-weight: bold; 
+            text-transform: uppercase; clip-path: var(--btn-clip); cursor: pointer;
         }
 
-        .menu-btn:active {
-            animation: glitch 0.1s infinite;
-            background: #ff0000;
-            color: #000;
-        }
+        /* Бегающий текст для логина и помощи */
+        .bg-chaos { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; }
+        .floating-text { position: absolute; font-weight: bold; white-space: nowrap; opacity: 0.5; animation: floatAnim 3s linear infinite; }
+        @keyframes floatAnim { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(10px, 10px); } }
 
-        .content {
-            border-left: 3px solid #ff0000;
-            padding: 15px;
-            background: #050505;
-            height: 60vh;
-            overflow-y: auto;
-        }
-
-        .carrot { text-align: center; font-size: 40px; margin: 20px 0; }
+        input, textarea { width: 100%; background: rgba(255,255,255,0.1); border: 1px solid var(--main); color: var(--font); padding: 8px; margin: 5px 0; outline: none; }
+        .content-box { border: 1px solid var(--main); padding: 15px; background: rgba(0,0,0,0.05); margin-bottom: 20px; }
         
-        input { 
-            background: #000; border: 1px solid #ff0000; color: #fff; 
-            padding: 15px; text-align: center; font-size: 24px; width: 180px;
+        #loader-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9999; justify-content: center; align-items: center; background: var(--bg);
         }
+
+        .shame-title { font-weight: bold; color: var(--main); text-transform: uppercase; display: block; margin-top: 10px; }
     </style>
 </head>
-<body>
+<body id="body-tag" class="theme-blood">
 
-    <div id="error-overlay"></div>
+    <div id="loader-overlay"></div>
 
-    <div id="login-screen" class="page active" style="text-align:center; padding-top:100px;">
-        <h1 style="color:red;">SYSTEM LOGIN</h1>
-        <input type="password" id="passInput" placeholder="****" maxlength="4">
-        <button class="menu-btn" onclick="checkPass()">DECRYPT</button>
-    </div>
-
-    <div id="main-menu" class="page">
-        <h1 style="color:red; text-align:center;">SatanaCIub Project</h1>
-        <div class="carrot">🥕</div>
-        <button class="menu-btn" onclick="triggerGlitch('rules-page')">/ПРАВИЛА_AER</button>
-        <button class="menu-btn" onclick="triggerGlitch('forms-page')">/СПИСОК_АНКЕТ</button>
-        <button class="menu-btn" onclick="tg.close()" style="color:#444;">SHUTDOWN</button>
-    </div>
-
-    <div id="rules-page" class="page">
-        <button class="menu-btn" style="padding:5px; width:100px;" onclick="triggerGlitch('main-menu')">< BACK</button>
-        <div class="content">
-            <h2 style="color:red;">PROTOCOL: RULES</h2>
-            <p>> 1.1. No system flood.</p>
-            <p>> 1.2. Follow the hierarchy.</p>
-            <p>> 1.3. Respect SatanaCIub.</p>
+    <div id="login-screen" class="page active" style="overflow: hidden;">
+        <div id="login-bg" class="bg-chaos"></div>
+        <div style="position: relative; z-index: 10; text-align: center; padding-top: 50px;">
+            <h1 style="color:var(--main); letter-spacing: 3px;">SATANACLUB ACCESS</h1>
+            <input type="password" id="passInput" placeholder="ENTER CODE" maxlength="4" style="width:160px; text-align:center; font-size: 20px;">
+            <button class="menu-btn" style="width: 200px;" onclick="checkPass()">ENTER</button>
+            
+            <div style="margin-top: 40px;">
+                <p style="font-size: 12px;">SELECT INTERFACE:</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 0 20px;">
+                    <button class="menu-btn" style="font-size: 10px; padding: 8px;" onclick="setTheme('blood')">КРОВАВЫЙ</button>
+                    <button class="menu-btn" style="font-size: 10px; padding: 8px;" onclick="setTheme('pickme')">ПИКМИ</button>
+                    <button class="menu-btn" style="font-size: 10px; padding: 8px;" onclick="setTheme('blue')">ОБЫЧНЫЙ</button>
+                    <button class="menu-btn" style="font-size: 10px; padding: 8px;" onclick="setTheme('pixel')">ОПТИМИЗАЦИЯ</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="forms-page" class="page">
-        <button class="menu-btn" style="padding:5px; width:100px;" onclick="triggerGlitch('main-menu')">< BACK</button>
-        <div class="content">
-            <h2 style="color:red;">DATA_FORMS</h2>
-            <button class="menu-btn" onclick="alert('SYSTEM ERROR: DATA NOT SENT')">SUBMIT APPLICATION</button>
+    <div id="main-menu" class="page">
+        <h1 style="text-align:center; color: var(--main);">SatanaCIub Project</h1>
+        <div style="text-align:center; font-size: 40px;">🥕</div>
+        <button class="menu-btn" onclick="triggerLoad('rules-page')">📜 ПРАВИЛА AER</button>
+        <button class="menu-btn" onclick="triggerLoad('forms-list-page')">📝 АНКЕТЫ</button>
+        <button class="menu-btn" onclick="triggerLoad('help-page')">❓ ПОМОЩЬ</button>
+        <button class="menu-btn" id="secret-btn" onclick="handleSecretClick()">СКОРО</button>
+        <button class="menu-btn" onclick="location.reload()" style="opacity:0.4; margin-top: 20px;">LOGOUT</button>
+    </div>
+
+    <div id="rules-page" class="page">
+        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
+        <div class="content-box" style="font-size: 12px;">
+            <h3>ПРАВИЛА AER</h3>
+            <p>Данный AER является сводом правил... [Тут твой полный текст из прошлого сообщения]</p>
+        </div>
+    </div>
+
+    <div id="forms-list-page" class="page">
+        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
+        <button class="menu-btn" onclick="triggerLoad('form-admin')">АРМИЯ АДМИНОВ</button>
+        <button class="menu-btn" onclick="triggerLoad('form-vice')">ВИЦЕ-ПРЕЗИДЕНТ</button>
+        <button class="menu-btn" onclick="triggerLoad('form-vet')">ВЕТЕРАН КЛУБА</button>
+    </div>
+
+    <div id="form-admin" class="page">
+        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('forms-list-page')">BACK</button>
+        <div class="content-box">
+            <p>1. Ник, @, ID, Возраст:</p>
+            <textarea readonly placeholder="Доступ запрещен..."></textarea>
+            <p>2. Пояс и время работы:</p>
+            <input type="text" readonly placeholder="Доступ запрещен...">
+            <button class="menu-btn" style="opacity: 0.5;">ОТПРАВИТЬ (ERROR)</button>
+        </div>
+    </div>
+
+    <div id="help-page" class="page">
+        <div id="help-bg" class="bg-chaos"></div>
+        <div style="position: relative; z-index: 10;">
+            <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
+            <h2 style="text-align:center;">SUPPORT</h2>
+            <div class="content-box" style="text-align:center;">
+                <p>CONTACT: @SatanaCIub</p>
+                <p>SYSTEM STATUS: ACTIVE</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="shame-page" class="page">
+        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
+        <h2 style="text-align:center;">СТЕНА ПОЗОРА</h2>
+        <div class="content-box" style="font-size: 11px;">
+            <span class="shame-title">1. Vinal</span> Рейдер, шантажер. Снесли ему 5 клубов.
+            <span class="shame-title">2. Григей</span> 18 лет, педофил, нулс-игрок. Чат на 3 чела.
+            <span class="shame-title">3. Релтин</span> Обиженка, нулс 24/7.
+            <span class="shame-title">4. Дед</span> Бывший доксер, вроде исправился.
+            <span class="shame-title">5. Психокид</span> Агрессивный фрик, забанен.
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand();
+        let currentTheme = 'blood';
+        let secretCounter = 0;
+        const phrases = ["@satanacIub", "Кириешка", "27", "42", "228", "Hooligan chat"];
 
-        // Функция залагивания
-        function triggerGlitch(targetPageId) {
-            const overlay = document.getElementById('error-overlay');
-            overlay.style.display = 'block';
+        function spawnChaos(containerId) {
+            const bg = document.getElementById(containerId);
+            bg.innerHTML = '';
+            for(let i=0; i<25; i++) {
+                const span = document.createElement('span');
+                span.className = 'floating-text';
+                span.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+                span.style.color = 'var(--main)';
+                span.style.left = Math.random() * 90 + 'vw';
+                span.style.top = Math.random() * 90 + 'vh';
+                span.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                bg.appendChild(span);
+            }
+        }
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            document.getElementById('body-tag').className = 'theme-' + theme;
+            spawnChaos('login-bg');
+        }
+
+        function checkPass() {
+            if (document.getElementById('passInput').value === '2727') triggerLoad('main-menu');
+            else { alert('ACCESS DENIED'); tg.HapticFeedback.notificationOccurred('error'); }
+        }
+
+        function triggerLoad(targetId) {
+            const loader = document.getElementById('loader-overlay');
+            loader.style.display = 'flex'; loader.innerHTML = '';
             
-            // Генерируем "мусорный" код ошибки
-            const interval = setInterval(() => {
-                overlay.innerHTML += `err:0x${Math.random().toString(16).substr(2, 8)}_CRITICAL_FAIL_SATANACLUB_OVERRIDE_SYSTEM_HALT_<br>`;
-                window.scrollTo(0, document.body.scrollHeight);
-            }, 50);
+            if (currentTheme === 'blood') {
+                loader.style.alignItems = 'flex-start';
+                for(let i=0; i<20; i++) loader.innerHTML += `<span style="color:red;font-size:10px;">err:0x${Math.random().toString(16).slice(2,8)}</span><br>`;
+            } else if (currentTheme === 'pickme') {
+                loader.innerHTML = '<span style="font-size:40px;">🥕🥕🥕</span>';
+            } else if (currentTheme === 'pixel') {
+                loader.innerHTML = '<div style="width:150px; height:20px; border:2px solid #000; position:relative;"><div style="width:60%; height:100%; background:#000;"></div></div><p>LOADING...</p>';
+            } else {
+                loader.innerHTML = '<p>LOADING...</p>';
+            }
 
-            // Через 2.5 секунды переключаем страницу
             setTimeout(() => {
-                clearInterval(interval);
-                overlay.style.display = 'none';
-                overlay.innerHTML = '';
-                showPage(targetPageId);
+                loader.style.display = 'none';
+                showPage(targetId);
+                if(targetId === 'help-page') spawnChaos('help-bg');
             }, 2500);
+        }
+
+        function handleSecretClick() {
+            secretCounter++;
+            if (secretCounter === 3) { secretCounter = 0; triggerLoad('shame-page'); }
         }
 
         function showPage(id) {
@@ -150,13 +184,8 @@
             document.getElementById(id).classList.add('active');
         }
 
-        function checkPass() {
-            if (document.getElementById('passInput').value === '2202') {
-                triggerGlitch('main-menu');
-            } else {
-                alert('ACCESS DENIED');
-            }
-        }
+        // Инициализация хаоса на входе
+        spawnChaos('login-bg');
     </script>
 </body>
 </html>
