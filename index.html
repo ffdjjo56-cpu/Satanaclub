@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -23,36 +24,39 @@
             text-transform: uppercase; clip-path: var(--btn-clip); border-radius: var(--radius); cursor: pointer;
         }
 
-        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; }
-        .floating-text { position: absolute; font-weight: bold; white-space: nowrap; opacity: 0.3; animation: floatAnim 3s linear infinite; }
-        
-        @keyframes floatAnim { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(10px, 10px); } }
-        @keyframes fallAnim { to { transform: translateY(110vh) rotate(360deg); } }
-        @keyframes bloodStream { 0% { transform: translateY(-100%); } 100% { transform: translateY(100vh); } }
-
-        #loader-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 9999; background: #000; overflow: hidden; color: #fff;
+        /* Анимация дрожания для примеров в анкетах */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
         }
+        .shaking-text { display: inline-block; animation: shake 0.5s infinite; color: var(--main); font-weight: bold; }
 
-        .content-box { border: 1px solid var(--main); padding: 15px; background: rgba(0,0,0,0.05); margin-bottom: 20px; font-size: 13px; line-height: 1.4; }
-        input, textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--main); color: var(--font); padding: 10px; margin: 5px 0; font-family: inherit; pointer-events: none; }
+        #loader-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; background: #000; overflow: hidden; }
+        .content-box { border: 1px solid var(--main); padding: 15px; background: rgba(0,0,0,0.05); margin-bottom: 20px; font-size: 13px; line-height: 1.4; white-space: pre-wrap; }
         
-        /* Специальные стили для ЧБ терминала */
-        .terminal-text { position: absolute; top: 10px; left: 10px; font-size: 10px; color: #00ff00; line-height: 1.2; }
+        @keyframes bloodStream { 0% { transform: translateY(-100%); } 100% { transform: translateY(100vh); } }
+        @keyframes fallAnim { to { transform: translateY(110vh) rotate(360deg); } }
+        .terminal-text { position: absolute; top: 10px; left: 10px; font-size: 10px; color: #00ff00; line-height: 1.5; }
     </style>
 </head>
 <body id="body-tag" class="theme-blood">
 
     <div id="loader-overlay"></div>
-    <div id="global-bg" class="bg-layer"></div>
 
     <div id="login-screen" class="page active">
-        <div style="position: relative; z-index: 20; text-align: center; padding-top: 40px;">
+        <div style="text-align: center; padding-top: 40px;">
             <div class="hooligan-header">Hooligan's AER</div>
-            <p style="font-size: 10px;">SYSTEM_STATUS: ENCRYPTED</p>
-            <input type="password" id="passInput" placeholder="ENTER CODE" maxlength="4" style="width:160px; text-align:center; font-size: 20px; pointer-events: auto;">
-            <button class="menu-btn" style="width: 200px;" onclick="checkPass()">DECRYPT</button>
+            <input type="password" id="passInput" placeholder="CODE: 2727" maxlength="4" style="width:160px; text-align:center; font-size: 20px; background:none; border:1px solid var(--main); color:var(--font); pointer-events: auto;">
+            <button class="menu-btn" style="width: 200px;" onclick="checkPass()">ACCESS</button>
             <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 0 40px;">
                 <button class="menu-btn" style="padding:5px; font-size:8px;" onclick="setTheme('blood')">BLOOD</button>
                 <button class="menu-btn" style="padding:5px; font-size:8px;" onclick="setTheme('pickme')">PICKME</button>
@@ -74,11 +78,21 @@
         <div class="hooligan-header">RULES</div>
         <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
         <div class="content-box">
-            <p><b>1. Дискриминация:</b> Ксенофобия и травля запрещена. <br><i>Наказание: Мут 20–45 мин.</i></p>
-            <p><b>2. Спам:</b> Повтор сообщений/ссылок. <br><i>Наказание: Мут 120 мин / Бан.</i></p>
-            <p><b>3. Флуд:</b> 4+ сообщения подряд. <br><i>Наказание: Мут 30 мин – 3 часа.</i></p>
-            <p><b>4. Политика:</b> Запрещена в любом виде. <br><i>Наказание: Бан навсегда.</i></p>
-            <p><b>5. 18+:</b> Порнография и шок-контент запрещены. <br><i>Наказание: Бан.</i></p>
+‼️ Данный AER является сводом правил чата. Незнание не освобождает от ответственности.
+
+1. Дискриминация: Любая ксенофобия, расизм и травля участников запрещена.
+Наказание: Мут 20–45 мин.
+
+2. Спам: Массовая отправка одинаковых сообщений или ссылок. 
+Наказание: Мут 120 мин / Бан.
+
+3. Флуд: Отправка более 4 сообщений подряд (включая «лестницу»). 
+Наказание: Мут 30 мин – 3 часа.
+
+4. Политика: Любые политические обсуждения и провокации запрещены.
+Наказание: Провокация — 220 мин. Политика — Бан навсегда.
+
+II. БАНЫ: Обход мута через дополнительные аккаунты (твинки) и распространение 18+ контента караются баном всех аккаунтов навсегда.
         </div>
     </div>
 
@@ -94,41 +108,64 @@
         <div class="hooligan-header">ADMIN</div>
         <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('forms-list-page')">BACK</button>
         <div class="content-box">
-            <p>1. Ник, @, ID, возраст:</p><input type="text" value="Satana, @satanaclub, 1234, 18л">
-            <p>2. Часовой пояс:</p><input type="text" value="МСК (UTC+3)">
-            <p>3. Действия при спаме:</p><textarea>Мут 120 минут согласно AER п.2</textarea>
-            <p>4. Опыт работы:</p><input type="text" value="Админ чатов 1000+">
+1. Ник, @, ID, возраст, активность:
+<span class="shaking-text">Satana, @satanaclub, 12345, 18 лет, 5ч/день</span>
+
+2. Ваш часовой пояс и в какое время будете работать:
+<span class="shaking-text">МСК, с 18:00 до 22:00</span>
+
+3. Ваши действия при виде нарушений:
+<span class="shaking-text">Описать подробно согласно AER</span>
+
+4. Ваш опыт работы админом (минимум 500+ участников):
+<span class="shaking-text">Указать чаты/каналы</span>
+
+5. Краткий пересказ правил AER:
+<span class="shaking-text">Своими словами (дрожащий канон)</span>
         </div>
     </div>
 
     <div id="form-vice" class="page">
         <div class="hooligan-header">VICE</div>
         <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('forms-list-page')">BACK</button>
-        <div class="content-box"><p>Заслуги:</p><textarea>Активное участие в жизни чата...</textarea></div>
+        <div class="content-box">
+1. Как долго вы в SatanaCIub Project?
+2. Ваши заслуги перед чатом?
+3. Почему вы заслуживаете этот статус?
+<span class="shaking-text">ЛОЯЛЬНОСТЬ ПРОВЕРЕНА</span>
+        </div>
     </div>
 
     <div id="form-vet" class="page">
         <div class="hooligan-header">VETERAN</div>
         <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('forms-list-page')">BACK</button>
-        <div class="content-box"><p>Стаж:</p><input type="text" value="Более 1 года в проекте"></div>
+        <div class="content-box">
+1. Стаж пребывания в проекте (от 6 месяцев).
+2. Лояльность и отсутствие грубых нарушений.
+<span class="shaking-text">СТАРЕЙШИНА ЧАТА</span>
+        </div>
     </div>
 
     <div id="help-page" class="page">
-        <div class="hooligan-header">HELP</div>
+        <div class="hooligan-header">SUPPORT</div>
         <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
         <div class="content-box" style="text-align:center;">
-            <p>OWNER: @SatanaCIub</p>
+            <p>OWNER: <span style="color:var(--main)">@SatanaCIub</span></p>
             <p>PROJECT: SatanaCIub Project</p>
-            <p>AER VERSION: 2.0.26</p>
+            <p>SYSTEM: Hooligan's AER v2.0</p>
+            <hr border="1" color="var(--main)">
+            <p>По всем вопросам сотрудничества или разбана писать владельцу.</p>
         </div>
     </div>
 
     <div id="shame-page" class="page">
-        <div class="hooligan-header">SHAME LIST</div>
+        <div class="hooligan-header">DATABASE: SHAME</div>
         <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
-        <button class="menu-btn" onclick="decodeFrik('vinal')">VINAL</button>
-        <button class="menu-btn" onclick="decodeFrik('grigey')">ГРИГЕЙ</button>
-        <button class="menu-btn" onclick="decodeFrik('reltin')">РЕЛТИН</button>
+        <button class="menu-btn" onclick="decodeFrik('vinal')">1. VINAL</button>
+        <button class="menu-btn" onclick="decodeFrik('grigey')">2. ГРИГЕЙ</button>
+        <button class="menu-btn" onclick="decodeFrik('reltin')">3. РЕЛТИН</button>
+        <button class="menu-btn" onclick="decodeFrik('ded')">4. ДЕД</button>
+        <button class="menu-btn" onclick="decodeFrik('psycho')">5. ПСИХОКИД</button>
     </div>
 
     <div id="frik-details" class="page">
@@ -138,30 +175,19 @@
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
         let currentTheme = 'blood';
         let secretCounter = 0;
 
         const frikData = {
-            vinal: "VINAL: Просил союз, получил отказ, угрожал рейдами. Оскорблял Украину в ГС. Итог: 5 его клубов снесены.",
-            grigey: "ГРИГЕЙ: 18-летний русофоб педофил. Общается только с детьми 7-9 лет. Создал чат с 80 ботами.",
-            reltin: "РЕЛТИН: Худший админ-нытик. Оскорблял участников. Вышел после мута на час. Фрик из нулса."
+            vinal: "1. Место Vinal – Просил союз с нашим чатом, при получении отказа начал говорить что будет рейдить наши кланы. Записывал гс где оскробил Украину и выставил Россию лучшей, постоянно в гс говорил планы по рейдам наших клубов.\n\nИтог: В бане, 2 раза мы зарейдили его чат, снесли около 5 клубов, был забанен в чате григея.",
+            grigey: "2. Место Григей (Настоящее имя) – 18 Летний русофоб педофил играющий в нулс. Ныл в 2-3 конфликтах, звал свою свиную стаю. Боится общаться с русскими людьми которым 10-15 лет. ( 7-9 лет это для него нормальный возраст для общения)\n\nИтог: Создал чат где 3 онлайна и 80 ботов.",
+            reltin: "3. Место Релтин – Самый худший админ в мире, даже 2 летний ребёнок меньше ноет чем он. Был админом группы 5 уровня, оскроблял обычных участников. Получил мут на 1 час и вышел с чата навсегда.\n\nИтог: Находится в чате григея.",
+            ded: "4. Место Дед – Крутой доксер в чате, сливал информацию про участников просто так. Успокоился после того как другие нашли его фото и страницу в вк его мамы.\n\nИтог: Стал нормальным (вроде), находится в нашем чате..",
+            psycho: "5. Место Психокид – Агрессивный но тихий фрик. Оскроблял всех участников в чате, разданивался несколько раз (жалели его).\n\nИтог: Забанен в чате, находится в чате нищих оппов."
         };
 
         function setTheme(t) {
             currentTheme = t; document.getElementById('body-tag').className = 'theme-' + t;
-            updateBackground();
-        }
-
-        function updateBackground() {
-            const bg = document.getElementById('global-bg'); bg.innerHTML = '';
-            const phrases = ["@satanacIub", "2727", "AER", "Hooligan"];
-            for(let i=0; i<15; i++) {
-                const s = document.createElement('span'); s.className = 'floating-text';
-                s.innerText = phrases[Math.floor(Math.random()*phrases.length)];
-                s.style.left = Math.random() * 90 + 'vw'; s.style.top = Math.random() * 90 + 'vh';
-                s.style.color = 'var(--main)'; bg.appendChild(s);
-            }
         }
 
         function triggerLoad(target) {
@@ -169,26 +195,24 @@
             loader.style.display = 'block'; loader.innerHTML = '';
             
             if (currentTheme === 'blood') {
-                for(let i=0; i<50; i++) {
+                for(let i=0; i<45; i++) {
                     const e = document.createElement('div');
-                    e.style = `position:absolute; color:red; font-size:10px; left:${Math.random()*100}vw; animation: bloodStream ${Math.random()+0.5}s linear infinite;`;
-                    e.innerText = `ERR:0x${Math.random().toString(16).slice(2,8).toUpperCase()}_FATAL`;
+                    e.style = `position:absolute; color:red; font-size:10px; left:${Math.random()*100}vw; animation: bloodStream ${Math.random()+0.2}s linear infinite;`;
+                    e.innerText = `err:0x${Math.random().toString(16).slice(2,8).toUpperCase()}`;
                     loader.appendChild(e);
                 }
             } else if (currentTheme === 'pickme') {
                 for(let i=0; i<30; i++) {
                     const m = document.createElement('div');
-                    m.style = `position:absolute; font-size:30px; left:${Math.random()*100}vw; top:-50px; animation: fallAnim 1.5s linear forwards;`;
+                    m.style = `position:absolute; font-size:40px; left:${Math.random()*100}vw; top:-60px; animation: fallAnim 1s linear forwards;`;
                     m.innerText = '🥕'; loader.appendChild(m);
                 }
             } else if (currentTheme === 'blue') {
                 loader.style.display = 'flex'; loader.style.alignItems = 'center'; loader.style.justifyContent = 'center';
-                loader.innerHTML = '<div style="color:#0088cc; font-size:20px;">CONNECTING<span id="dots"></span></div>';
-                let d = 0; setInterval(() => { document.getElementById('dots').innerText = '.'.repeat(d%4); d++; }, 400);
+                loader.innerHTML = '<div style="color:#0088cc; font-size:22px;">CONNECTING<span id="dots"></span></div>';
+                let d = 0; setInterval(() => { const el = document.getElementById('dots'); if(el) el.innerText = '.'.repeat(d%4); d++; }, 400);
             } else if (currentTheme === 'pixel') {
-                loader.innerHTML = `<div class="terminal-text">
-                    > SYSTEM BOOT...<br>> USER: SATANA_ADMIN<br>> OS: HOOLIGAN_AER_OS<br>> LOADING KERNEL...<br>> STATUS: [OK]<br>> DECRYPTING INTERFACE...
-                </div>`;
+                loader.innerHTML = `<div class="terminal-text">> BOOTING SatanaCIub_OS...<br>> USER: SATANA_ADMIN<br>> Брух и Генуко канон<br>> STATUS: [READY]<br>> LOADING...</div>`;
             }
 
             setTimeout(() => { loader.style.display = 'none'; showPage(target); }, 2500);
@@ -197,8 +221,7 @@
         function decodeFrik(key) {
             const nameEl = document.getElementById('frik-name');
             const textEl = document.getElementById('frik-text');
-            nameEl.innerText = key.toUpperCase();
-            textEl.innerText = '';
+            nameEl.innerText = key.toUpperCase(); textEl.innerText = '';
             showPage('frik-details');
             const fullText = frikData[key];
             const chars = "#$&@3%?!*+=";
@@ -206,6 +229,7 @@
             const interval = setInterval(() => {
                 textEl.innerText = fullText.split("").map((char, index) => {
                     if (index < iteration) return fullText[index];
+                    if (char === " " || char === "\n") return char;
                     return chars[Math.floor(Math.random()*chars.length)];
                 }).join("");
                 if (iteration >= fullText.length) clearInterval(interval);
@@ -215,7 +239,7 @@
 
         function checkPass() {
             if (document.getElementById('passInput').value === '2727') triggerLoad('main-menu');
-            else alert('ACCESS DENIED');
+            else alert('DENIED');
         }
 
         function handleSecretClick() {
@@ -226,7 +250,6 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
-        updateBackground();
     </script>
 </body>
 </html>
