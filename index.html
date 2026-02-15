@@ -181,8 +181,23 @@
                     });
                 }
             });
-        });
-          // --- ГЛАВНАЯ ЛОГИКА ---
+       });
+      function triggerLoad(target) {
+        const l = document.getElementById('loader-overlay');
+        l.style.display = 'block'; 
+        l.innerHTML = '';
+        for(let i=0; i<30; i++) {
+            const e = document.createElement('div');
+            e.style = `position:absolute; color:red; font-size:10px; left:${Math.random()*100}vw; animation: bloodStream ${Math.random()+0.5}s linear infinite;`;
+            e.innerText = "VOID_DATA"; 
+            l.appendChild(e);
+        }
+        setTimeout(() => { 
+            l.style.display = 'none'; 
+            showPage(target); 
+        }, 1000);
+      }
+        // --- ГЛАВНАЯ ЛОГИКА ---
     function checkPass() {
         const v = document.getElementById('passInput').value;
         if(v === '2727') triggerLoad('main-menu');
