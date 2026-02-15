@@ -2,13 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SatanaCIub Project | CT1C2 Ultimate System</title>
+    <title>SatanaCIub Project | CT1C2 Core System</title>
     
     <style>
         /* =========================================
-           1. ПОДКЛЮЧЕНИЕ ШРИФТОВ (ПРЯМЫЕ ССЫЛКИ)
-           ========================================= 
+           1. FONTS CONFIGURATION
+           =========================================
         */
         @font-face { 
             font-family: 'ThemeRed'; 
@@ -28,90 +29,87 @@
         }
 
         /* =========================================
-           2. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И СТИЛИ
-           ========================================= 
+           2. GLOBAL VARIABLES & RESET
+           =========================================
         */
         :root {
             --main-color: #f00;
             --bg-color: #000;
             --text-color: #eee;
-            --box-bg: rgba(15, 15, 15, 0.98);
+            --box-bg: rgba(10, 10, 10, 0.98);
             --btn-radius: 0px;
             --font-current: 'ThemeRed', sans-serif;
-            --glow: 0 0 15px rgba(255, 0, 0, 0.5);
-            --transition-speed: 0.5s;
+            --glow-color: rgba(255, 0, 0, 0.6);
+            --glow-power: 0 0 20px var(--glow-color);
+            --animation-speed: 0.4s;
         }
 
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
             outline: none;
-            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
 
-        body { 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-            font-family: var(--font-current); 
-            margin: 0; padding: 0;
-            overflow: hidden; 
-            height: 100vh; width: 100vw;
-            transition: background var(--transition-speed) ease;
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-current);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.8s ease, color 0.5s;
         }
 
         /* =========================================
-           3. СИСТЕМА ДОЖДЯ И ЧАСТИЦ
-           ========================================= 
+           3. BACKGROUND MATRIX SYSTEM
+           =========================================
         */
         #rain-container {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
             z-index: 1;
         }
 
         .rain-item {
             position: absolute;
-            user-select: none;
-            opacity: 0.8;
+            opacity: 0.75;
             will-change: transform;
             white-space: nowrap;
             font-size: 1.4rem;
+            transition: color 0.3s ease;
         }
 
         .user-tag {
             pointer-events: auto;
-            cursor: crosshair;
+            cursor: pointer;
             font-weight: bold;
-            transition: text-shadow 0.3s;
+            z-index: 2;
         }
 
-        .user-tag:hover {
-            text-shadow: 0 0 10px var(--main-color);
-        }
-
-        .particle {
-            position: absolute;
-            pointer-events: none;
-            animation: particleFade 1.5s forwards;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        @keyframes particleFade {
-            0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-            100% { transform: translate(var(--dx), var(--dy)) rotate(450deg); opacity: 0; }
+        .hidden-nick {
+            display: none !important;
         }
 
         /* =========================================
-           4. ЭКРАН ЗАГРУЗКИ (МАШИНКА)
-           ========================================= 
+           4. LOADING SYSTEM (RACE CAR)
+           =========================================
         */
         #loading-overlay {
             display: none;
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: var(--bg-color);
             z-index: 9999;
             flex-direction: column;
@@ -119,42 +117,94 @@
             align-items: center;
         }
 
-        .loader-track {
-            position: relative;
-            width: 300px;
+        .track-container {
+            width: 320px;
             height: 4px;
-            background: #222;
+            background: #1a1a1a;
+            position: relative;
             border-radius: 10px;
         }
 
-        .race-car {
+        .race-car-icon {
             position: absolute;
             top: -40px;
-            font-size: 2.8rem;
-            transform: scaleX(-1); /* Едет влево */
-            animation: moveCarLeft 1.2s infinite linear;
+            font-size: 3rem;
+            transform: scaleX(-1);
+            animation: moveCarAnim 1.2s infinite linear;
         }
 
-        @keyframes moveCarLeft {
+        @keyframes moveCarAnim {
             0% { right: -20%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
             100% { right: 110%; opacity: 0; }
         }
 
         /* =========================================
-           5. ИНТЕРФЕЙС СТРАНИЦ
-           ========================================= 
+           5. DYNAMIC GLOW BUTTONS (СИЯНИЕ)
+           =========================================
+        */
+        .menu-btn {
+            width: 340px;
+            padding: 20px;
+            margin: 10px;
+            background: transparent;
+            color: var(--text-color);
+            border: 2px solid var(--main-color);
+            font-weight: 900;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            border-radius: var(--btn-radius);
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            
+            /* Анимация мигания/сияния */
+            animation: buttonPulse 2s infinite ease-in-out;
+            box-shadow: var(--glow-power);
+        }
+
+        @keyframes buttonPulse {
+            0% {
+                box-shadow: 0 0 5px var(--glow-color);
+                border-color: var(--main-color);
+            }
+            50% {
+                box-shadow: 0 0 25px var(--glow-color), inset 0 0 10px var(--glow-color);
+                border-color: #fff; /* Мигание белым в пике */
+            }
+            100% {
+                box-shadow: 0 0 5px var(--glow-color);
+                border-color: var(--main-color);
+            }
+        }
+
+        .menu-btn:hover {
+            background: var(--main-color);
+            color: var(--bg-color);
+            transform: translateY(-3px) scale(1.02);
+            animation: none; /* Остановка пульсации при наведении для четкости */
+            box-shadow: 0 0 40px var(--main-color);
+        }
+
+        .menu-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* =========================================
+           6. LAYOUT & PAGES
+           =========================================
         */
         .page {
             display: none;
             position: absolute;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 25px;
             z-index: 10;
         }
 
@@ -164,92 +214,81 @@
             font-size: 3.5rem;
             text-transform: uppercase;
             color: var(--main-color);
-            text-shadow: var(--glow);
-            margin-bottom: 30px;
+            text-shadow: var(--glow-power);
+            margin-bottom: 35px;
             cursor: pointer;
             text-align: center;
-            transition: 0.3s;
-        }
-
-        .hooligan-header:hover {
-            transform: scale(1.05);
+            transition: transform 0.3s;
         }
 
         .content-card {
             width: 100%;
-            max-width: 800px;
-            max-height: 60vh;
+            max-width: 850px;
+            max-height: 65vh;
             background: var(--box-bg);
-            border: 3px solid var(--main-color);
+            border: 2px solid var(--main-color);
             padding: 40px;
             overflow-y: auto;
             border-radius: var(--btn-radius);
-            box-shadow: 0 15px 60px rgba(0,0,0,0.8);
-            scrollbar-width: thin;
-            scrollbar-color: var(--main-color) transparent;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
         }
 
-        .content-card::-webkit-scrollbar { width: 8px; }
-        .content-card::-webkit-scrollbar-thumb { background: var(--main-color); border-radius: 4px; }
-
-        .menu-btn {
-            width: 340px;
-            padding: 20px;
-            margin: 10px;
-            background: transparent;
-            color: var(--text-color);
-            border: 2px solid var(--main-color);
-            border-radius: var(--btn-radius);
-            font-weight: 900;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: 0.4s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .menu-btn:hover {
-            background: var(--main-color);
-            color: var(--bg-color);
-            box-shadow: var(--glow);
-        }
+        .content-card::-webkit-scrollbar { width: 6px; }
+        .content-card::-webkit-scrollbar-thumb { background: var(--main-color); }
 
         /* =========================================
-           6. ДОПОЛНИТЕЛЬНЫЕ ЭЛЕМЕНТЫ
-           ========================================= 
+           7. SYSTEM FOOTER
+           =========================================
         */
-        .theme-panel {
+        .system-footer {
             position: fixed;
             bottom: 30px;
             display: flex;
+            align-items: center;
             gap: 20px;
-            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.6);
             padding: 15px 25px;
-            border-radius: 40px;
+            border-radius: 50px;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .t-orb {
-            width: 35px;
-            height: 35px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             border: 2px solid #fff;
             cursor: pointer;
             transition: 0.3s;
         }
 
-        .t-orb:hover { transform: scale(1.3); }
+        .t-orb:hover { transform: scale(1.2); }
 
-        .section-tag {
-            color: var(--main-color);
-            font-weight: bold;
-            display: block;
-            margin-top: 20px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 5px;
+        .toggle-nicks-btn {
+            background: var(--main-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 12px 20px;
+            font-weight: 900;
+            cursor: pointer;
+            font-family: inherit;
             text-transform: uppercase;
+            font-size: 0.9rem;
+            box-shadow: var(--glow-power);
         }
+
+        /* =========================================
+           8. TEXT COMPONENTS
+           =========================================
+        */
+        .rule-accent { color: var(--main-color); font-weight: 900; text-transform: uppercase; }
+        .rule-punish { 
+            color: #f00; font-style: italic; display: block; 
+            margin: 10px 0 20px 0; border-left: 3px solid var(--main-color); 
+            padding: 10px 15px; background: rgba(255, 0, 0, 0.05);
+        }
+        .section-title { color: var(--main-color); margin-top: 30px; font-size: 1.6rem; border-bottom: 1px solid #333; }
 
     </style>
 </head>
@@ -258,284 +297,219 @@
     <div id="rain-container"></div>
 
     <div id="loading-overlay">
-        <div class="loader-track"><div class="race-car">🏎️</div></div>
-        <div style="margin-top:50px; letter-spacing:6px; font-weight:bold;">CT1C2 DATA SYNCING...</div>
+        <div class="track-container">
+            <div class="race-car-icon">🏎️</div>
+        </div>
+        <div style="margin-top:40px; color:var(--main-color); letter-spacing:5px;">CONNECTING TO CORE...</div>
     </div>
 
     <div id="page-login" class="page active-page">
-        <div class="content-card" style="text-align:center; max-width:450px;">
-            <h1 style="color:var(--main-color); margin-bottom:10px;">CT1C2 ACCESS</h1>
-            <p style="font-size:0.9rem; opacity:0.7;">RESTRICTED AREA: SatanaCIub Project</p>
+        <div class="content-card" style="text-align:center; max-width:420px;">
+            <h1 style="color:var(--main-color)">CT1C2 CORE</h1>
+            <input type="password" id="pass" maxlength="4" placeholder="****" 
+                   style="background:none; border:3px solid var(--main-color); color:var(--main-color); padding:20px; text-align:center; font-size:2.5rem; width:180px; margin: 20px 0;">
             <br>
-            <input type="password" id="pass" maxlength="4" placeholder="••••" 
-                   style="background:none; border:2px solid var(--main-color); color:var(--main-color); padding:18px; text-align:center; font-size:2.5rem; width:160px; border-radius: var(--btn-radius);">
-            <br><br>
-            <button class="menu-btn" style="width:200px" onclick="tryLogin()">ACCESS CORE</button>
+            <button class="menu-btn" style="width:200px" onclick="tryLogin()">ACCESS</button>
         </div>
     </div>
 
     <div id="page-menu" class="page">
-        <h1 class="hooligan-header" onclick="this.innerText='CT1C2 CORE v2.0'">SatanaCIub Project</h1>
-        
+        <h1 class="hooligan-header">SatanaCIub Project</h1>
         <button class="menu-btn" onclick="nav('page-rules')">ПРАВИЛА AER</button>
         <button class="menu-btn" onclick="nav('page-forms')">АНКЕТЫ СОСТАВА</button>
         <button class="menu-btn" onclick="nav('page-duty')">ОБЯЗАННОСТИ</button>
-        <button class="menu-btn" onclick="nav('page-shame')">ДОСКА ПОЗОРА</button>
+        <button class="menu-btn" onclick="handleSecretClick(this)">Скоро...</button>
         <button class="menu-btn" onclick="nav('page-help')">ПОМОЩЬ</button>
 
-        <div class="theme-panel">
+        <div class="system-footer">
             <div class="t-orb" style="background:#f00" onclick="applyTheme('red')"></div>
             <div class="t-orb" style="background:#ffb6c1" onclick="applyTheme('pink')"></div>
             <div class="t-orb" style="background:#00bfff" onclick="applyTheme('blue')"></div>
             <div class="t-orb" style="background:#0f0" onclick="applyTheme('green')"></div>
+            <button class="toggle-nicks-btn" onclick="toggleNicks()">-НИКИ</button>
         </div>
-    </div>
-
-    <div id="page-duty" class="page">
-        <h1 class="hooligan-header">ОБЯЗАННОСТИ</h1>
-        <div class="content-card">
-            <span class="section-tag">I РАНГ – СТАЖЕР</span>
-            <p>• Просмотр банлиста чата.<br>• Причина бана [ Причина @ ].<br>• Удаление сообщений (ответом на СМС).<br>• Списки пользователей.</p>
-            
-            <span class="section-tag">II РАНГ – МОДЕРАТОР</span>
-            <p>• Все функции 1 ранга.<br>• Команда <b>КИК</b> [ Кик @ ].<br>• Право на временные ограничения.</p>
-            
-            <span class="section-tag">III РАНГ – АДМИНИСТРАТОР</span>
-            <p>• <b>БАН</b> и <b>РАЗБАН</b> участников.<br>• Управление закрепами.<br>• Созвать всех молчунов проекта.</p>
-            
-            <span class="section-tag">IV РАНГ – ГЛАВА (OWNER)</span>
-            <p>• <b>ВЫЗОВ ДК</b> (Прямая связь).<br>• Массовое удаление сообщений.<br>• Лог назначений админов.<br>• Темы модераторов и конфиг CT1C2.</p>
-        </div>
-        <button class="menu-btn" onclick="nav('page-menu')">НАЗАД В МЕНЮ</button>
     </div>
 
     <div id="page-rules" class="page">
         <h1 class="hooligan-header">ПРАВИЛА AER</h1>
         <div class="content-card">
-            <h3 style="color:var(--main-color)">1. ПОВЕДЕНИЕ В ЧАТЕ</h3>
-            <p><b>1.1 Дискриминация:</b> Оскорбления по национальности, ориентации. <br>Наказание: Мут 20-45 мин.</p>
-            <p><b>1.2 Спам/Флуд:</b> 4+ сообщения подряд. Лестница из слов. <br>Наказание: Мут 30-180 мин.</p>
-            <p><b>1.3 Политика:</b> Обсуждение мировых конфликтов. <br>Наказание: <b>БАН НАВСЕГДА.</b></p>
+            <p>Данный AER является основном сводом правил чата. Незнание правил не освобождает от ответственности. Копирование структуры или содержания без разрешения автора <span class="rule-accent">@SatanaCIub</span> запрещено</p>
             
-            <h3 style="color:var(--main-color); margin-top:30px;">2. АДМИНИСТРАЦИЯ</h3>
-            <p>• Запрещено использовать админку в личных целях.<br>• Запрещена самовыдача EblCurrency (Авто-бан).<br>• Обязательное указание причины через @.</p>
-        </div>
-        <button class="menu-btn" onclick="nav('page-menu')">НАЗАД В МЕНЮ</button>
-    </div>
+            <h3 class="section-title">1. Дискриминация и деструктив</h3>
+            <p>Запрещены любые формы ксенофобии, расизма, гомофобии, сексизма, а также травля по религиозному или социальному признаку.<br>
+            Запрещена прямая или завуалированная агрессия в адрес участников или третьих лиц.</p>
+            <span class="rule-punish">Наказание: Мут от 20 до 45 минут.</span>
 
-    <div id="page-shame" class="page">
-        <h1 class="hooligan-header">ДОСКА ПОЗОРА</h1>
-        <div class="content-card">
-            <p style="text-align:center; color:#f00; font-weight:bold;">BLACKLISTED USERS - SatanaCIub</p>
-            <hr style="border:0; border-top:1px solid #333;">
-            <div style="padding:15px; background:rgba(255,0,0,0.05);">
-                <p><b>@scammer_pro</b> — Попытка взлома баланса EblCurrency.</p>
-                <p><b>@leaker_1337</b> — Слив данных о модераторских темах.</p>
-                <p><b>@toxic_beast</b> — Рецидив дискриминации (5+ банов).</p>
-                <p><b>@admin_traitor</b> — Снятие админов без причины.</p>
-            </div>
-        </div>
-        <button class="menu-btn" onclick="nav('page-menu')">НАЗАД В МЕНЮ</button>
-    </div>
+            <h3 class="section-title">3. Спам и рассылки</h3>
+            <p>Запрещена массовая отправка однотипных сообщений, стикеров, медиафайлов или команд ботов.</p>
+            <span class="rule-punish">Наказание: Мут 120 минут. При рецидиве — Бан.</span>
 
-    <div id="page-help" class="page">
-        <h1 class="hooligan-header">ТЕХ. ПОДДЕРЖКА</h1>
-        <div class="content-card">
-            <p><b>Q: Как получить префикс?</b><br>A: Нужно иметь 500+ сообщений в чате и подать анкету.</p>
-            <p><b>Q: Почему машинка едет влево?</b><br>A: Это стандарт системы CT1C2 — движение только вперед (налево).</p>
-            <p><b>Q: Можно ли изменить шрифт?</b><br>A: Шрифты привязаны к темам автоматически.</p>
-            <p><b>Q: Где находится владелец?</b><br>A: Связь с куратором: @satanaCIub.</p>
+            <h3 class="section-title">4. Флуд и Лестница</h3>
+            <p><span class="rule-accent">Флуд:</span> Отправка более 4-х бессмысленных сообщений подряд.<br>
+            <span class="rule-accent">Лестница:</span> Дробление одной мысли на 5 и более сообщений.</p>
+            <span class="rule-punish">Наказание: Мут от 30 минут до 3 часов мута</span>
+
+            <h3 class="section-title">5. Политика и Конфликты</h3>
+            <p>Запрещено разжигание конфликтов, обсуждение политических событий, деятелей и войн. Любая попытка поднять острую социальную тему карается незамедлительно.</p>
+            <span class="rule-punish">Наказание: За провокацию — 220 минут мута. За политику — бан навсегда</span>
+
+            <span class="rule-punish">Наказание: Мут 12 часов или Бан (на усмотрение модератора).</span>
+
+            <p>• Администрация не имеет право вынести наказание, не описанное в правилах, если действия юзера вредят атмосфере</p>
         </div>
-        <button class="menu-btn" onclick="nav('page-menu')">НАЗАД В МЕНЮ</button>
+        <button class="menu-btn" onclick="nav('page-menu')">НАЗАД</button>
     </div>
 
     <div id="page-forms" class="page">
         <h1 class="hooligan-header">АНКЕТЫ AER</h1>
         <div class="content-card">
-            <b style="color:var(--main-color)">В СОСТАВ:</b>
-            <p>1. Ник, @ID.<br>2. Возраст (Строго 14+).<br>3. Опыт в других чатах.<br>4. Средний актив (3ч+).</p>
-            <br>
-            <b style="color:var(--main-color)">НА ВИЦЕ-ПРЕЗИДЕНТА:</b>
-            <p>• Наличие 30,000+ трофеев в клубе.<br>• Скриншот статистики.<br>• Одобрение от @satanaCIub.</p>
+            <h2 class="rule-accent">В основной состав:</h2>
+            <p>1. Ваш Ник и @ID юзера.</p>
+            <p>2. Ваш Возраст (Строго 14+).</p>
+            <p>3. Опыт работы в других чатах.</p>
+            <p>4. Ваш ежедневный актив (от 3 часов).</p>
+            <p>5. Количество сообщений в AER (минимум 500+).</p>
+            
+            <h2 class="rule-accent" style="margin-top:30px">На Вице-Президента:</h2>
+            <p>• Наличие 30,000+ трофеев в игровом клубе.</p>
+            <p>• Отсутствие серьезных нарушений за последний месяц.</p>
+            <p>• Одобрение от @SatanaCIub.</p>
         </div>
-        <button class="menu-btn" onclick="nav('page-menu')">НАЗАД В МЕНЮ</button>
+        <button class="menu-btn" onclick="nav('page-menu')">НАЗАД</button>
+    </div>
+
+    <div id="page-shame" class="page">
+        <h1 class="hooligan-header">SHAME LIST</h1>
+        <div class="content-card" style="text-align:center">
+            <h2 style="color:red">BLACKLIST GRANTED</h2>
+            <hr style="margin:20px 0; opacity:0.2">
+            <p>@scammer_pro — Взлом EblCurrency</p>
+            <p>@leaker_1337 — Слив данных</p>
+            <p>@toxic_king — Рецидив</p>
+        </div>
+        <button class="menu-btn" onclick="nav('page-menu')">НАЗАД</button>
+    </div>
+
+    <div id="page-duty" class="page">
+        <h1 class="hooligan-header">ОБЯЗАННОСТИ</h1>
+        <div class="content-card">
+            <p><b class="rule-accent">1 РАНГ:</b> Банлист, Причины, Списки.</p><br>
+            <p><b class="rule-accent">2 РАНГ:</b> Предыдущие + КИК.</p><br>
+            <p><b class="rule-accent">3 РАНГ:</b> БАН/РАЗБАН, Закрепы.</p><br>
+            <p><b class="rule-accent">4 РАНГ:</b> Вызов ДК, Конфиг CT1C2.</p>
+        </div>
+        <button class="menu-btn" onclick="nav('page-menu')">НАЗАД</button>
+    </div>
+
+    <div id="page-help" class="page">
+        <h1 class="hooligan-header">ПОМОЩЬ</h1>
+        <div class="content-card" style="text-align:center">
+            <p>Система: CT1C2 Core</p>
+            <p>Валюта: EblCurrency</p>
+            <p>Создатель: @SatanaCIub</p>
+        </div>
+        <button class="menu-btn" onclick="nav('page-menu')">НАЗАД</button>
     </div>
 
     <script>
-        /* =========================================
-           7. ЛОГИКА ПРИЛОЖЕНИЯ (JS)
-           ========================================= 
-        */
-        let currentMode = 'red';
-        let rainItems = [];
-        const userNames = ['@satanaCIub', '@hooligan', '@Vetal', '@Blood', '@Kirieshka', '@genius', '@Admin_X', '@Dev_Core'];
+        let currentTheme = 'red';
+        let nicksHidden = false;
+        let rainArray = [];
+        let secretClicks = 0;
+        let lastClick = 0;
         
-        const emojiData = {
-            red: ['†', '🃜', '🃚', '🃖', '🃁', '🂭', '🂺', '⛥', '⭑', '⛤'],
-            pink: ['‹𝟹', '༝', '༚', 'ꨄ︎', '୨ৎ', '𐚁', '>⩊<', '♪', '𐙚', '𖣠'],
-            blue: ['➢', '❯❯❯❯', '↓', '➤', '⟢', '»', '➜'],
-            green: ['▓▓', '██', '⬚', '❖', '⌗', '𖣯', '⮞', '𓊌', '░', '「  」', '⛶']
+        const users = ['@SatanaCIub', '@hooligan'];
+        const emotes = {
+            red: ['†', '🃜', '🃚', '🃖', '🃁', '⛥', '⭑'],
+            pink: ['‹𝟹', '༝', 'ꨄ︎', '୨ৎ', '𐙚'],
+            blue: ['➢', '❯❯❯', '➤', '➜'],
+            green: ['▓▓', '██', '⬚', '❖', '⌗']
         };
 
         const themes = {
-            red: { bg:'#000', main:'#f00', font:'ThemeRed', rad:'0px', glow:'0 0 15px rgba(255,0,0,0.6)' },
-            pink: { bg:'#fff0f5', main:'#ff69b4', font:'ThemePink', rad:'45px', glow:'none' },
-            blue: { bg:'#f0f8ff', main:'#00bfff', font:'ThemeRegular', rad:'15px', glow:'0 0 10px rgba(0,191,255,0.5)' },
-            green: { bg:'#000', main:'#0f0', font:'ThemeGreen', rad:'0px', glow:'0 0 5px rgba(0,255,0,0.5)' }
+            red: { bg:'#000', main:'#f00', font:'ThemeRed', rad:'0px', glow:'rgba(255,0,0,0.6)' },
+            pink: { bg:'#fff0f5', main:'#ff69b4', font:'ThemePink', rad:'40px', glow:'rgba(255,105,180,0.5)' },
+            blue: { bg:'#f0f8ff', main:'#00bfff', font:'ThemeRegular', rad:'15px', glow:'rgba(0,191,255,0.5)' },
+            green: { bg:'#000', main:'#0f0', font:'ThemeGreen', rad:'0px', glow:'rgba(0,255,0,0.6)' }
         };
 
-        function applyTheme(m) {
-            currentMode = m;
-            const cfg = themes[m];
-            const root = document.documentElement.style;
-            
-            root.setProperty('--bg-color', cfg.bg);
-            root.setProperty('--main-color', cfg.main);
-            root.setProperty('--font-current', cfg.font);
-            root.setProperty('--btn-radius', cfg.rad);
-            root.setProperty('--glow', cfg.glow);
-            
+        function applyTheme(t) {
+            currentTheme = t;
+            const cfg = themes[t];
+            const s = document.documentElement.style;
+            s.setProperty('--bg-color', cfg.bg);
+            s.setProperty('--main-color', cfg.main);
+            s.setProperty('--font-current', cfg.font);
+            s.setProperty('--btn-radius', cfg.rad);
+            s.setProperty('--glow-color', cfg.glow);
             initRain();
+        }
+
+        function handleSecretClick(el) {
+            const now = Date.now();
+            if(now - lastClick > 2000) secretClicks = 0;
+            lastClick = now;
+            secretClicks++;
+            if(secretClicks === 1) {
+                el.innerText = "DENIED";
+                setTimeout(() => { if(secretClicks < 3) el.innerText = "Скоро..."; }, 1500);
+            } else if(secretClicks === 3) {
+                nav('page-shame');
+                secretClicks = 0;
+                el.innerText = "Скоро...";
+            }
+        }
+
+        function toggleNicks() {
+            nicksHidden = !nicksHidden;
+            document.querySelectorAll('.user-tag').forEach(tag => tag.classList.toggle('hidden-nick', nicksHidden));
+            document.querySelector('.toggle-nicks-btn').innerText = nicksHidden ? '+НИКИ' : '-НИКИ';
         }
 
         function initRain() {
             const container = document.getElementById('rain-container');
-            container.innerHTML = '';
-            rainItems = [];
-            
-            const set = emojiData[currentMode];
-            const pool = [...set, ...userNames];
-            
-            // Создаем 50 элементов для высокой плотности и равномерного распределения
-            for(let i=0; i<50; i++) {
-                let val = pool[Math.floor(Math.random() * pool.length)];
-                let el = document.createElement('div');
-                el.className = 'rain-item';
-                if(val.startsWith('@')) el.className += ' user-tag';
-                
+            container.innerHTML = ''; rainArray = [];
+            const pool = [...emotes[currentTheme], ...users];
+            for(let i=0; i<35; i++) {
+                const val = pool[Math.floor(Math.random()*pool.length)];
+                const el = document.createElement('div');
+                el.className = 'rain-item' + (val.startsWith('@') ? ' user-tag' : '');
+                if(nicksHidden && val.startsWith('@')) el.classList.add('hidden-nick');
                 el.innerText = val;
-                
-                // РАВНОМЕРНОЕ РАСПРЕДЕЛЕНИЕ ПО ШИРИНЕ (100vw)
-                let posX = Math.random() * window.innerWidth;
-                el.style.left = posX + 'px';
-                
-                // Цветовая логика для ников
-                if(val === '@satanaCIub') {
-                    el.style.color = 'var(--main-color)';
-                    el.style.fontWeight = '900';
-                    el.style.textShadow = '0 0 10px var(--main-color)';
-                } else if(val.startsWith('@')) {
-                    el.style.color = currentMode === 'pink' ? '#ff1493' : (currentMode === 'green' ? '#0f0' : '#fff');
-                } else {
-                    el.style.color = 'var(--main-color)';
-                }
-                
+                const x = Math.random() * window.innerWidth;
+                el.style.left = x + 'px';
+                el.style.color = (val === '@SatanaCIub') ? 'var(--main-color)' : (val.startsWith('@') ? '#fff' : 'var(--main-color)');
                 container.appendChild(el);
-                
-                rainItems.push({
-                    el,
-                    x: posX,
-                    y: Math.random() * window.innerHeight,
-                    speed: currentMode === 'green' ? 45 : (1.2 + Math.random() * 3.5),
-                    lastTick: Date.now(),
-                    isVip: val === '@satanaCIub' || val === '@hooligan'
-                });
-
-                if(val.startsWith('@')) {
-                    el.onclick = (e) => {
-                        e.stopPropagation();
-                        const obj = rainItems.find(r => r.el === el);
-                        if(!obj.isVip) explodeTag(obj);
-                    };
-                }
+                rainArray.push({ el, x, y: Math.random()*window.innerHeight, speed: currentTheme==='green'?40:(1.5+Math.random()*3), tick: Date.now() });
             }
         }
 
-        function explodeTag(obj) {
-            const rect = obj.el.getBoundingClientRect();
-            obj.el.style.display = 'none';
-            
-            for(let i=0; i<obj.el.innerText.length; i++) {
-                let p = document.createElement('div');
-                p.className = 'particle';
-                p.innerText = obj.el.innerText[i];
-                p.style.left = (rect.left + i*12) + 'px';
-                p.style.top = rect.top + 'px';
-                p.style.color = 'var(--main-color)';
-                p.style.setProperty('--dx', (Math.random()*400-200)+'px');
-                p.style.setProperty('--dy', (Math.random()*400-200)+'px');
-                document.body.appendChild(p);
-                setTimeout(() => p.remove(), 1500);
-            }
-            
-            setTimeout(() => {
-                obj.el.style.display = 'block';
-                obj.y = -60;
-                obj.x = Math.random() * window.innerWidth;
-                obj.el.style.left = obj.x + 'px';
-            }, 4000);
-        }
-
-        function updateRain() {
-            let now = Date.now();
-            rainItems.forEach(item => {
-                if(currentMode === 'green') {
-                    // Покадровый сдвиг раз в секунду
-                    if(now - item.lastTick > 1000) {
-                        item.y += item.speed;
-                        item.lastTick = now;
-                    }
-                } else {
-                    item.y += item.speed;
-                }
-                
-                // Проверка выхода за экран и респаун
-                if(item.y > window.innerHeight + 50) {
-                    item.y = -60;
-                    item.x = Math.random() * (window.innerWidth - 60);
-                    item.el.style.left = item.x + 'px';
-                }
-                
+        function update() {
+            const now = Date.now();
+            rainArray.forEach(item => {
+                if(currentTheme === 'green') {
+                    if(now - item.tick > 1000) { item.y += item.speed; item.tick = now; }
+                } else { item.y += item.speed; }
+                if(item.y > window.innerHeight + 50) { item.y = -60; item.x = Math.random()*window.innerWidth; item.el.style.left = item.x+'px'; }
                 item.el.style.transform = `translateY(${item.y}px)`;
             });
-            requestAnimationFrame(updateRain);
+            requestAnimationFrame(update);
         }
 
-        function nav(pageId) {
-            const overlay = document.getElementById('loading-overlay');
-            overlay.style.display = 'flex';
-            
+        function nav(id) {
+            const l = document.getElementById('loading-overlay');
+            l.style.display = 'flex';
             setTimeout(() => {
-                overlay.style.display = 'none';
+                l.style.display = 'none';
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-                document.getElementById(pageId).classList.add('active-page');
+                document.getElementById(id).classList.add('active-page');
             }, 1100);
         }
 
-        function tryLogin() {
-            const val = document.getElementById('pass').value;
-            if(val === '2727') {
-                nav('page-menu');
-            } else {
-                const input = document.getElementById('pass');
-                input.style.borderColor = 'red';
-                input.style.transform = 'translateX(10px)';
-                setTimeout(() => {
-                    input.style.borderColor = 'var(--main-color)';
-                    input.style.transform = 'translateX(0)';
-                }, 400);
-            }
-        }
-
-        /* Адаптация под ресайз окна */
-        window.onresize = () => initRain();
-
-        /* ЗАПУСК СИСТЕМЫ */
-        window.onload = () => {
-            applyTheme('red');
-            updateRain();
-        };
-
+        function tryLogin() { if(document.getElementById('pass').value === '2727') nav('page-menu'); }
+        window.onresize = initRain;
+        applyTheme('red');
+        update();
     </script>
 </body>
 </html>
