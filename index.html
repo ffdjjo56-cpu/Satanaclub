@@ -2,234 +2,788 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>SatanaCIub Project | CT1C2 ULTIMATE FULL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SatanaCIub Project | CT1C2 MONOLITH MAXIMUM</title>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=JetBrains+Mono:wght@800&family=Rubik+Mono+One&display=swap');
 
-        :root { --m: #00f2ff; --bg: #000; --t: #fff; --rd: 0px; }
-        body.p-mode { --m: #ffb7d5; --bg: #ffffff; --t: #ff69b4; --rd: 45px; font-family: 'Comfortaa', cursive; }
-        body.n-mode { --m: #0080ff; --bg: #f5faff; --t: #004080; --rd: 15px; font-family: 'Segoe UI', sans-serif; }
-        body.r-mode { --m: #ff0000; --bg: #000000; --t: #ffffff; --rd: 0px; font-family: 'Georgia', serif; }
-        body.g-mode { --m: #00ff00; --bg: #000000; --t: #00ff00; --rd: 0px; font-family: 'JetBrains Mono', monospace; }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: var(--t); height: 100vh; width: 100vw; overflow: hidden; user-select: none; }
-        body.dead { filter: grayscale(1) contrast(2) !important; background: #500 !important; pointer-events: none; }
-
-        #big-bg-text {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-family: 'Rubik Mono One', sans-serif; font-size: 14vw;
-            color: var(--m); opacity: 0.1; z-index: 0; pointer-events: none; text-align: center; line-height: 0.8;
+        :root {
+            --m: #00f2ff;
+            --bg: #000;
+            --t: #fff;
+            --rd: 0px;
+            --p-color: #ffb7d5;
+            --n-color: #0080ff;
+            --r-color: #ff0000;
+            --g-color: #00ff00;
         }
 
-        #loader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .screen { display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
-        .screen-active { display: flex; }
-        .panel { width: 90%; max-width: 1100px; background: rgba(0,0,0,0.04); border: 5px solid var(--m); border-radius: var(--rd); padding: 40px; backdrop-filter: blur(15px); max-height: 80vh; overflow-y: auto; z-index: 10; }
-        
-        .main-btn { width: 500px; padding: 22px; background: transparent; color: var(--t); border: 3px solid var(--m); border-radius: var(--rd); font-size: 1.2rem; font-weight: 900; cursor: pointer; margin: 10px; position: relative; z-index: 100; text-transform: uppercase; }
-        .main-btn:hover { background: var(--m); color: var(--bg); box-shadow: 0 0 30px var(--m); }
+        /* ТЕМА: PINK */
+        body.p-mode {
+            --m: var(--p-color);
+            --bg: #ffffff;
+            --t: #ff69b4;
+            --rd: 45px;
+            font-family: 'Comfortaa', cursive;
+        }
 
-        .vip, .attacker { position: fixed; font-weight: 900; z-index: 200; white-space: nowrap; }
-        .attacker { color: #f00; text-shadow: 0 0 10px #f00; cursor: crosshair; font-size: 1.5rem; transition: 0.1s; }
-        
-        @keyframes fl-rw { 0%, 100% { color: red; } 50% { color: #fff; } }
-        .vip-r { animation: fl-rw 0.4s infinite; }
+        /* ТЕМА: NORMAL (BLUE) */
+        body.n-mode {
+            --m: var(--n-color);
+            --bg: #f5faff;
+            --t: #004080;
+            --rd: 15px;
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-        .rain { position: absolute; font-size: 2rem; pointer-events: none; z-index: 1; }
-        .theme-switches { position: fixed; bottom: 30px; display: flex; gap: 15px; z-index: 1000; }
-        .t-btn { width: 25px; height: 25px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; }
+        /* ТЕМА: RED (SATANA) */
+        body.r-mode {
+            --m: var(--r-color);
+            --bg: #000000;
+            --t: #ffffff;
+            --rd: 0px;
+            font-family: 'Georgia', serif;
+        }
 
-        h2 { border-bottom: 3px solid var(--m); margin-bottom: 20px; padding-bottom: 10px; color: var(--m); }
-        .rank-item { margin-bottom: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-left: 4px solid var(--m); line-height: 1.6; }
-        input[type=range] { width: 100%; accent-color: var(--m); cursor: pointer; }
+        /* ТЕМА: GREEN (HACKER) */
+        body.g-mode {
+            --m: var(--g-color);
+            --bg: #000000;
+            --t: #00ff00;
+            --rd: 0px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ОБЩИЕ ПАРАМЕТРЫ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--t);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            user-select: none;
+            transition: background 0.6s ease-in-out, color 0.6s ease-in-out;
+        }
+
+        /* DVD SATANA LOGO ANIMATION */
+        #dvd-logo {
+            position: fixed;
+            white-space: pre;
+            font-family: monospace;
+            font-size: 10px;
+            color: #ffffff;
+            z-index: 5;
+            pointer-events: none;
+            line-height: 1.1;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+
+        /* ЭФФЕКТ КРОВИ (FLASH) */
+        #flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.7);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        @keyframes blood-anim {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* ЭКРАНЫ */
+        .screen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 30px;
+        }
+
+        .screen-active {
+            display: flex;
+        }
+
+        /* ПАНЕЛЬ КОНТЕНТА */
+        .panel {
+            width: 95%;
+            max-width: 1300px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 6px solid var(--m);
+            border-radius: var(--rd);
+            padding: 50px;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
+        }
+
+        /* КНОПКИ */
+        .main-btn {
+            width: 600px;
+            padding: 30px;
+            background: transparent;
+            color: var(--t);
+            border: 5px solid var(--m);
+            border-radius: var(--rd);
+            font-size: 1.5rem;
+            font-weight: 900;
+            cursor: pointer;
+            margin: 15px;
+            position: relative;
+            z-index: 1000;
+            text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 3px;
+        }
+
+        .main-btn:hover {
+            background: var(--m);
+            color: var(--bg);
+            box-shadow: 0 0 50px var(--m);
+            transform: scale(1.05);
+        }
+
+        /* ПЕРСОНАЖИ (VIP, КИЛЛЕР, ЖЕРТВЫ) */
+        .vip {
+            position: fixed;
+            font-weight: 900;
+            pointer-events: none;
+            z-index: 500;
+            white-space: nowrap;
+            font-size: 1.2rem;
+            color: var(--m);
+            text-shadow: 0 0 15px var(--m);
+            transition: opacity 0.3s;
+        }
+
+        .attacker {
+            position: fixed;
+            color: #ff0000;
+            font-weight: 900;
+            z-index: 600;
+            text-shadow: 0 0 25px #ff0000;
+            pointer-events: none;
+            font-size: 2rem;
+            font-family: 'Rubik Mono One';
+        }
+
+        .victim {
+            position: fixed;
+            color: var(--t);
+            font-size: 1.1rem;
+            opacity: 0.5;
+            z-index: 400;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ПЕРЕКЛЮЧАТЕЛИ ТЕМ */
+        .theme-switches {
+            position: fixed;
+            bottom: 40px;
+            left: 40px;
+            display: flex;
+            gap: 20px;
+            z-index: 2000;
+        }
+
+        .t-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 3px solid #ffffff;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .t-btn:hover {
+            transform: scale(1.3) translateY(-10px);
+        }
+
+        /* ТЕКСТОВЫЕ БЛОКИ */
+        h1 {
+            font-family: 'Rubik Mono One';
+            font-size: 5rem;
+            margin-bottom: 20px;
+            color: var(--m);
+            text-shadow: 0 0 40px var(--m);
+        }
+
+        h2 {
+            border-bottom: 6px solid var(--m);
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            color: var(--m);
+            text-transform: uppercase;
+            font-size: 3rem;
+            font-family: 'Rubik Mono One';
+        }
+
+        h3 {
+            color: var(--m);
+            margin: 30px 0 15px 0;
+            text-transform: uppercase;
+            font-size: 1.8rem;
+        }
+
+        .shame-item {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: rgba(255, 0, 0, 0.1);
+            border-left: 10px solid #ff0000;
+            line-height: 1.8;
+            font-size: 1.2rem;
+        }
+кв
+        .shame-item b {
+            color: #ff0000;
+            font-size: 1.6rem;
+            display: block;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .rank-item {
+            margin-bottom: 20px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 6px solid var(--m);
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .rank-item b {
+            color: var(--m);
+            font-size: 1.4rem;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        /* СКРОЛЛБАР */
+        .panel::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .panel::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .panel::-webkit-scrollbar-thumb {
+            background: var(--m);
+            border-radius: 10px;
+            border: 3px solid rgba(0,0,0,0);
+            background-clip: content-box;
+        }
     </style>
 </head>
-<body class="n-mode">
 
-<div id="loader"><h1 style="color:var(--m)">INITIALIZING...</h1></div>
-<div id="big-bg-text">SATANA<br>CIUB</div>
-<div id="rain-layer"></div>
+<body class="r-mode">
 
-<div id="dokki" class="attacker" onclick="Core.dokkiHit()">@ebu_Dokki</div>
+    <div id="flash"></div>
 
-<div class="theme-switches">
-    <div class="t-btn" style="background: #ffb7d5;" onclick="Core.setTheme('p')"></div>
-    <div class="t-btn" style="background: #0080ff;" onclick="Core.setTheme('n')"></div>
-    <div class="t-btn" style="background: #f00;" onclick="Core.setTheme('r')"></div>
-    <div class="t-btn" style="background: #0f0;" onclick="Core.setTheme('g')"></div>
-</div>
+    <div id="dvd-logo">
+░██████╗░█████╗░████████╗░█████╗░███╗░░██╗░█████╗░
+██╔════╝██╔══██╗╚══██╔══╝██╔══██╗████╗░██║██╔══██╗
+╚█████╗░███████║░░░██║░░░███████║██╔██╗██║███████║
+░╚═══██╗██╔══██║░░░██║░░░██╔══██║██║╚████║██╔══██║
+██████╔╝██║░░██║░░░██║░░░██║░░██║██║░╚███║██║░░██║
+╚═════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝</div>
 
-<div id="scr-auth" class="screen screen-active">
-    <h1 style="font-size: 5rem; margin-bottom: 30px;">HOOLIGAN AER</h1>
-    <input type="password" id="pass" placeholder="PASSWORD" style="background:none; border:3px solid var(--m); color:var(--t); padding:20px; width:400px; text-align:center; font-size: 2rem; outline:none;">
-    <button class="main-btn" onclick="Core.auth()" style="margin-top:20px;">CONNECT</button>
-</div>
+    <div id="killer" class="attacker">@ebu_Dokki</div>
 
-<div id="scr-menu" class="screen">
-    <button class="main-btn" onclick="Nav.to('scr-ranks')">ОБЯЗАННОСТИ</button>
-    <button class="main-btn" onclick="Nav.to('scr-rules')">ПРАВИЛА AER</button>
-    <button class="main-btn" onclick="Nav.to('scr-anketa')">АНКЕТИРОВАНИЕ</button>
-    <button class="main-btn" onclick="Nav.to('scr-settings')">НАСТРОЙКИ</button>
-    <button class="main-btn" onclick="alert('СКОРО...')">ДОСКА ПОЗОРА</button>
-</div>
-
-<div id="scr-ranks" class="screen">
-    <div class="panel">
-        <h2>ОБЯЗАННОСТИ И ПРАВА РАНГОВ</h2>
-        <div class="rank-item"><b>1 Ранг – Префикс:</b> Банлист ; Причина бана [ Причина @ ] ; Кто назначил ; Удаление сообщений [ -смс (ответом на сообщение) ] ; Списки пользователей ; Привязать к лс [ .Привязать] (Доступно с 0 ранга) ; Каталог</div>
-        <div class="rank-item"><b>2 Ранг:</b> Банлист ; Причина бана [ Причина @ ] ; Кто назначил ; Удаление сообщений [ -смс (ответом на сообщение) ] ; Списки пользователей ; Привязать к лс [ .Привязать] ; Кик [ Кик (ответом на сообщение / Кик @) ]</div>
-        <div class="rank-item"><b>3 Ранг – Доступ к закрытым темам:</b> Банлист ; Причина бана [ Причина @ ] ; Кто назначил ; Удаление сообщений [ -смс (ответом на сообщение) ] ; Списки пользователей ; Привязать к лс [ .Привязать] ; Кик [ Кик (ответом на сообщение / Кик @) ] ; Бан ; Закреп сообщений ; Созвать всех молчунов ; Разбан ;</div>
-        <div class="rank-item"><b>4 Ранг:</b> Банлист ; Причина бана [ Причина @ ] ; Кто назначил ; Удаление сообщений [ -смс (ответом на сообщение) ] ; Списки пользователей ; Привязать к лс [ .Привязать] ; Кик [ Кик (ответом на сообщение / Кик @) ] ; Бан ; Закреп сообщений ; Созвать всех молчунов ; Разбан ; Вызов ДК ; Массовое удаление сообщений ; Лог назначий админов ; Темы модераторов ; Назначение админов ; Настройки модерации</div>
+    <div class="theme-switches">
+        <div class="t-btn" style="background: #ffb7d5;" title="Pink Mode" onclick="Core.setTheme('p')"></div>
+        <div class="t-btn" style="background: #0080ff;" title="Normal Mode" onclick="Core.setTheme('n')"></div>
+        <div class="t-btn" style="background: #ff0000;" title="Satana Mode" onclick="Core.setTheme('r')"></div>
+        <div class="t-btn" style="background: #00ff00;" title="Hacker Mode" onclick="Core.setTheme('g')"></div>
     </div>
-    <button class="main-btn" onclick="Nav.to('scr-menu')">BACK</button>
-</div>
 
-<div id="scr-rules" class="screen">
-    <div class="panel">
-        <h2>ПОЛНЫЙ СВОД ПРАВИЛ AER</h2>
-        <div class="rank-item">
-            <b>РАЗДЕЛ 1: МУТЫ (ОГРАНИЧЕНИЯ ЧАТА)</b><br>
-            • Оскорбление участников: Мут от 60 до 120 минут.<br>
-            • Дискриминация по любому признаку: Мут 200 минут.<br>
-            • Спам (более 3-х однотипных сообщений подряд): Мут 120 минут.<br>
-            • Флуд, бессмысленные наборы символов, лестницы: Мут 60 минут.<br>
-            • Чрезмерное использование капса (более 70% сообщения): Мут 30 минут.<br>
-            • Попрошайничество прав или валюты: Мут 45 минут.
-        </div>
-        <div class="rank-item">
-            <b>РАЗДЕЛ 2: БАНЫ (ИСКЛЮЧЕНИЕ ИЗ СИСТЕМЫ)</b><br>
-            • Политическая агитация и обсуждение войн: <b>БАН НАВСЕГДА.</b><br>
-            • Реклама сторонних ресурсов/ботов без разрешения: БАН НАВСЕГДА.<br>
-            • Деструктивные действия в адрес SatanaCIub Project: БАН НАВСЕГДА.<br>
-            • Распространение шок-контента, порнографии (18+): БАН.<br>
-            • Использование багов системы в личных целях: БАН.<br>
-            • Оскорбление высшей администрации (Овнеров): БАН.
-        </div>
-        <div class="rank-item">
-            <b>РАЗДЕЛ 3: ДЛЯ АДМИНИСТРАЦИИ (РЕГЛАМЕНТ)</b><br>
-            • Запрещено использовать команды ради забавы или личной выгоды.<br>
-            • Админ обязан указывать корректную причину бана/мута через [Причина @].<br>
-            • Запрещено снимать наказания, выданные вышестоящими рангами.<br>
-            • Неактив более 7 дней без предупреждения ведет к снятию прав.<br>
-            • Попытка выдать себе валюту EblCurrency или права карается обнулением аккаунта.
-        </div>
+    <div id="scr-auth" class="screen screen-active">
+        <h1>HOOLIGAN AER</h1>
+        <p style="margin-bottom: 40px; letter-spacing: 10px; font-size: 1.2rem; opacity: 0.8;">CT1C2 TERMINAL ACCESS</p>
+        
+        <input type="password" id="pass" placeholder="PASSWORD REQUIRED" 
+            style="background: rgba(0,0,0,0.4); border: 5px solid var(--m); color: var(--t); padding: 30px; width: 500px; text-align: center; font-size: 2.5rem; border-radius: var(--rd); font-family: 'JetBrains Mono';">
+        
+        <button class="main-btn" onclick="Core.auth()" style="margin-top: 40px;">LOGIN TO SYSTEM</button>
     </div>
-    <button class="main-btn" onclick="Nav.to('scr-menu')">BACK</button>
-</div>
 
-<div id="scr-anketa" class="screen">
-    <div class="panel">
-        <h2>ФОРМЫ АНКЕТ</h2>
-        <div class="rank-item"><b>АДМИН:</b> 1. Ник/ID. 2. Возраст. 3. Опыт. 4. Время онлайн. 5. Знание правил (0/10).</div>
-        <div class="rank-item"><b>ВИЦЕ:</b> 1. Ранг. 2. Рекомендации. 3. Предложения по развитию.</div>
-        <div class="rank-item"><b>ВЕТЕРАН:</b> 1. Дата захода. 2. Вклад в проект.</div>
+    <div id="scr-menu" class="screen">
+        <h1 style="margin-bottom: 50px;">SATANA CIUB</h1>
+        
+        <button class="main-btn" id="btn-ranks" onclick="Nav.to('scr-ranks')">ОБЯЗАННОСТИ</button>
+        <button class="main-btn" id="btn-rules" onclick="Nav.to('scr-rules')">ПРАВИЛА AER</button>
+        <button class="main-btn" id="btn-shame" onclick="Nav.to('scr-shame')">СТЕНА ПОЗОРА</button>
+        <button class="main-btn" id="btn-anketa" onclick="Nav.to('scr-anketa')">АНКЕТИРОВАНИЕ</button>
+        <button class="main-btn" id="btn-settings" onclick="Nav.to('scr-settings')">НАСТРОЙКИ</button>
     </div>
-    <button class="main-btn" onclick="Nav.to('scr-menu')">BACK</button>
-</div>
 
-<div id="scr-settings" class="screen">
-    <div class="panel">
-        <h2>НАСТРОЙКИ</h2>
-        <label>СКОРОСТЬ ДОЖДЯ: <span id="sv">1.8</span></label>
-        <input type="range" min="0.1" max="15" step="0.1" value="1.8" oninput="Core.updateSpeed(this.value)">
-    </div>
-    <button class="main-btn" onclick="Nav.to('scr-menu')">BACK</button>
-</div>
-
-<script>
-    const Data = {
-        VIPS: ['@satanacIub', '@hooligan_hooligan'],
-        RAIN: { r: ['†', '⛥'], p: ['‹𝟹', '୨ৎ'], n: ['➢', '➤'], g: ['▓▓', '██'] }
-    };
-
-    let State = { 
-        theme: 'n', angle: 0, lastTick: 0, fallSpeed: 1.8, 
-        dokkiHP: 3, dokkiPos: {x: 50, y: 50, targetX: 50, targetY: 50} 
-    };
-
-    const Core = {
-        init() { this.setTheme('n'); this.loop(); },
-        auth() { if(document.getElementById('pass').value === '2727') Nav.to('scr-menu'); },
-        updateSpeed(v) { State.fallSpeed = parseFloat(v); document.getElementById('sv').innerText = v; },
-        setTheme(t) {
-            State.theme = t; document.body.className = t + '-mode';
-            document.getElementById('loader').style.display = 'flex';
-            setTimeout(() => { document.getElementById('loader').style.display = 'none'; this.rebuildRain(); this.rebuildVips(); }, 1000);
-        },
-        dokkiHit() {
-            State.dokkiHP--;
-            if(State.dokkiHP <= 0) {
-                document.body.classList.add('dead');
-                setTimeout(() => { document.body.classList.remove('dead'); State.dokkiHP = 3; }, 2000);
-            }
-        },
-        rebuildRain() {
-            const layer = document.getElementById('rain-layer'); layer.innerHTML = '';
-            for(let i=0; i<30; i++) {
-                const r = document.createElement('div'); r.className = 'rain';
-                r.innerText = Data.RAIN[State.theme][Math.floor(Math.random()*Data.RAIN[State.theme].length)];
-                r.style.left = Math.random()*100+'vw'; r.style.top = Math.random()*-100+'vh';
-                layer.appendChild(r);
-            }
-        },
-        rebuildVips() {
-            document.querySelectorAll('.vip').forEach(v=>v.remove());
-            document.querySelectorAll('.main-btn').forEach((btn, bIdx) => {
-                if(btn.offsetParent === null) return;
-                Data.VIPS.forEach((name, vIdx) => {
-                    const v = document.createElement('div');
-                    v.className = 'vip ' + (State.theme==='r'?'vip-r':'');
-                    v.innerText = name; v.dataset.b = bIdx; v.dataset.v = vIdx;
-                    document.body.appendChild(v);
-                });
-            });
-        },
-        loop() {
-            const now = Date.now();
-            let canUpdate = true;
-            if(State.theme === 'g' && now - State.lastTick < 1000) canUpdate = false;
+    <div id="scr-ranks" class="screen">
+        <div class="panel">
+            <h2>ОБЯЗАННОСТИ АДМИНИСТРАЦИИ</h2>
             
-            if(canUpdate) {
-                if(State.theme === 'g') State.lastTick = now;
-                State.angle += 0.035;
+            <div class="rank-item">
+                <b>1 РАНГ [ПРЕФИКС]:</b><br>
+                Просмотр банлиста ; Указание причины бана через [ Причина @ ] ; Информация о том, кто назначил ; Удаление нежелательных сообщений командой [-смс] (ответом) ; Просмотр списков пользователей чата ; Привязка аккаунта к личному кабинету [.Привязать] ; Доступ к общему каталогу.
+            </div>
+
+            <div class="rank-item">
+                <b>2 РАНГ:</b><br>
+                Все полномочия 1-го ранга ; Право на исключение участников командой [Кик] (ответом на сообщение пользователя или через упоминание @user).
+            </div>
+
+            <div class="rank-item">
+                <b>3 РАНГ [ADVANCED]:</b><br>
+                Все полномочия 2-го ранга ; Полный доступ к закрытым темам модерации ; Право на блокировку [Бан] ; Управление закрепами сообщений ; Команда на созыв всех неактивных участников ; Право на разблокировку пользователей [Разбан].
+            </div>
+
+            <div class="rank-item">
+                <b>4 РАНГ [OVERLORD]:</b><br>
+                Максимальные полномочия ; Вызов Дисциплинарного Комитета (ДК) ; Массовое удаление сообщений (очистка чата) ; Просмотр логов назначений админов ; Управление темами модераторов ; Назначение новых администраторов в состав ; Изменение глобальных настроек модерации бота.
+            </div>
+        </div>
+        <button class="main-btn" onclick="Nav.to('scr-menu')">BACK TO TERMINAL</button>
+    </div>
+
+    <div id="scr-rules" class="screen">
+        <div class="panel">
+            <h2>СВОД ЗАКОНОВ SATANACIUB</h2>
+            
+            <h3>РАЗДЕЛ I: ОГРАНИЧЕНИЯ (МУТЫ)</h3>
+            <div class="rank-item">
+                • Оскорбление личности участника: Наказание 60-120 минут.<br>
+                • Любые формы дискриминации (раса, пол, нация, религия): Наказание 200 минут.<br>
+                • Спам-рассылка (3+ одинаковых сообщения): Наказание 120 минут.<br>
+                • Флуд символами или бессмысленным текстом: Наказание 60 минут.<br>
+                • Чрезмерный капс (заглавные буквы): Наказание 30 минут.<br>
+                • Выпрашивание валюты или админ-прав: Наказание 45 минут.
+            </div>
+
+            <h3>РАЗДЕЛ II: ИСКЛЮЧЕНИЯ (БАНЫ)</h3>
+            <div class="rank-item">
+                • Политическая пропаганда, обсуждение войн и конфликтов: <b>БАН НАВСЕГДА БЕЗ ПРАВА АПЕЛЛЯЦИИ.</b><br>
+                • Реклама других чатов, ботов или каналов: <b>БАН НАВСЕГДА.</b><br>
+                • Любой деструктив, направленный на вред SatanaCIub Project: <b>БАН НАВСЕГДА.</b><br>
+                • Распространение порнографии или шок-контента: МГНОВЕННЫЙ БАН.<br>
+                • Попытки обхода системных ограничений или использование багов: БАН.<br>
+                • Прямое неуважение или оскорбление Овнеров (Владельцев): БАН.
+            </div>
+
+            <h3>РАЗДЕЛ III: КОДЕКС АДМИНИСТРАТОРА</h3>
+            <div class="rank-item">
+                • Администратор обязан подавать пример адекватного поведения.<br>
+                • Использование команд для личного развлечения (фан-юз) строго запрещено.<br>
+                • Каждое действие модерации должно иметь четкую причину в формате [Причина @].<br>
+                • Неактивность в течение 7 календарных дней без предупреждения – снятие полномочий.<br>
+                • Любые попытки накрутки EblCurrency или взлома системы – вечный бан по ID.
+            </div>
+        </div>
+        <button class="main-btn" onclick="Nav.to('scr-menu')">BACK TO TERMINAL</button>
+    </div>
+
+    <div id="scr-shame" class="screen">
+        <div class="panel">
+            <h2>СТЕНА ПОЗОРА И ФРИКОВ</h2>
+            <p style="margin-bottom: 30px; font-size: 1.3rem; color: #ff8888;">Архив лиц, чьё развитие остановилось раньше, чем у Ивана Сало.</p>
+            
+            <div class="shame-item">
+                <b>1 МЕСТО — VINAL (Рейдер-неудачник)</b>
+                Слезно просил союз с нашим чатом. Получив отказ, включил режим «мега-хакера» и угрожал рейдами. Записывал голосовые сообщения с оскорблениями Украины и нелепыми планами по захвату наших клубов. 
+                <br><i>ИТОГ: Получил по шапке. Его чат уничтожен. Ушел в небытие.</i>
+            </div>
+
+            <div class="shame-item">
+                <b>2 МЕСТО — ГРИГЕЙ (18-летний нулс-боец)</b>
+                Русофоб с сомнительными наклонностями. Постоянно ныл в конфликтах, прятался за свою «свиную стаю». Панически боится общаться с людьми своего возраста, предпочитая аудиторию 7-9 лет. 
+                <br><i>ИТОГ: Создал чат-пустышку с 80 ботами, расстроился и удалил его.</i>
+            </div>
+
+            <div class="shame-item">
+                <b>3 МЕСТО — РЕЛТИН (Король нытиков)</b>
+                Худший админ в истории. Будучи 5 рангом, умудрялся обижаться на обычных юзеров. Получив мут на час за дело, обиделся на весь мир и ливнул навсегда. 
+                <br><i>ИТОГ: Гниет в чате нищих оппов у Григея.</i>
+            </div>
+
+            <div class="shame-item">
+                <b>4 МЕСТО — ДЕД (Неудачный доксер)</b>
+                Пытался играть в опасного хакера, сливая инфу про участников. Героизм закончился ровно тогда, когда чат нашел его реальное фото и страницу его мамы в ВК. 
+                <br><i>ИТОГ: Резко «перевоспитался», сейчас сидит тише воды, ниже травы.</i>
+            </div>
+
+            <div class="shame-item">
+                <b>5 МЕСТО — ПСИХОКИД (Агрессивный тихоня)</b>
+                Оскорблял всех подряд, несколько раз выпрашивал разбан (его жалели). В итоге природа взяла своё. 
+                <br><i>ИТОГ: Забанен. Находится в стойле у оппов.</i>
+            </div>
+        </div>
+        <button class="main-btn" onclick="Nav.to('scr-menu')">BACK TO TERMINAL</button>
+    </div>
+
+    <div id="scr-anketa" class="screen">
+        <div class="panel">
+            <h2>ЦЕНТР ПОДАЧИ ЗАЯВОК</h2>
+            
+            <div class="rank-item">
+                <b>ЗАЯВКА НА ПОСТ АДМИНИСТРАТОРА:</b><br>
+                1. Укажите ваш Никнейм и уникальный Telegram ID.<br>
+                2. Ваш реальный возраст (Принимаем 16+, исключения редки).<br>
+                3. Был ли у вас опыт управления крупными чатами?<br>
+                4. Сколько часов в день вы проводите в Telegram?<br>
+                5. Знание правил SatanaCIub (оцените честно от 1 до 10).<br>
+                6. Ваша мотивация: почему мы должны выбрать вас?
+            </div>
+
+            <div class="rank-item">
+                <b>ЗАЯВКА НА ПОСТ ВИЦЕ-ПРЕЗИДЕНТА:</b><br>
+                1. Текущий стаж в проекте и текущий ранг.<br>
+                2. Список администраторов 4-го ранга, готовых за вас поручиться.<br>
+                3. Предложите 3 конкретных улучшения для структуры чата.<br>
+                4. Готовы ли вы получить бан за ошибки ваших подчиненных?
+            </div>
+
+            <div class="rank-item" style="border-left: 10px solid #ff0000; background: rgba(255,0,0,0.1);">
+                <b>СТАТУС ВЕТЕРАНА ПРОЕКТА:</b><br>
+                <p style="font-size: 2.5rem; font-weight: 900; color: #ff0000; text-align: center; padding: 20px;">ПРОСТО СКРИНШОТ АККАУНТА</p>
+                <p style="text-align: center; opacity: 0.7;">Отправьте скриншот профиля овнеру для подтверждения олд-статуса.</p>
+            </div>
+        </div>
+        <button class="main-btn" onclick="Nav.to('scr-menu')">BACK TO TERMINAL</button>
+    </div>
+
+    <div id="scr-settings" class="screen">
+        <div class="panel">
+            <h2>КОНФИГУРАЦИЯ СИСТЕМЫ CT1C2</h2>
+            
+            <div style="margin-top: 50px; border-top: 2px solid var(--m); padding-top: 30px;">
+                <label style="font-size: 2rem; cursor: pointer; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                    <span>ЭФФЕКТЫ УБИЙСТВА (МЕРЦАНИЕ КРОВИ)</span>
+                    <input type="checkbox" id="kill-effects" checked style="width: 50px; height: 50px; cursor: pointer;">
+                </label>
+                <p style="margin-top: 20px; font-size: 1.1rem; opacity: 0.6;">
+                    * Если включено: при ликвидации жертвы ботом @ebu_Dokki экран будет вспыхивать красным цветом.
+                </p>
+            </div>
+
+            <div style="margin-top: 50px;">
+                <h3 style="color: #ff0000;">СИСТЕМНЫЙ СТАТУС: ONLINE</h3>
+                <p>Версия модуля: 2.0.26-ALPHA (SatanaCIub Edition)</p>
+                <p>Ядро: EblCurrency Core Engine</p>
+            </div>
+        </div>
+        <button class="main-btn" onclick="Nav.to('scr-menu')">BACK TO TERMINAL</button>
+    </div>
+
+    <script>
+        /**
+         * SatanaCIub Project Core
+         * Developed for: CT1C2
+         */
+
+        // СПИСКИ ОБЪЕКТОВ
+        const VICTIMS_DATA = [
+            '@Blood_Househ', 
+            '@Aaaaaaaaaafkrjfjfjso', 
+            '@VetalGeor', 
+            '@geniusmozer', 
+            '@aungakw'
+        ];
+
+        const VIP_DATA = [
+            '@satanacIub', 
+            '@hooligan_hooligan'
+        ];
+
+        // ГЛОБАЛЬНОЕ СОСТОЯНИЕ
+        let GlobalState = {
+            activeTheme: 'r',
+            rotationAngle: 0,
+            dvdPosition: { 
+                posX: 100, 
+                posY: 100, 
+                dirX: 4, 
+                dirY: 4 
+            },
+            killerPosition: { 
+                x: window.innerWidth / 2, 
+                y: window.innerHeight / 2 
+            },
+            victims: VICTIMS_DATA.map(name => ({
+                name: name,
+                x: Math.random() * 80 + 10,
+                y: Math.random() * 80 + 10,
+                isDead: false,
+                element: null
+            }))
+        };
+
+        // ЯДРО СИСТЕМЫ
+        const Core = {
+            /**
+             * Инициализация
+             */
+            init() {
+                console.log("SatanaCIub Project Initializing...");
+                this.setTheme('r');
+                this.spawnVictims();
+                this.startMainLoop();
+            },
+
+            /**
+             * Создание жертв на экране
+             */
+            spawnVictims() {
+                GlobalState.victims.forEach((victim, index) => {
+                    const el = document.createElement('div');
+                    el.className = 'victim';
+                    el.id = 'v-id-' + index;
+                    el.innerText = victim.name;
+                    document.body.appendChild(el);
+                    victim.element = el;
+                });
+            },
+
+            /**
+             * Установка темы оформления
+             */
+            setTheme(themeKey) {
+                GlobalState.activeTheme = themeKey;
+                document.body.className = themeKey + '-mode';
+                this.updateVipPositions();
+            },
+
+            /**
+             * Обновление VIP-ников вокруг кнопок
+             */
+            updateVipPositions() {
+                // Удаляем старых
+                document.querySelectorAll('.vip').forEach(v => v.remove());
                 
-                // Дождь
-                document.querySelectorAll('.rain').forEach(r => {
-                    let y = parseFloat(r.style.top) || 0;
-                    y += (State.theme === 'g' ? State.fallSpeed*8 : State.fallSpeed);
-                    if(y > 110) y = -10;
-                    r.style.top = y + 'vh';
+                // Создаем новых (по одному на каждую видимую кнопку)
+                const buttons = document.querySelectorAll('.main-btn');
+                buttons.forEach((btn, index) => {
+                    if (btn.offsetParent !== null) {
+                        const vipEl = document.createElement('div');
+                        vipEl.className = 'vip';
+                        vipEl.innerText = VIP_DATA[index % VIP_DATA.length];
+                        vipEl.dataset.targetBtn = index;
+                        document.body.appendChild(vipEl);
+                    }
                 });
+            },
 
-                // Випы
-                document.querySelectorAll('.vip').forEach(v => {
-                    const btn = document.querySelectorAll('.main-btn')[v.dataset.b];
-                    if(!btn || btn.offsetParent === null) { v.remove(); return; }
-                    const r = btn.getBoundingClientRect();
-                    const a = State.angle + (v.dataset.v * Math.PI);
-                    v.style.left = (r.left + r.width/2 + Math.cos(a)*320 - v.offsetWidth/2) + 'px';
-                    v.style.top = (r.top + r.height/2 + Math.sin(a)*80 - v.offsetHeight/2) + 'px';
-                });
+            /**
+             * Основной цикл анимации (60 FPS)
+             */
+            startMainLoop() {
+                const step = () => {
+                    this.processDvdLogo();
+                    this.processVipOrbit();
+                    this.processKillerAI();
+                    this.renderVictims();
+                    
+                    requestAnimationFrame(step);
+                };
+                requestAnimationFrame(step);
+            },
 
-                // Движение Dokki
-                const dokki = document.getElementById('dokki');
-                if(Math.random() > 0.95 || State.theme === 'g') {
-                    State.dokkiPos.targetX = Math.random()*80 + 10;
-                    State.dokkiPos.targetY = Math.random()*80 + 10;
+            /**
+             * Логика летающего логотипа
+             */
+            processDvdLogo() {
+                const dvd = document.getElementById('dvd-logo');
+                const state = GlobalState.dvdPosition;
+
+                state.posX += state.dirX;
+                state.posY += state.dirY;
+
+                // Столкновение по горизонтали
+                if (state.posX <= 0 || state.posX + dvd.offsetWidth >= window.innerWidth) {
+                    state.dirX *= -1;
+                    this.triggerDvdFlash(dvd);
                 }
-                dokki.style.left = State.dokkiPos.targetX + 'vw';
-                dokki.style.top = State.dokkiPos.targetY + 'vh';
+
+                // Столкновение по вертикали
+                if (state.posY <= 0 || state.posY + dvd.offsetHeight >= window.innerHeight) {
+                    state.dirY *= -1;
+                    this.triggerDvdFlash(dvd);
+                }
+
+                dvd.style.left = state.posX + 'px';
+                dvd.style.top = state.posY + 'px';
+            },
+
+            /**
+             * Эффект при ударе логотипа об угол
+             */
+            triggerDvdFlash(el) {
+                el.style.color = '#ff0000';
+                setTimeout(() => {
+                    el.style.color = '#ffffff';
+                }, 150);
+            },
+
+            /**
+             * Логика вращения VIP-ников (медленно по одному)
+             */
+            processVipOrbit() {
+                GlobalState.rotationAngle += 0.007; // Очень медленно
+                
+                const vips = document.querySelectorAll('.vip');
+                const buttons = document.querySelectorAll('.main-btn');
+
+                vips.forEach(vip => {
+                    const btnIndex = vip.dataset.targetBtn;
+                    const btn = buttons[btnIndex];
+                    
+                    if (btn && btn.offsetParent !== null) {
+                        const rect = btn.getBoundingClientRect();
+                        const centerX = rect.left + rect.width / 2;
+                        const centerY = rect.top + rect.height / 2;
+
+                        // Эллиптическая орбита
+                        const orbitX = centerX + Math.cos(GlobalState.rotationAngle) * 360 - (vip.offsetWidth / 2);
+                        const orbitY = centerY + Math.sin(GlobalState.rotationAngle) * 110 - (vip.offsetHeight / 2);
+
+                        vip.style.left = orbitX + 'px';
+                        vip.style.top = orbitY + 'px';
+                    }
+                });
+            },
+
+            /**
+             * Искусственный интеллект убийцы @ebu_Dokki
+             */
+            processKillerAI() {
+                const killerEl = document.getElementById('killer');
+                const target = GlobalState.victims.find(v => !v.isDead);
+
+                if (target) {
+                    const targetX = (target.x * window.innerWidth) / 100;
+                    const targetY = (target.y * window.innerHeight) / 100;
+
+                    // Движение к цели (плавная интерполяция)
+                    GlobalState.killerPosition.x += (targetX - GlobalState.killerPosition.x) * 0.015;
+                    GlobalState.killerPosition.y += (targetY - GlobalState.killerPosition.y) * 0.015;
+
+                    // Проверка дистанции для убийства
+                    const dist = Math.hypot(
+                        GlobalState.killerPosition.x - targetX, 
+                        GlobalState.killerPosition.y - targetY
+                    );
+
+                    if (dist < 25) {
+                        this.executeVictim(target);
+                    }
+                } else {
+                    // Если целей нет, летим в центр экрана
+                    GlobalState.killerPosition.x += (window.innerWidth / 2 - GlobalState.killerPosition.x) * 0.01;
+                    GlobalState.killerPosition.y += (window.innerHeight / 2 - GlobalState.killerPosition.y) * 0.01;
+                }
+
+                killerEl.style.left = GlobalState.killerPosition.x + 'px';
+                killerEl.style.top = GlobalState.killerPosition.y + 'px';
+            },
+
+            /**
+             * Логика смерти жертвы
+             */
+            executeVictim(victim) {
+                victim.isDead = true;
+                
+                // Включаем мерцание если галочка стоит
+                if (document.getElementById('kill-effects').checked) {
+                    const flash = document.getElementById('flash');
+                    flash.style.animation = 'none';
+                    void flash.offsetWidth; // Триггер рефлоу для перезапуска анимации
+                    flash.style.animation = 'blood-anim 0.6s ease-out';
+                }
+
+                // Воскрешение через 5 секунд в новой точке
+                setTimeout(() => {
+                    victim.isDead = false;
+                    victim.x = Math.random() * 80 + 10;
+                    victim.y = Math.random() * 80 + 10;
+                }, 5000);
+            },
+
+            /**
+             * Отрисовка жертв
+             */
+            renderVictims() {
+                GlobalState.victims.forEach(v => {
+                    if (v.element) {
+                        v.element.style.left = v.x + 'vw';
+                        v.element.style.top = v.y + 'vh';
+                        v.element.style.display = v.isDead ? 'none' : 'block';
+                    }
+                });
+            },
+
+            /**
+             * Проверка пароля
+             */
+            auth() {
+                const input = document.getElementById('pass').value;
+                if (input === '2727') {
+                    Nav.to('scr-menu');
+                } else {
+                    alert("ACCESS DENIED: ИНВАЛИДНЫЙ КОД");
+                }
             }
-            requestAnimationFrame(() => this.loop());
-        }
-    };
-    const Nav = { to(id) { 
-        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('screen-active'));
-        document.getElementById(id).classList.add('screen-active');
-        setTimeout(() => Core.rebuildVips(), 50);
-    }};
-    window.onload = () => Core.init();
-</script>
+        };
+
+        // НАВИГАЦИЯ ПО ЭКРАНАМ
+        const Nav = {
+            /**
+             * Перейти на экран по ID
+             */
+            to(screenId) {
+                const screens = document.querySelectorAll('.screen');
+                screens.forEach(s => s.classList.remove('screen-active'));
+                
+                const target = document.getElementById(screenId);
+                if (target) {
+                    target.classList.add('screen-active');
+                }
+
+                // Пересоздаем VIP-ников для новых кнопок
+                setTimeout(() => {
+                    Core.updateVipPositions();
+                }, 100);
+            }
+        };
+
+        // ЗАПУСК ПОСЛЕ ЗАГРУЗКИ
+        window.addEventListener('load', () => {
+            Core.init();
+        });
+
+    </script>
 </body>
 </html>
