@@ -48,13 +48,13 @@
     </div>
 
     <div id="main-menu" class="page">
-        <div id="main-menu" class="page">
-      <div class="hooligan-header">Hooligan AER <span id="carrot-secret" style="cursor:pointer; opacity: 0.3;">🥕</span></div>
-        <button class="menu-btn" onclick="triggerLoad('rules-page')">📜 ПРАВИЛА AER </button>
-        <button class="menu-btn" onclick="triggerLoad('forms-page')">📝 АНКЕТЫ / АДМИН </button>
-        <button class="menu-btn" onclick="triggerLoad('help-page')">❓ ПОМОЩЬ</button>
-        <button class="menu-btn" onclick="handleSecretClick()">СКОРО</button>
-        </div>
+<div id="main-menu" class="page">
+    <div class="hooligan-header">Hooligan AER <span id="carrot-secret" style="cursor:pointer; opacity: 0.3;">🥕</span></div>
+    <button class="menu-btn" onclick="triggerLoad('rules-page')">📜 ПРАВИЛА AER</button>
+    <button class="menu-btn" onclick="triggerLoad('forms-page')">📝 АНКЕТЫ / АДМИН</button>
+    <button class="menu-btn" onclick="triggerLoad('help-page')">❓ ПОМОЩЬ</button>
+    <button class="menu-btn" onclick="handleSecretClick()">СКОРО</button>
+</div>
 <div id="rules-page" class="page">
         <div class="hooligan-header"Правила</div>
         <button class="menu-btn" style="width:100px; padding:5px;" onclick="showPage('main-menu')">BACK</button>
@@ -182,43 +182,45 @@
                 }
             });
         });
-          // ... тут твой старый код (функции checkPass, showPage и т.д.) ...
+          // --- ГЛАВНАЯ ЛОГИКА ---
+    function checkPass() {
+        const v = document.getElementById('passInput').value;
+        if(v === '2727') triggerLoad('main-menu');
+        else if(v === '6666') {
+            alert("VOID SYSTEM ACTIVATED");
+            document.body.style.filter = "invert(1) hue-rotate(90deg)";
+        } else alert('ДОСТУП ЗАПРЕЩЕН');
+    }
 
-        // --- НОВЫЙ КУСОК ПРО МОРКОВКУ ---
-        let carrotClicks = 0;
-        
-        // Ждем, пока страница загрузится, чтобы найти морковку
-        document.addEventListener('click', function(e) {
-            if (e.target && e.target.id === 'carrot-secret') {
-                carrotClicks++;
-                
-                // Морковка становится ярче с каждым нажатием
-                e.target.style.opacity = 0.3 + (carrotClicks * 0.02);
-                
-                if (carrotClicks === 27) {
-                    triggerCarrotHell();
-                }
-            }
-        });
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const target = document.getElementById(id);
+        if(target) target.classList.add('active');
+    }
 
-        function triggerCarrotHell() {
-            // Тряска экрана
-            document.body.style.animation = "shake 0.1s infinite";
-            // Жуткие цвета
-            document.body.style.filter = "invert(1) sepia(1) saturate(1000%) hue-rotate(0deg)";
-            
-            // Заменяем все тексты
-            document.querySelectorAll('b, span, button, div').forEach(el => {
-                if(el.children.length === 0) el.innerText = "🥕 МОРКОВЬ 🥕";
-            });
+    function setTheme(t) {
+        const b = document.getElementById('body-tag');
+        if(b) b.className = (t === 'blood') ? '' : 'theme-' + t;
+    }
 
-            setTimeout(() => {
-                alert("СИСТЕМА ПЕРЕГРУЖЕНА МОРКОВЬЮ. КРОЛИК ИДЕТ ЗА ТОБОЙ.");
-                location.reload(); 
-            }, 5000);
+    // --- МОРКОВНАЯ ПАСХАЛКА ---
+    let carrotClicks = 0;
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'carrot-secret') {
+            carrotClicks++;
+            e.target.style.opacity = 0.3 + (carrotClicks * 0.02);
+            if (carrotClicks === 27) triggerCarrotHell();
         }
-        // --- КОНЕЦ КУСКА ---
+    });
 
-    </script> 
+    function triggerCarrotHell() {
+        document.body.style.animation = "shake 0.1s infinite";
+        document.body.style.filter = "invert(1) sepia(1) saturate(1000%) hue-rotate(0deg)";
+        document.querySelectorAll('b, span, button, div').forEach(el => {
+            if(el.children.length === 0) el.innerText = "🥕 МОРКОВЬ 🥕";
+        });
+        setTimeout(() => { location.reload(); }, 5000);
+    }
+        </script>
 </body>
 </html>
