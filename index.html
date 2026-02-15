@@ -1,255 +1,224 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>SatanaCIub Project</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        @font-face {
+            font-family: 'SatanaCustomFont';
+            src: url('https://docs.google.com/uc?export=download&id=17SGLPOcEMVBWfAQfEKox1FZOSv47rLha') format('truetype');
+        }
         :root { --main: #ff0000; --bg: #000; --font: #fff; --btn-clip: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%); --radius: 0px; }
         .theme-pickme { --main: #ff69b4; --bg: #fff0f5; --font: #d02090; --btn-clip: none; --radius: 20px; }
-        .theme-blue { --main: #0088cc; --bg: #f0faff; --font: #004466; --btn-clip: none; --radius: 8px; }
+        .theme-blue { --main: #0088cc; --bg: #f0faff; --font: #004466; --btn-clip: none; --radius: 10px; }
         .theme-pixel { --main: #00ff00; --bg: #000; --font: #00ff00; --btn-clip: none; --radius: 0px; }
 
-        body { font-family: 'Courier New', monospace; background: var(--bg); color: var(--font); margin: 0; overflow: hidden; transition: 0.3s; }
-        .page { display: none; width: 100vw; height: 100vh; padding: 20px; box-sizing: border-box; overflow-y: auto; position: relative; z-index: 10; }
+        * { font-family: 'SatanaCustomFont', sans-serif !important; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--font); margin: 0; overflow: hidden; transition: 0.4s; user-select: none; }
+        .page { display: none; width: 100vw; height: 100vh; padding: 20px; overflow-y: auto; position: relative; }
         .active { display: block; }
-
-        .hooligan-header { text-align: center; font-size: 24px; font-weight: 900; color: var(--main); letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase; border-bottom: 2px solid var(--main); }
-
-        .menu-btn {
-            width: 100%; padding: 15px; margin: 10px 0; background: rgba(0,0,0,0.1); 
-            border: 2px solid var(--main); color: var(--main); font-weight: bold; 
-            text-transform: uppercase; clip-path: var(--btn-clip); border-radius: var(--radius); cursor: pointer;
-        }
-
-        /* Анимация дрожания для примеров в анкетах */
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
-        .shaking-text { display: inline-block; animation: shake 0.5s infinite; color: var(--main); font-weight: bold; }
-
-        #loader-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; background: #000; overflow: hidden; }
-        .content-box { border: 1px solid var(--main); padding: 15px; background: rgba(0,0,0,0.05); margin-bottom: 20px; font-size: 13px; line-height: 1.4; white-space: pre-wrap; }
-        
+        .hooligan-header { text-align: center; font-size: 24px; font-weight: 900; color: var(--main); border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 15px; text-transform: uppercase; }
+        .menu-btn { width: 100%; padding: 15px; margin: 10px 0; background: rgba(0,0,0,0.05); border: 2px solid var(--main); color: var(--main); font-weight: bold; text-transform: uppercase; clip-path: var(--btn-clip); border-radius: var(--radius); cursor: pointer; }
+        .content-box { border: 1px solid var(--main); border-radius: var(--radius); padding: 15px; background: rgba(0,0,0,0.05); margin-bottom: 20px; line-height: 1.4; white-space: pre-wrap; font-size: 14px; }
+        b { color: var(--main); font-weight: bold; }
+        .shaking-text { display: inline-block; animation: shake 0.4s infinite; color: var(--main); font-weight: bold; }
+        @keyframes shake { 0% {transform: translate(1px,1px)} 20% {transform: translate(-2px,-1px)} 100% {transform: translate(1px,-1px)} }
+        .shatter-char { display: inline-block; transition: transform 0.8s; pointer-events: none; }
+        #loader-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; background: #000; }
         @keyframes bloodStream { 0% { transform: translateY(-100%); } 100% { transform: translateY(100vh); } }
-        @keyframes fallAnim { to { transform: translateY(110vh) rotate(360deg); } }
-        .terminal-text { position: absolute; top: 10px; left: 10px; font-size: 10px; color: #00ff00; line-height: 1.5; }
     </style>
 </head>
-<body id="body-tag" class="theme-blood">
-
+<body id="body-tag">
     <div id="loader-overlay"></div>
 
     <div id="login-screen" class="page active">
-        <div style="text-align: center; padding-top: 40px;">
-            <div class="hooligan-header">Hooligan's AER</div>
-            <input type="password" id="passInput" placeholder="CODE: 2727" maxlength="4" style="width:160px; text-align:center; font-size: 20px; background:none; border:1px solid var(--main); color:var(--font); pointer-events: auto;">
-            <button class="menu-btn" style="width: 200px;" onclick="checkPass()">ACCESS</button>
-            <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 0 40px;">
-                <button class="menu-btn" style="padding:5px; font-size:8px;" onclick="setTheme('blood')">BLOOD</button>
-                <button class="menu-btn" style="padding:5px; font-size:8px;" onclick="setTheme('pickme')">PICKME</button>
-                <button class="menu-btn" style="padding:5px; font-size:8px;" onclick="setTheme('blue')">BLUE</button>
-                <button class="menu-btn" style="padding:5px; font-size:8px;" onclick="setTheme('pixel')">TERMINAL</button>
+        <div style="text-align: center; padding-top: 50px;">
+            <div class="hooligan-header">SatanaCIub Project</div>
+            <input type="password" id="passInput" placeholder="CODE" maxlength="4" style="width:180px; text-align:center; font-size: 22px; background:none; border:2px solid var(--main); color:var(--font); padding: 10px; margin-bottom: 15px;">
+            <button class="menu-btn" style="width: 220px; margin: 0 auto 20px auto;" onclick="checkPass()">ACCESS</button>
+
+            <div style="display: flex; justify-content: center; gap: 5px; padding: 0 10px;">
+                <button class="menu-btn" style="font-size: 8px; padding: 10px 5px;" onclick="setTheme('blood')">BLOOD</button>
+                <button class="menu-btn" style="font-size: 8px; padding: 10px 5px;" onclick="setTheme('pickme')">PICKME</button>
+                <button class="menu-btn" style="font-size: 8px; padding: 10px 5px;" onclick="setTheme('blue')">BLUE</button>
+                <button class="menu-btn" style="font-size: 8px; padding: 10px 5px;" onclick="setTheme('pixel')">TERMINAL</button>
             </div>
         </div>
     </div>
 
     <div id="main-menu" class="page">
-        <div class="hooligan-header">Hooligan's AER</div>
-        <button class="menu-btn" onclick="triggerLoad('rules-page')">📜 ПРАВИЛА AER</button>
-        <button class="menu-btn" onclick="triggerLoad('forms-list-page')">📝 АНКЕТЫ</button>
+        <div id="main-menu" class="page">
+      <div class="hooligan-header">Hooligan AER <span id="carrot-secret" style="cursor:pointer; opacity: 0.3;">🥕</span></div>
+        <button class="menu-btn" onclick="triggerLoad('rules-page')">📜 ПРАВИЛА AER </button>
+        <button class="menu-btn" onclick="triggerLoad('forms-page')">📝 АНКЕТЫ / АДМИН </button>
         <button class="menu-btn" onclick="triggerLoad('help-page')">❓ ПОМОЩЬ</button>
-        <button class="menu-btn" id="secret-btn" onclick="handleSecretClick()">СКОРО</button>
-    </div>
-
-    <div id="rules-page" class="page">
-        <div class="hooligan-header">RULES</div>
-        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
-        <div class="content-box">
-‼️ Данный AER является сводом правил чата. Незнание не освобождает от ответственности.
-
-1. Дискриминация: Любая ксенофобия, расизм и травля участников запрещена.
-Наказание: Мут 20–45 мин.
-
-2. Спам: Массовая отправка одинаковых сообщений или ссылок. 
-Наказание: Мут 120 мин / Бан.
-
-3. Флуд: Отправка более 4 сообщений подряд (включая «лестницу»). 
-Наказание: Мут 30 мин – 3 часа.
-
-4. Политика: Любые политические обсуждения и провокации запрещены.
-Наказание: Провокация — 220 мин. Политика — Бан навсегда.
-
-II. БАНЫ: Обход мута через дополнительные аккаунты (твинки) и распространение 18+ контента караются баном всех аккаунтов навсегда.
+        <button class="menu-btn" onclick="handleSecretClick()">СКОРО</button>
         </div>
-    </div>
-
-    <div id="forms-list-page" class="page">
-        <div class="hooligan-header">FORMS</div>
-        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
-        <button class="menu-btn" onclick="triggerLoad('form-admin')">АНКЕТА: АДМИН</button>
-        <button class="menu-btn" onclick="triggerLoad('form-vice')">АНКЕТА: ВИЦЕ</button>
-        <button class="menu-btn" onclick="triggerLoad('form-vet')">АНКЕТА: ВЕТЕРАН</button>
-    </div>
-
-    <div id="form-admin" class="page">
-        <div class="hooligan-header">ADMIN</div>
-        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('forms-list-page')">BACK</button>
+<div id="rules-page" class="page">
+        <div class="hooligan-header"Правила</div>
+        <button class="menu-btn" style="width:100px; padding:5px;" onclick="showPage('main-menu')">BACK</button>
         <div class="content-box">
-1. Ник, @, ID, возраст, активность:
-<span class="shaking-text">Satana, @satanaclub, 12345, 18 лет, 5ч/день</span>
-
-2. Ваш часовой пояс и в какое время будете работать:
-<span class="shaking-text">МСК, с 18:00 до 22:00</span>
-
-3. Ваши действия при виде нарушений:
-<span class="shaking-text">Описать подробно согласно AER</span>
-
-4. Ваш опыт работы админом (минимум 500+ участников):
-<span class="shaking-text">Указать чаты/каналы</span>
-
-5. Краткий пересказ правил AER:
-<span class="shaking-text">Своими словами (дрожащий канон)</span>
+<b>Данный AER является сводом правил. Незнание не освобождает от ответственности.</b><br><br>
+<b>1. Дискриминация:</b> Запрещена ксенофобия, расизм, агрессия.<br><b>Наказание:</b> Мут 20-45 мин.<br><br>
+<b>3. Спам:</b> Массовая отправка сообщений/стикеров.<br><b>Наказание:</b> Мут 120 мин / Бан.<br><br>
+<b>4. Флуд/Лестница:</b> 4+ сообщения подряд или дробление мысли.<br><b>Наказание:</b> Мут 30-180 мин.<br><br>
+<b>Политика:</b> Запрещена провокация и обсуждение.<br><b>Наказание:</b> Мут 220 мин / Бан навсегда.<br><br>
+<b>🚫 Раздел II (Баны)</b><br>
+<b>1. Обход наказаний:</b> Твинки в муте/бане — Бан всех аккаунтов.<br>
+<b>2. Контент 18+:</b> Порно, шок, насилие — Перманентный бан.<br>
+<b>3. Опасное поведение:</b> Доксинг, шантаж, вирусы — Глобальный бан.<br>
+<b>4. Фейк:</b> Копирование профиля админов — Перманентный бан.
         </div>
-    </div>
-
-    <div id="form-vice" class="page">
-        <div class="hooligan-header">VICE</div>
-        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('forms-list-page')">BACK</button>
+</div>
+    <div id="forms-page" class="page">
+        <div class="hooligan-header">Админка/Информация</div>
+        <button class="menu-btn" style="width:100px; padding:5px;" onclick="showPage('main-menu')">BACK</button>
         <div class="content-box">
-1. Как долго вы в SatanaCIub Project?
-2. Ваши заслуги перед чатом?
-3. Почему вы заслуживаете этот статус?
-<span class="shaking-text">ЛОЯЛЬНОСТЬ ПРОВЕРЕНА</span>
+<b>🛠 Раздел III: Информация для администрации</b><br><br>
+<b>Принцип прогрессии:</b> Повторное нарушение: <b>+15%, +25%, +30%</b> к муту.<br><br>
+<b>Пересыл сообщений:</b> Запрещено транслировать мысли забаненных/замученных.<br><br>
+<b>Префиксы:</b> Только доверенным лицам.<br><br>
+• Администрация не наказывает вне правил, если юзер не вредит атмосфере.
         </div>
-    </div>
-
-    <div id="form-vet" class="page">
-        <div class="hooligan-header">VETERAN</div>
-        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('forms-list-page')">BACK</button>
         <div class="content-box">
-1. Стаж пребывания в проекте (от 6 месяцев).
-2. Лояльность и отсутствие грубых нарушений.
-<span class="shaking-text">СТАРЕЙШИНА ЧАТА</span>
+<b>АНКЕТА:</b><br>
+1. Ник и ID:<br>2. Возраст:<br>3. Опыт админа:<br>
+<span class="shaking-text">ЛС: @SatanaCIub</span>
         </div>
     </div>
 
     <div id="help-page" class="page">
         <div class="hooligan-header">SUPPORT</div>
-        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
-        <div class="content-box" style="text-align:center;">
-            <p>OWNER: <span style="color:var(--main)">@SatanaCIub</span></p>
-            <p>PROJECT: SatanaCIub Project</p>
-            <p>SYSTEM: Hooligan's AER v2.0</p>
-            <hr border="1" color="var(--main)">
-            <p>По всем вопросам сотрудничества или разбана писать владельцу.</p>
+        <button class="menu-btn" style="width:100px; padding:5px;" onclick="showPage('main-menu')">BACK</button>
+        <div class="content-box">Владелец: <b>@SatanaCIub</b></div>
+    </div>
+    <div id="shame-page" class="page">
+        <div class="hooligan-header">ДОСКА ПОЗОРА</div>
+        <button class="menu-btn" style="width:100px; padding:5px;" onclick="showPage('main-menu')">НАЗАД</button>
+        <div class="content-box">
+<b>АРХИВ ГЛАВНЫХ ФРИКОВ И ПРЕДАТЕЛЕЙ:</b><br><br>
+
+<b>• VINAL</b> — Шантаж и угрозы рейдов. Потерял 5 своих клубов. Забанен.<br><br>
+<b>• ГРИГЕЙ</b> — Русофоб, ботовод и фрик. Полный неадекват.<br><br>
+<b>• РЕЛТИН</b> — Худший админ: ливнул после первого же мута в его сторону. Предатель.<br><br>
+<b>• ДЕД</b> — Пытался доксить участников. Был быстро слит и исчез.<br><br>
+<b>• ПСИХОКИД</b> — Агрессивный спамер. Перманентный бан за мусор в чате.<br><br>
+
+<span class="shaking-text">ПОМНИ: ТВОЁ ИМЯ МОЖЕТ БЫТЬ СЛЕДУЮЩИМ.</span>
         </div>
     </div>
 
-    <div id="shame-page" class="page">
-        <div class="hooligan-header">DATABASE: SHAME</div>
-        <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
-        <button class="menu-btn" onclick="decodeFrik('vinal')">1. VINAL</button>
-        <button class="menu-btn" onclick="decodeFrik('grigey')">2. ГРИГЕЙ</button>
-        <button class="menu-btn" onclick="decodeFrik('reltin')">3. РЕЛТИН</button>
-        <button class="menu-btn" onclick="decodeFrik('ded')">4. ДЕД</button>
-        <button class="menu-btn" onclick="decodeFrik('psycho')">5. ПСИХОКИД</button>
-    </div>
-
-    <div id="frik-details" class="page">
-        <div class="hooligan-header" id="frik-name">TARGET</div>
-        <button class="menu-btn" style="width:100px; padding:5px;" onclick="showPage('shame-page')">BACK</button>
-        <div class="content-box" id="frik-text" style="color: var(--main); font-weight: bold;"></div>
-    </div>
-
     <script>
-        let currentTheme = 'blood';
         let secretCounter = 0;
 
-        const frikData = {
-            vinal: "1. Место Vinal – Просил союз с нашим чатом, при получении отказа начал говорить что будет рейдить наши кланы. Записывал гс где оскробил Украину и выставил Россию лучшей, постоянно в гс говорил планы по рейдам наших клубов.\n\nИтог: В бане, 2 раза мы зарейдили его чат, снесли около 5 клубов, был забанен в чате григея.",
-            grigey: "2. Место Григей (Настоящее имя) – 18 Летний русофоб педофил играющий в нулс. Ныл в 2-3 конфликтах, звал свою свиную стаю. Боится общаться с русскими людьми которым 10-15 лет. ( 7-9 лет это для него нормальный возраст для общения)\n\nИтог: Создал чат где 3 онлайна и 80 ботов.",
-            reltin: "3. Место Релтин – Самый худший админ в мире, даже 2 летний ребёнок меньше ноет чем он. Был админом группы 5 уровня, оскроблял обычных участников. Получил мут на 1 час и вышел с чата навсегда.\n\nИтог: Находится в чате григея.",
-            ded: "4. Место Дед – Крутой доксер в чате, сливал информацию про участников просто так. Успокоился после того как другие нашли его фото и страницу в вк его мамы.\n\nИтог: Стал нормальным (вроде), находится в нашем чате..",
-            psycho: "5. Место Психокид – Агрессивный но тихий фрик. Оскроблял всех участников в чате, разданивался несколько раз (жалели его).\n\nИтог: Забанен в чате, находится в чате нищих оппов."
-        };
-
-        function setTheme(t) {
-            currentTheme = t; document.getElementById('body-tag').className = 'theme-' + t;
-        }
-
-        function triggerLoad(target) {
-            const loader = document.getElementById('loader-overlay');
-            loader.style.display = 'block'; loader.innerHTML = '';
-            
-            if (currentTheme === 'blood') {
-                for(let i=0; i<45; i++) {
-                    const e = document.createElement('div');
-                    e.style = `position:absolute; color:red; font-size:10px; left:${Math.random()*100}vw; animation: bloodStream ${Math.random()+0.2}s linear infinite;`;
-                    e.innerText = `err:0x${Math.random().toString(16).slice(2,8).toUpperCase()}`;
-                    loader.appendChild(e);
-                }
-            } else if (currentTheme === 'pickme') {
-                for(let i=0; i<30; i++) {
-                    const m = document.createElement('div');
-                    m.style = `position:absolute; font-size:40px; left:${Math.random()*100}vw; top:-60px; animation: fallAnim 1s linear forwards;`;
-                    m.innerText = '🥕'; loader.appendChild(m);
-                }
-            } else if (currentTheme === 'blue') {
-                loader.style.display = 'flex'; loader.style.alignItems = 'center'; loader.style.justifyContent = 'center';
-                loader.innerHTML = '<div style="color:#0088cc; font-size:22px;">CONNECTING<span id="dots"></span></div>';
-                let d = 0; setInterval(() => { const el = document.getElementById('dots'); if(el) el.innerText = '.'.repeat(d%4); d++; }, 400);
-            } else if (currentTheme === 'pixel') {
-                loader.innerHTML = `<div class="terminal-text">> BOOTING SatanaCIub_OS...<br>> USER: SATANA_ADMIN<br>> Брух и Генуко канон<br>> STATUS: [READY]<br>> LOADING...</div>`;
-            }
-
-            setTimeout(() => { loader.style.display = 'none'; showPage(target); }, 2500);
-        }
-
-        function decodeFrik(key) {
-            const nameEl = document.getElementById('frik-name');
-            const textEl = document.getElementById('frik-text');
-            nameEl.innerText = key.toUpperCase(); textEl.innerText = '';
-            showPage('frik-details');
-            const fullText = frikData[key];
-            const chars = "#$&@3%?!*+=";
-            let iteration = 0;
-            const interval = setInterval(() => {
-                textEl.innerText = fullText.split("").map((char, index) => {
-                    if (index < iteration) return fullText[index];
-                    if (char === " " || char === "\n") return char;
-                    return chars[Math.floor(Math.random()*chars.length)];
-                }).join("");
-                if (iteration >= fullText.length) clearInterval(interval);
-                iteration += fullText.length / 54;
-            }, 50);
-        }
-
+        // ПРОВЕРКА ПАРОЛЯ ПРИ ВХОДЕ
         function checkPass() {
-            if (document.getElementById('passInput').value === '2727') triggerLoad('main-menu');
-            else alert('DENIED');
+            const v = document.getElementById('passInput').value;
+            if(v === '2727') triggerLoad('main-menu');
+            else if(v === '6666') {
+                alert("VOID SYSTEM ACTIVATED");
+                document.body.style.filter = "invert(1) hue-rotate(90deg)";
+            }
+            else alert('ДОСТУП ЗАПРЕЩЕН');
         }
 
-        function handleSecretClick() {
-            secretCounter++; if (secretCounter === 3) { secretCounter = 0; triggerLoad('shame-page'); }
+        // ПЕРЕКЛЮЧЕНИЕ ТЕМ (BLOOD, PICKME И Т.Д.)
+        function setTheme(t) {
+            const b = document.getElementById('body-tag');
+            b.className = (t === 'blood') ? '' : 'theme-' + t;
         }
 
+        // ПРОСТОЕ ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
-    </script>
+
+        // АНИМАЦИЯ ЗАГРУЗКИ С "КРОВЬЮ"
+        function triggerLoad(target) {
+            const l = document.getElementById('loader-overlay');
+            l.style.display = 'block'; l.innerHTML = '';
+            for(let i=0; i<30; i++) {
+                const e = document.createElement('div');
+                e.style = `position:absolute; color:red; font-size:10px; left:${Math.random()*100}vw; animation: bloodStream ${Math.random()+0.5}s linear infinite;`;
+                e.innerText = "VOID_DATA"; l.appendChild(e);
+            }
+            setTimeout(() => { l.style.display = 'none'; showPage(target); }, 1000);
+        }
+
+        // СЕКРЕТ КНОПКИ "СКОРО" (3 НАЖАТИЯ)
+        function handleSecretClick() {
+            secretCounter++;
+            if(secretCounter >= 3) {
+                secretCounter = 0;
+                triggerLoad('shame-page');
+            }
+        }
+
+        // ТОТ САМЫЙ ЭФФЕКТ РАЗРУШЕНИЯ БУКВ
+        document.addEventListener('mousedown', function(e) {
+            const radius = 110;
+            const x = e.clientX; const y = e.clientY;
+            const boxes = document.querySelectorAll('.content-box');
+
+            boxes.forEach(box => {
+                const rect = box.getBoundingClientRect();
+                if (x > rect.left - radius && x < rect.right + radius && y > rect.top - radius && y < rect.bottom + radius) {
+                    if (box.querySelectorAll('.shatter-char').length === 0) {
+                        const text = box.innerText;
+                        box.innerHTML = text.split('').map(c => `<span class="shatter-char">${c}</span>`).join('');
+                    }
+                    Array.from(box.querySelectorAll('.shatter-char')).forEach(span => {
+                        const sRect = span.getBoundingClientRect();
+                        const dist = Math.hypot(sRect.left - x, sRect.top - y);
+                        if (dist < radius) {
+                            const p = (radius - dist) / radius;
+                            const ang = Math.atan2(sRect.top - y, sRect.left - x);
+                            span.style.transform = `translate(${Math.cos(ang)*220*p}px, ${Math.sin(ang)*220*p}px) rotate(${(Math.random()-0.5)*700}deg)`;
+                            span.style.opacity = '0';
+                        }
+                    });
+                }
+            });
+        });
+          // ... тут твой старый код (функции checkPass, showPage и т.д.) ...
+
+        // --- НОВЫЙ КУСОК ПРО МОРКОВКУ ---
+        let carrotClicks = 0;
+        
+        // Ждем, пока страница загрузится, чтобы найти морковку
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'carrot-secret') {
+                carrotClicks++;
+                
+                // Морковка становится ярче с каждым нажатием
+                e.target.style.opacity = 0.3 + (carrotClicks * 0.02);
+                
+                if (carrotClicks === 27) {
+                    triggerCarrotHell();
+                }
+            }
+        });
+
+        function triggerCarrotHell() {
+            // Тряска экрана
+            document.body.style.animation = "shake 0.1s infinite";
+            // Жуткие цвета
+            document.body.style.filter = "invert(1) sepia(1) saturate(1000%) hue-rotate(0deg)";
+            
+            // Заменяем все тексты
+            document.querySelectorAll('b, span, button, div').forEach(el => {
+                if(el.children.length === 0) el.innerText = "🥕 МОРКОВЬ 🥕";
+            });
+
+            setTimeout(() => {
+                alert("СИСТЕМА ПЕРЕГРУЖЕНА МОРКОВЬЮ. КРОЛИК ИДЕТ ЗА ТОБОЙ.");
+                location.reload(); 
+            }, 5000);
+        }
+        // --- КОНЕЦ КУСКА ---
+
+    </script> 
 </body>
 </html>
