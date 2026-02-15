@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SatanaCIub Project | CT1C2 System</title>
+    <title>SatanaCIub Project | CT1C2 Ultimate</title>
     
     <style>
-        /* БЛОК ШРИФТОВ (Замени ID на свои из Google Drive) */
+        /* =========================================
+           БЛОК ПОДКЛЮЧЕНИЯ ШРИФТОВ (Google Drive)
+           ========================================= */
         @font-face { 
             font-family: 'ThemeRed'; 
             src: url('https://docs.google.com/uc?export=download&id=18J81MIy2OUKc58Jt0LBc-dAhYchXDaO_'); 
@@ -24,30 +26,41 @@
             src: url('https://docs.google.com/uc?export=download&id=1LRjzzPgXkdKqyP_xrbjN2r2RAt-snk25'); 
         }
 
+        /* =========================================
+           ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И СТИЛИ
+           ========================================= */
         :root {
             --main-color: #f00;
             --bg-color: #000;
             --text-color: #eee;
-            --box-bg: rgba(15, 15, 15, 0.95);
+            --box-bg: rgba(15, 15, 15, 0.98);
             --btn-radius: 0px;
             --font-current: 'Courier New', monospace;
-            --accent-glow: 0 0 10px #f00;
+            --glow: 0 0 15px rgba(255, 0, 0, 0.5);
+            --transition-speed: 0.6s;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * {
+            box-sizing: border-box;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
         body { 
             background-color: var(--bg-color); 
             color: var(--text-color); 
             font-family: var(--font-current); 
             margin: 0; 
+            padding: 0;
+            overflow: hidden; 
             height: 100vh;
             width: 100vw;
-            overflow: hidden; 
-            transition: background 0.7s cubic-bezier(0.4, 0, 0.2, 1), color 0.7s ease;
+            transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
         }
 
-        /* --- ГЛОБАЛЬНЫЙ ЗАГРУЗЧИК --- */
+        /* =========================================
+           ЭКРАН ЗАГРУЗКИ
+           ========================================= */
         #loading-overlay {
             display: none;
             position: fixed;
@@ -60,473 +73,520 @@
             align-items: center;
         }
 
-        .loader-visual { font-size: 3.5rem; margin-bottom: 20px; }
-        .loader-text { letter-spacing: 5px; font-weight: bold; text-transform: uppercase; }
+        .loader-visual-box {
+            font-size: 4rem;
+            margin-bottom: 25px;
+            position: relative;
+        }
 
-        /* Анимации загрузки */
-        .pink-carrot { animation: carrotFloat 1s ease-in-out infinite; }
-        @keyframes carrotFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); opacity: 0.7; } }
-
-        .race-line { width: 300px; height: 4px; background: #333; position: relative; border-radius: 2px; }
-        .race-car-icon { position: absolute; left: 0; top: -30px; font-size: 2rem; animation: driveCar 1.5s infinite linear; }
-        @keyframes driveCar { from { left: -10%; } to { left: 100%; } }
-
-        .star-container { display: flex; gap: 10px; }
-        .star-unit { font-size: 2.5rem; transition: all 0.4s; color: #333; }
-        .star-active { color: #f00; text-shadow: 0 0 15px #f00; transform: scale(1.2); }
-
-        .green-blocks { font-family: monospace; font-size: 2rem; color: #0f0; }
-
-        /* --- СТРАНИЦЫ --- */
-        .page {
-            display: none;
+        /* Анимация болида справа налево */
+        .race-track-loader {
+            width: 300px;
+            height: 4px;
+            background: #222;
+            position: relative;
+            border-radius: 10px;
+        }
+        .race-car-loader {
             position: absolute;
+            top: -40px;
+            font-size: 2.8rem;
+            transform: scaleX(-1); /* Разворот влево */
+            animation: moveCarLeft 1.3s infinite linear;
+        }
+        @keyframes moveCarLeft {
+            0% { right: -20%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { right: 110%; opacity: 0; }
+        }
+
+        .pink-carrot-loader {
+            animation: carrotPulse 0.9s infinite ease-in-out;
+        }
+        @keyframes carrotPulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.3) rotate(15deg); }
+        }
+
+        /* =========================================
+           СИСТЕМА ДОЖДЯ (RAIN SYSTEM)
+           ========================================= */
+        #rain-container {
+            position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            padding: 40px;
-            overflow-y: auto;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .rain-drop {
+            position: absolute;
+            user-select: none;
+            will-change: transform;
+            opacity: 0.7;
+            font-size: 1.3rem;
+        }
+
+        /* =========================================
+           СТРУКТУРА СТРАНИЦ
+           ========================================= */
+        .page-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
             z-index: 10;
         }
 
-        .active-page { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
+        .page-active { display: flex; }
 
-        /* --- ДИЗАЙН КОНТЕНТА --- */
         .hooligan-header {
-            font-size: 4rem;
+            font-size: 3.5rem;
+            font-weight: 900;
             text-transform: uppercase;
-            margin-bottom: 40px;
             color: var(--main-color);
-            text-shadow: var(--accent-glow);
+            text-shadow: var(--glow);
+            margin-bottom: 40px;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
         }
+        .hooligan-header:hover { transform: scale(1.1); }
 
-        .hooligan-header:hover { transform: scale(1.05); }
-
-        .content-box {
+        /* Контентные блоки с адаптивным скроллом */
+        .content-card {
             width: 100%;
-            max-width: 900px;
+            max-width: 850px;
+            max-height: 65vh;
             background: var(--box-bg);
-            border: 2px solid var(--main-color);
+            border: 3px solid var(--main-color);
             border-radius: var(--btn-radius);
             padding: 40px;
-            box-shadow: 0 10px 50px rgba(0,0,0,0.8);
-            margin-bottom: 30px;
-            backdrop-filter: blur(5px);
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            scrollbar-width: thin;
+            scrollbar-color: var(--main-color) transparent;
         }
 
-        .menu-btn {
-            width: 400px;
+        .content-card::-webkit-scrollbar { width: 8px; }
+        .content-card::-webkit-scrollbar-track { background: transparent; }
+        .content-card::-webkit-scrollbar-thumb { background: var(--main-color); border-radius: 10px; }
+
+        /* Элементы внутри текста */
+        .section-title {
+            display: block;
+            font-size: 1.4rem;
+            color: var(--main-color);
+            margin: 25px 0 10px 0;
+            font-weight: bold;
+            border-bottom: 2px solid var(--main-color);
+            padding-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .status-tag {
+            background: var(--main-color);
+            color: var(--bg-color);
+            padding: 2px 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+
+        /* Кнопки управления */
+        .action-btn {
+            width: 350px;
             padding: 18px;
-            margin: 12px;
+            margin: 10px;
             background: transparent;
             color: var(--text-color);
             border: 2px solid var(--main-color);
             font-size: 1.1rem;
-            font-weight: 900;
+            font-weight: 800;
             text-transform: uppercase;
             cursor: pointer;
             border-radius: var(--btn-radius);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-family: inherit;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
         }
 
-        .menu-btn:hover {
+        .action-btn:hover {
             background: var(--main-color);
             color: var(--bg-color);
-            transform: translateX(10px);
-            box-shadow: -10px 0 0 var(--text-color);
+            box-shadow: 0 0 20px var(--main-color);
         }
 
-        /* Обязанности: лагающая кнопка */
-        .duty-btn { animation: glitchPulse 5s infinite; }
-        @keyframes glitchPulse {
-            0% { transform: translate(0); }
-            90% { transform: translate(0); border-color: var(--main-color); }
-            92% { transform: translate(-5px, 2px); border-color: #fff; }
-            94% { transform: translate(5px, -2px); border-color: #0f0; }
-            96% { transform: translate(-2px, -3px); }
-            100% { transform: translate(0); }
+        /* Специальные стили кнопок */
+        .btn-glitch { animation: buttonJitter 5s infinite; }
+        @keyframes buttonJitter {
+            0%, 94%, 100% { transform: translate(0); }
+            95% { transform: translate(-4px, 2px); }
+            97% { transform: translate(4px, -2px); }
+            98% { transform: translate(-2px, -3px); }
         }
 
-        .rank-section { margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .rank-head { font-size: 1.5rem; color: var(--main-color); font-weight: bold; display: block; margin-bottom: 10px; }
-
-        /* ФИЗИКА НИКОВ */
-        .user-tag {
-            position: absolute;
-            font-size: 1.8rem;
-            font-weight: bold;
-            pointer-events: auto;
-            cursor: crosshair;
-            z-index: 5;
-            user-select: none;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-        }
-
-        .particle {
-            position: absolute;
-            pointer-events: none;
-            font-weight: bold;
-            z-index: 100;
-            animation: particleOut 2.5s forwards ease-out;
-        }
-
-        @keyframes particleOut {
-            to { transform: translate(var(--dx), var(--dy)) rotate(540deg); opacity: 0; }
-        }
-
-        /* ТЕМЫ */
-        .theme-selector {
+        /* =========================================
+           ПАНЕЛЬ ТЕМ
+           ========================================= */
+        .theme-switcher {
             position: fixed;
             bottom: 30px;
-            right: 30px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            gap: 15px;
+            gap: 20px;
+            background: rgba(0,0,0,0.5);
+            padding: 15px 30px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
             z-index: 1000;
         }
 
-        .t-dot {
-            width: 45px; height: 45px;
+        .theme-orb {
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
-            border: 3px solid #fff;
             cursor: pointer;
-            transition: 0.4s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            border: 3px solid #fff;
+            transition: 0.3s;
+        }
+        .theme-orb:hover { transform: scale(1.4); }
+
+        /* =========================================
+           ВИРТУАЛЬНАЯ КОНСОЛЬ
+           ========================================= */
+        #system-log {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 0.7rem;
+            color: var(--main-color);
+            font-family: monospace;
+            pointer-events: none;
+            opacity: 0.5;
+            z-index: 100;
         }
 
-        .t-dot:hover { transform: scale(1.3) rotate(15deg); }
     </style>
 </head>
 <body>
 
+    <div id="rain-container"></div>
+
+    <div id="system-log">CT1C2 OS INIT... OK</div>
+
     <div id="loading-overlay">
-        <div id="loader-icon" class="loader-visual"></div>
-        <div id="loader-status" class="loader-text">Initializing CT1C2...</div>
+        <div id="loader-visual" class="loader-visual-box"></div>
+        <div id="loader-text" style="letter-spacing: 5px; font-weight: bold;">SYNCING...</div>
     </div>
 
-    <div id="page-login" class="page active-page">
-        <div class="content-box" style="text-align: center; margin-top: 15vh;">
-            <h1 id="login-header">SECURE LOGIN</h1>
-            <p>ENTER ACCESS KEY TO PROCEED</p>
-            <input type="password" id="access-input" maxlength="4" placeholder="****" 
-                   style="background: transparent; border: 2px solid var(--main-color); color: var(--main-color); padding: 20px; font-size: 2rem; width: 150px; text-align: center; outline: none; border-radius: var(--btn-radius);">
+    <div id="page-login" class="page-container page-active">
+        <div class="content-card" style="text-align: center; max-width: 450px;">
+            <h1 style="color: var(--main-color);">SYSTEM ACCESS</h1>
+            <p>ENTER 4-DIGIT OVERRIDE CODE</p>
+            <input type="password" id="login-input" maxlength="4" placeholder="****" 
+                   style="background: transparent; border: 2px solid var(--main-color); color: var(--main-color); padding: 15px; font-size: 2rem; width: 140px; text-align: center; border-radius: var(--btn-radius);">
             <br><br>
-            <button class="menu-btn" style="width: 200px;" onclick="tryLogin()">AUTHENTICATE</button>
+            <button class="action-btn" style="width: 200px;" onclick="validateAccess()">LOGIN</button>
         </div>
     </div>
 
-    <div id="page-menu" class="page">
-        <div id="ambient-layer" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none;"></div>
+    <div id="page-menu" class="page-container">
+        <h1 class="hooligan-header" onclick="toggleTitle(this)">SatanaCIub Project</h1>
         
-        <h1 class="hooligan-header" onclick="rebrand()">SatanaCIub Project</h1>
-        
-        <button class="menu-btn" onclick="nav('page-rules')">Правила AER</button>
-        <button class="menu-btn" onclick="nav('page-forms')">Анкеты состава</button>
-        <button class="menu-btn duty-btn" onclick="nav('page-duty')">Обязанности</button>
-        <button class="menu-btn" id="secret-trigger" onclick="secretCheck()">СКОРО...</button>
+        <button class="action-btn" onclick="switchPage('page-rules')">ПРАВИЛА AER</button>
+        <button class="action-btn" onclick="switchPage('page-forms')">АНКЕТЫ СОСТАВА</button>
+        <button class="action-btn btn-glitch" onclick="switchPage('page-duty')">ОБЯЗАННОСТИ</button>
+        <button class="action-btn" onclick="switchPage('page-shame')">ДОСКА ПОЗОРА</button>
+        <button class="action-btn" onclick="switchPage('page-help')">ПОМОЩЬ</button>
 
-        <div class="theme-selector">
-            <div class="t-dot" style="background: #f00;" onclick="applyTheme('red')"></div>
-            <div class="t-dot" style="background: #ffb6c1;" onclick="applyTheme('pink')"></div>
-            <div class="t-dot" style="background: #00bfff;" onclick="applyTheme('blue')"></div>
-            <div class="t-dot" style="background: #0f0;" onclick="applyTheme('green')"></div>
+        <div class="theme-switcher">
+            <div class="theme-orb" style="background: #f00;" onclick="changeTheme('red')"></div>
+            <div class="theme-orb" style="background: #ffb6c1;" onclick="changeTheme('pink')"></div>
+            <div class="theme-orb" style="background: #00bfff;" onclick="changeTheme('blue')"></div>
+            <div class="theme-orb" style="background: #0f0;" onclick="changeTheme('green')"></div>
         </div>
     </div>
 
-    <div id="page-duty" class="page">
+    <div id="page-duty" class="page-container">
         <h1 class="hooligan-header">ОБЯЗАННОСТИ</h1>
-        <div class="content-box">
-            <div class="rank-section">
-                <span class="rank-head">1 РАНГ – Префикс</span>
-                <p>Базовый доступ к системе мониторинга. Обязанности: Банлист ; Причина бана [ Причина @ ] ; Кто назначил ; Удаление сообщений [ -смс (ответом на сообщение) ] ; Списки пользователей ; Привязать к лс [ .Привязать] (Доступно с 0 ранга) ; Каталог</p>
-            </div>
-            <div class="rank-section">
-                <span class="rank-head">2 РАНГ – Модератор</span>
-                <p>Расширенный контроль чата. Функционал: Банлист ; Причина бана ; Кто назначил ; Удаление сообщений ; Списки пользователей ; Привязать к лс ; <b>Кик [ Кик (ответом на сообщение / Кик @) ]</b></p>
-            </div>
-            <div class="rank-section">
-                <span class="rank-head">3 РАНГ – Администратор</span>
-                <p>Доступ к закрытым темам. Полномочия: Банлист ; Причина бана ; Кто назначил ; Удаление сообщений ; Списки пользователей ; Привязать к лс ; Кик ; <b>Бан ; Закреп сообщений ; Созвать всех молчунов ; Разбан ;</b></p>
-            </div>
-            <div class="rank-section">
-                <span class="rank-head">4 РАНГ – Глава Модерации</span>
-                <p>Полный технический контроль. Привилегии: Банлист ; Причина бана ; Кто назначил ; Удаление сообщений ; Списки пользователей ; Привязать к лс ; Кик ; Бан ; Закреп ; Созвать молчунов ; Разбан ; <b>Вызов ДК ; Массовое удаление сообщений ; Лог назначий админов ; Темы модераторов ; Назначение админов ; Настройки модерации</b></p>
-            </div>
+        <div class="content-card">
+            <div class="section-title">I УРОВЕНЬ - СТАЖЕР</div>
+            <p><span class="status-tag">ACCESS</span> Базовые команды модерации чата.</p>
+            <p>• Просмотр банлиста чата через систему CT1C2.</p>
+            <p>• Установка причины бана для существующих записей.</p>
+            <p>• Удаление нежелательных сообщений (через ответ на СМС).</p>
+            <p>• Получение списка активных пользователей проекта.</p>
+
+            <div class="section-title">II УРОВЕНЬ - МОДЕРАТОР</div>
+            <p><span class="status-tag">MODER</span> Расширенные права контроля участников.</p>
+            <p>• Все функции предыдущего уровня полномочий.</p>
+            <p>• Команда <b>КИК</b> (Исключение из чата без бана).</p>
+            <p>• Право на выдачу временных предупреждений (Варны).</p>
+
+            <div class="section-title">III УРОВЕНЬ - АДМИНИСТРАТОР</div>
+            <p><span class="status-tag">ADMIN</span> Полная власть над инфраструктурой чата.</p>
+            <p>• <b>БАН</b> и <b>РАЗБАН</b> участников в реальном времени.</p>
+            <p>• Управление закрепами (Важные объявления).</p>
+            <p>• Глобальный вызов всех участников чата (Созвать молчунов).</p>
+
+            <div class="section-title">IV УРОВЕНЬ - ОВНЕР</div>
+            <p><span class="status-tag">OWNER</span> Техническое ядро SatanaCIub Project.</p>
+            <p>• <b>ВЫЗОВ ДК</b> (Экстренная связь с руководством).</p>
+            <p>• Массовая очистка истории сообщений.</p>
+            <p>• Назначение и снятие прав администраторов ниже уровнем.</p>
+            <p>• Настройка конфигурации модуля CT1C2.</p>
         </div>
-        <button class="menu-btn" onclick="nav('page-menu')">ВЕРНУТЬСЯ В МЕНЮ</button>
+        <button class="action-btn" onclick="switchPage('page-menu')">ВЕРНУТЬСЯ</button>
     </div>
 
-    <div id="page-rules" class="page">
+    <div id="page-rules" class="page-container">
         <h1 class="hooligan-header">ПРАВИЛА AER</h1>
-        <div class="content-box">
-            <h2>РАЗДЕЛ I: ПОВЕДЕНИЕ В ЧАТЕ</h2>
-            <p>1. <b>Дискриминация:</b> Любая ксенофобия, расизм, гомофобия. <span style="color: red;">Мут 20-45 мин.</span></p>
-            <p>2. <b>Спам:</b> Массовая рассылка, реклама. <span style="color: red;">Мут 120 мин.</span></p>
-            <p>3. <b>Флуд:</b> 4+ сообщения подряд. <b>Лестница:</b> 5+ слов по одному сообщению. <span style="color: red;">Мут 30-180 мин.</span></p>
-            <p>4. <b>Политика:</b> Любые обсуждения ситуации в мире. <span style="color: red;">БАН НАВСЕГДА.</span></p>
+        <div class="content-card">
+            <div class="section-title">ЧАТОВЫЕ ПРАВИЛА</div>
+            <p><b>1. Дискриминация:</b> Оскорбление по нац. признаку, ориентации или религии. <br>Наказание: <span style="color: #f00;">Мут 45 минут.</span></p>
+            <p><b>2. Спам/Реклама:</b> Рассылка ссылок на сторонние ресурсы без согласования. <br>Наказание: <span style="color: #f00;">Мут 120 минут / Бан.</span></p>
+            <p><b>3. Политика:</b> Обсуждение острых мировых конфликтов. <br>Наказание: <span style="color: #f00;">БАН НАВСЕГДА.</span></p>
+            <p><b>4. Флуд:</b> 5+ сообщений подряд или лестница из слов. <br>Наказание: <span style="color: #f00;">Мут 30 минут.</span></p>
             <br>
-            <h2>РАЗДЕЛ II: АДМИНИСТРИРОВАНИЕ</h2>
-            <p>• Рецидив нарушений: +15%, +25%, +30% к базовому сроку наказания.</p>
-            <p>• Автор проекта: <b>@satanaCIub</b></p>
+            <div class="section-title">ПРАВИЛА АДМИНИСТРАЦИИ</div>
+            <p>• Админ всегда должен указывать причину бана через [ Причина @ ].</p>
+            <p>• Запрещено использовать админку в личных целях (Слив, самовыдача валюты).</p>
+            <p>• Куратор проекта: <b>@satanaCIub</b>.</p>
         </div>
-        <button class="menu-btn" onclick="nav('page-menu')">ВЕРНУТЬСЯ В МЕНЮ</button>
+        <button class="action-btn" onclick="switchPage('page-menu')">ВЕРНУТЬСЯ</button>
     </div>
 
-    <div id="page-forms" class="page">
-        <h1 class="hooligan-header">АНКЕТЫ AER</h1>
-        <div class="content-box">
-            <h2 style="color: var(--main-color)">ВСТУПЛЕНИЕ В АДМИН-СОСТАВ:</h2>
-            <p>1. Ваш основной ник, @username и уникальный ID.</p>
-            <p>2. Реальный возраст (Строго 14+), суточный актив.</p>
-            <p>3. Имеющийся опыт работы и причины ухода с прошлых мест.</p>
-            <p>4. Ваша статистика сообщений (Минимум 500 в чате).</p>
-            <p>5. Полное согласие с правилами AER и SatanaCIub.</p>
-            <br>
-            <h2 style="color: #00bfff">ПОЛУЧЕНИЕ СТАТУСА ВИЦЕ:</h2>
-            <p>• Иметь 30,000+ трофеев в игровом клубе.</p>
-            <p>• Предоставить скриншот профиля.</p>
-            <p>• Личное одобрение создателя: <b>@satanaCIub</b>.</p>
+    <div id="page-shame" class="page-container">
+        <h1 class="hooligan-header">ДОСКА ПОЗОРА</h1>
+        <div class="content-card" style="text-align: center;">
+            <p>Здесь будут отображаться те, кто предал доверие SatanaCIub.</p>
+            <hr style="border: 1px solid var(--main-color); opacity: 0.3;">
+            <div style="padding: 20px; font-size: 1.2rem; color: #f00;">
+                <p><b>@scammer_nick</b> — Попытка кражи валюты.</p>
+                <p><b>@toxic_user</b> — Оскорбление родных.</p>
+                <p><b>@admin_leaker</b> — Слив данных конфигурации.</p>
+            </div>
+            <p style="opacity: 0.5; font-size: 0.8rem;">Список обновляется еженедельно.</p>
         </div>
-        <button class="menu-btn" onclick="nav('page-menu')">ВЕРНУТЬСЯ В МЕНЮ</button>
+        <button class="action-btn" onclick="switchPage('page-menu')">ВЕРНУТЬСЯ</button>
+    </div>
+
+    <div id="page-help" class="page-container">
+        <h1 class="hooligan-header">ТЕХ. ПОМОЩЬ</h1>
+        <div class="content-card">
+            <div class="section-title">ЧАСТО ЗАДАВАЕМЫЕ ВОПРОСЫ</div>
+            <p><b>Q: Как сменить ник в системе?</b><br>A: Используйте команду .ник [новое_имя].</p>
+            <p><b>Q: Что делать, если не работает префикс?</b><br>A: Напишите в поддержку @satanaCIub с указанием вашего ID.</p>
+            <p><b>Q: Можно ли перенести валюту EblCurrency?</b><br>A: Нет, перенос между аккаунтами временно отключен.</p>
+            <br>
+            <div class="section-title">КОНТАКТЫ</div>
+            <p>Разработчик: @satanaCIub</p>
+            <p>Модуль: CT1C2 v2026.02</p>
+        </div>
+        <button class="action-btn" onclick="switchPage('page-menu')">ВЕРНУТЬСЯ</button>
+    </div>
+
+    <div id="page-forms" class="page-container">
+        <h1 class="hooligan-header">АНКЕТЫ</h1>
+        <div class="content-card">
+            <div class="section-title">НАБОР В СОСТАВ AER</div>
+            <p>Чтобы подать заявку, ваша анкета должна соответствовать пунктам:</p>
+            <p>1. Игровой ник и актуальный Telegram ID.</p>
+            <p>2. Возраст: 14 лет и старше (Без исключений).</p>
+            <p>3. Суточный онлайн в чате: от 3-х часов.</p>
+            <p>4. Опыт работы в других проектах (Если есть).</p>
+            <p>5. Количество сообщений в чате: 500+.</p>
+            <br>
+            <div class="section-title">ПОДАЧА НА ВИЦЕ-ПРЕЗИДЕНТА</div>
+            <p>• Обязательное наличие 30,000+ трофеев в игровом профиле.</p>
+            <p>• Безупречная репутация в проекте.</p>
+        </div>
+        <button class="action-btn" onclick="switchPage('page-menu')">ВЕРНУТЬСЯ</button>
     </div>
 
     <script>
-        /* ЛОГИКА ПРИЛОЖЕНИЯ CT1C2 */
-        let currentMode = 'red';
-        let secretCounter = 0;
-        let userElements = [];
-        let isPhysicsRunning = false;
+        /* ИНИЦИАЛИЗАЦИЯ ДАННЫХ */
+        let currentTheme = 'red';
+        let rainDrops = [];
+        let logLines = [];
+        const maxLog = 5;
 
-        // Конфигурация тем
-        const themeData = {
-            red: {
-                bg: '#000', main: '#f00', text: '#eee', box: 'rgba(20, 5, 5, 0.98)', 
-                font: 'ThemeRed', radius: '0px', glow: '0 0 15px #f00'
-            },
-            pink: {
-                bg: '#fff0f5', main: '#ff69b4', text: '#ff1493', box: 'rgba(255, 255, 255, 0.95)', 
-                font: 'ThemePink', radius: '50px', glow: 'none'
-            },
-            blue: {
-                bg: '#f0f8ff', main: '#00bfff', text: '#00008b', box: 'rgba(220, 240, 255, 0.9)', 
-                font: 'ThemeRegular', radius: '10px', glow: '0 0 10px #00bfff'
-            },
-            green: {
-                bg: '#000', main: '#0f0', text: '#0f0', box: 'rgba(0, 15, 0, 0.98)', 
-                font: 'ThemeGreen', radius: '0px', glow: '0 0 5px #0f0'
-            }
+        const emojiData = {
+            red: ['†', '🃜', '🃚', '🃖', '🃁', '🂭', '🂺', '⛥', '⭑', '⛤'],
+            pink: ['‹𝟹', '༝', '༚', 'ꨄ︎', '୨ৎ', '𐚁', '>⩊<', '♪', '𐙚', '𖣠'],
+            blue: ['➢', '❯❯❯❯', '↓', '➤', '⟢', '»', '➜'],
+            green: ['▓▓', '██', '⬚', '❖', '⌗', '𖣯', '⮞', '𓊌', '░', '「  」', '⛶']
         };
 
-        // Переключение тем
-        function applyTheme(mode) {
-            console.log(`[CT1C2] Switching to ${mode} mode...`);
-            currentMode = mode;
-            const config = themeData[mode];
-            const root = document.documentElement.style;
+        const themeMap = {
+            red: { bg: '#000', main: '#f00', text: '#eee', box: 'rgba(20,5,5,0.98)', font: 'ThemeRed', rad: '0px', glow: '0 0 15px rgba(255,0,0,0.6)' },
+            pink: { bg: '#fff0f5', main: '#ff69b4', text: '#ff1493', box: 'rgba(255,255,255,0.95)', font: 'ThemePink', rad: '40px', glow: 'none' },
+            blue: { bg: '#f0f8ff', main: '#00bfff', text: '#00008b', box: 'rgba(230,240,255,0.95)', font: 'ThemeRegular', rad: '15px', glow: '0 0 10px rgba(0,191,255,0.5)' },
+            green: { bg: '#000', main: '#0f0', text: '#0f0', box: 'rgba(0,15,0,0.98)', font: 'ThemeGreen', rad: '0px', glow: '0 0 5px rgba(0,255,0,0.5)' }
+        };
 
-            root.setProperty('--bg-color', config.bg);
-            root.setProperty('--main-color', config.main);
-            root.setProperty('--text-color', config.text);
-            root.setProperty('--box-bg', config.box);
-            root.setProperty('--font-current', config.font);
-            root.setProperty('--btn-radius', config.radius);
-            root.setProperty('--accent-glow', config.glow);
-
-            if(document.getElementById('page-menu').style.display === 'flex') {
-                refreshUsers();
-            }
+        /* ФУНКЦИЯ ЛОГИРОВАНИЯ */
+        function sysLog(msg) {
+            const logger = document.getElementById('system-log');
+            logLines.push(`> ${new Date().toLocaleTimeString()} | ${msg}`);
+            if(logLines.length > maxLog) logLines.shift();
+            logger.innerHTML = logLines.join('<br>');
         }
 
-        // Навигация с загрузкой
-        function nav(pageId) {
+        /* ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ С ЗАГРУЗКОЙ */
+        function switchPage(pageId) {
+            sysLog(`NAVIGATING TO: ${pageId.toUpperCase()}`);
             const loader = document.getElementById('loading-overlay');
-            const icon = document.getElementById('loader-icon');
-            const status = document.getElementById('loader-status');
+            const visual = document.getElementById('loader-visual');
+            const status = document.getElementById('loader-text');
             
             loader.style.display = 'flex';
-            icon.innerHTML = '';
+            visual.innerHTML = '';
             
-            // Логика кастомных загрузок
-            if(currentMode === 'pink') {
-                icon.innerHTML = '<div class="pink-carrot">🥕</div>';
-                status.innerText = "Growing Carrot...";
-                setTimeout(() => finishNav(pageId), 1200);
+            // Настройка анимации загрузки
+            if(currentTheme === 'pink') {
+                visual.innerHTML = '<div class="pink-carrot-loader">🥕</div>';
+                status.innerText = "GROWING...";
+                setTimeout(() => finalizeNav(pageId), 1000);
             } 
-            else if(currentMode === 'blue') {
-                icon.innerHTML = '<div class="race-line"><div class="race-car-icon">🏎️</div></div>';
-                status.innerText = "Racing to Destination...";
-                setTimeout(() => finishNav(pageId), 1500);
+            else if(currentTheme === 'blue') {
+                visual.innerHTML = '<div class="race-track-loader"><div class="race-car-loader">🏎️</div></div>';
+                status.innerText = "DRIFTING...";
+                setTimeout(() => finalizeNav(pageId), 1400);
             }
-            else if(currentMode === 'red') {
-                icon.innerHTML = '<div class="star-container" id="star-row"></div>';
-                const row = document.getElementById('star-row');
-                for(let i=0; i<8; i++) {
+            else if(currentTheme === 'red') {
+                visual.innerHTML = '<div id="red-stars" style="display:flex; gap:10px;"></div>';
+                const sRow = document.getElementById('red-stars');
+                for(let i=0; i<6; i++) {
                     let s = document.createElement('span');
-                    s.className = 'star-unit';
                     s.innerText = '⛤';
-                    row.appendChild(s);
-                    setTimeout(() => { s.classList.add('star-active'); }, i * 200);
+                    sRow.appendChild(s);
+                    setTimeout(() => { s.style.color = '#f00'; s.style.textShadow = '0 0 10px #f00'; }, i*200);
                 }
-                status.innerText = "Infecting System...";
-                setTimeout(() => finishNav(pageId), 2500);
+                status.innerText = "INFECTING...";
+                setTimeout(() => finalizeNav(pageId), 2000);
             }
-            else if(currentMode === 'green') {
-                icon.innerHTML = '<div class="green-blocks" id="g-loader">Loading: [ ]</div>';
-                const blocks = ["■▫▫▫", "■■▫▫", "■■■▫", "■■■■"];
+            else if(currentTheme === 'green') {
+                visual.style.color = '#0f0';
+                visual.style.fontFamily = 'monospace';
+                const steps = ["[■□□□]", "[■■□□]", "[■■■□]", "[■■■■]"];
                 let step = 0;
                 let iv = setInterval(() => {
-                    document.getElementById('g-loader').innerText = `Loading: [${blocks[step]}]`;
-                    step++; if(step >= blocks.length) { clearInterval(iv); finishNav(pageId); }
+                    visual.innerText = steps[step];
+                    step++; if(step >= steps.length) { clearInterval(iv); finalizeNav(pageId); }
                 }, 400);
-            } else {
-                setTimeout(() => finishNav(pageId), 600);
+                status.innerText = "DECRYPTING...";
             }
         }
 
-        function finishNav(id) {
+        function finalizeNav(id) {
             document.getElementById('loading-overlay').style.display = 'none';
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            const target = document.getElementById(id);
-            target.classList.add('active-page');
-            target.style.display = 'flex';
-
-            if(id === 'page-menu') {
-                refreshUsers();
-                if(!isPhysicsRunning) startPhysics();
-            } else {
-                // Прячем меню если ушли
-                document.getElementById('page-menu').style.display = 'none';
-            }
+            document.querySelectorAll('.page-container').forEach(p => p.classList.remove('page-active'));
+            document.getElementById(id).classList.add('page-active');
+            sysLog(`PAGE LOADED: ${id}`);
         }
 
-        // Физика ников
-        function refreshUsers() {
-            const layer = document.getElementById('ambient-layer');
-            layer.innerHTML = '';
-            userElements = [];
-            const nicks = ['@satanacIub', '@hooligan', '@Blood_Househ', '@VetalGeor', '@Kirieshka', '@geniusmozer'];
+        /* СИСТЕМА ТЕМ */
+        function changeTheme(mode) {
+            sysLog(`THEME CHANGE: ${mode.toUpperCase()}`);
+            currentTheme = mode;
+            const cfg = themeMap[mode];
+            const root = document.documentElement.style;
 
-            nicks.forEach(name => {
-                let div = document.createElement('div');
-                div.className = 'user-tag';
-                div.innerText = name;
-                div.style.color = name.includes('satan') ? 'var(--main-color)' : 'var(--text-color)';
-                layer.appendChild(div);
+            root.setProperty('--bg-color', cfg.bg);
+            root.setProperty('--main-color', cfg.main);
+            root.setProperty('--text-color', cfg.text);
+            root.setProperty('--box-bg', cfg.box);
+            root.setProperty('--font-current', cfg.font);
+            root.setProperty('--btn-radius', cfg.rad);
+            root.setProperty('--glow', cfg.glow);
 
-                let isVip = name.includes('satan') || name.includes('hooligan');
-                
-                userElements.push({
-                    el: div,
-                    isVip: isVip,
+            initRain();
+        }
+
+        /* СИСТЕМА ДОЖДЯ */
+        function initRain() {
+            const container = document.getElementById('rain-container');
+            container.innerHTML = '';
+            rainDrops = [];
+            const set = emojiData[currentTheme];
+
+            // Создаем 35 элементов для плотности
+            for(let i=0; i<35; i++) {
+                let drop = document.createElement('div');
+                drop.className = 'rain-drop';
+                drop.innerText = set[Math.floor(Math.random()*set.length)];
+                drop.style.left = Math.random() * 100 + 'vw';
+                drop.style.color = 'var(--main-color)';
+                container.appendChild(drop);
+
+                rainDrops.push({
+                    el: drop,
                     x: Math.random() * window.innerWidth,
-                    y: currentMode === 'pink' ? window.innerHeight + 50 : -100,
-                    vy: currentMode === 'pink' ? -0.6 : (currentMode === 'green' ? 0.8 : 2.5),
-                    vx: currentMode === 'green' ? 0 : (Math.random() - 0.5) * 3,
-                    angle: 0,
-                    va: currentMode === 'green' ? 0 : (Math.random() - 0.5) * 5,
-                    lastStep: Date.now()
+                    y: Math.random() * window.innerHeight, // Изначальный разброс
+                    speed: currentTheme === 'green' ? 45 : (1.5 + Math.random() * 3.5),
+                    lastTick: Date.now()
                 });
+            }
+        }
 
-                div.onclick = (e) => {
-                    e.stopPropagation();
-                    if(!isVip) destroyUser(userElements[userElements.length-1]);
-                };
+        function updateRain() {
+            let now = Date.now();
+            rainDrops.forEach(drop => {
+                if(currentTheme === 'green') {
+                    // Покадровая анимация: смещение раз в секунду
+                    if(now - drop.lastTick > 1000) {
+                        drop.y += drop.speed;
+                        drop.lastTick = now;
+                    }
+                } else {
+                    drop.y += drop.speed;
+                }
+
+                // Респаун
+                if(drop.y > window.innerHeight + 50) {
+                    drop.y = -50;
+                    drop.x = Math.random() * window.innerWidth;
+                }
+
+                drop.el.style.transform = `translate(${drop.x}px, ${drop.y}px)`;
             });
+            requestAnimationFrame(updateRain);
         }
 
-        function startPhysics() {
-            isPhysicsRunning = true;
-            function loop() {
-                let now = Date.now();
-                userElements.forEach(u => {
-                    if(currentMode === 'green') {
-                        // Пошаговое движение (раз в секунду)
-                        if(now - u.lastStep > 1000) {
-                            u.y += 45;
-                            u.lastStep = now;
-                        }
-                    } else {
-                        u.y += u.vy;
-                        u.x += u.vx;
-                        u.angle += u.va;
-                    }
-
-                    // Респаун
-                    if(currentMode === 'pink') {
-                        if(u.y < -150) u.y = window.innerHeight + 50;
-                    } else {
-                        if(u.y > window.innerHeight + 150) u.y = -100;
-                    }
-
-                    u.el.style.transform = `translate(${u.x}px, ${u.y}px) rotate(${u.angle}deg)`;
-                });
-                requestAnimationFrame(loop);
-            }
-            loop();
-        }
-
-        function destroyUser(obj) {
-            // Вспышка
-            let f = document.createElement('div');
-            f.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;opacity:0.4;z-index:9998;pointer-events:none;";
-            document.body.appendChild(f);
-            setTimeout(() => f.remove(), 100);
-
-            obj.el.style.opacity = '0';
-            const rect = obj.el.getBoundingClientRect();
-
-            // Создание частиц
-            const txt = obj.el.innerText;
-            for(let i=0; i<txt.length; i++) {
-                let p = document.createElement('div');
-                p.className = 'particle';
-                p.innerText = txt[i];
-                p.style.left = (rect.left + (i*15)) + 'px';
-                p.style.top = rect.top + 'px';
-                p.style.color = 'var(--main-color)';
-                p.style.setProperty('--dx', (Math.random()*600-300)+'px');
-                p.style.setProperty('--dy', (Math.random()*600-300)+'px');
-                document.body.appendChild(p);
-                setTimeout(() => p.remove(), 2500);
-            }
-
-            // Возврат через 5 секунд
-            setTimeout(() => {
-                obj.el.style.opacity = '1';
-                obj.y = -100;
-            }, 5000);
-        }
-
-        function tryLogin() {
-            if(document.getElementById('access-input').value === '2727') {
-                nav('page-menu');
+        /* ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ */
+        function validateAccess() {
+            const input = document.getElementById('login-input');
+            if(input.value === '2727') {
+                sysLog("AUTH SUCCESSFUL");
+                switchPage('page-menu');
             } else {
-                alert("ACCESS DENIED");
+                sysLog("AUTH FAILED");
+                input.style.borderColor = 'red';
+                setTimeout(() => input.style.borderColor = 'var(--main-color)', 500);
             }
         }
 
-        function secretCheck() {
-            secretCounter++;
-            if(secretCounter === 4) {
-                alert("DATABASE CORRUPTED. EMERGENCY PROTOCOL CT1C2 ACTIVATED.");
-            }
+        function toggleTitle(el) {
+            el.innerText = el.innerText === "SatanaCIub Project" ? "CT1C2 CORE" : "SatanaCIub Project";
+            sysLog("TITLE INTERACTION");
         }
 
-        function rebrand() {
-            const h = document.querySelector('.hooligan-header');
-            h.innerText = h.innerText === "SatanaCIub Project" ? "CT1C2 CONTROL" : "SatanaCIub Project";
-        }
+        /* СТАРТ */
+        window.onload = () => {
+            sysLog("BOOTING CT1C2...");
+            changeTheme('red');
+            updateRain();
+        };
 
-        function checkInfected(input) {
-            if(input.value.toLowerCase() === "кириешка лох") {
-                document.body.style.filter = "invert(1) hue-rotate(180deg)";
-            }
-        }
-
-        // Инициализация системы
-        console.log("[CT1C2] System Ready. 2026 Version.");
-        applyTheme('red');
     </script>
 </body>
 </html>
