@@ -2,252 +2,298 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>SatanaCIub Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Module</title>
     <style>
-        @font-face {
-            font-family: 'SatanaCustomFont';
-            src: url('https://docs.google.com/uc?export=download&id=17SGLPOcEMVBWfAQfEKox1FZOSv47rLha') format('truetype');
+        body { background: #0a0a0a; color: #eee; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; transition: box-shadow 0.5s ease; }
+        .page { display: none; padding: 20px; text-align: center; min-height: 100vh; box-sizing: border-box; position: relative; z-index: 5; }
+        .active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .vip-user { font-weight: bold; z-index: 10; animation: rainbow-glow 3s linear infinite; }
+        @keyframes rainbow-glow {
+            0% { color: #f00; text-shadow: 0 0 10px #f00; }
+            33% { color: #0f0; text-shadow: 0 0 10px #0f0; }
+            66% { color: #00f; text-shadow: 0 0 10px #00f; }
+            100% { color: #f00; text-shadow: 0 0 10px #f00; }
         }
-        :root { --main: #ff0000; --bg: #000; --font: #fff; --btn-clip: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%); --radius: 0px; }
-        .theme-pickme { --main: #ff69b4; --bg: #fff0f5; --font: #d02090; --btn-clip: none; --radius: 20px; }
-        .theme-blue { --main: #0088cc; --bg: #f0faff; --font: #004466; --btn-clip: none; --radius: 10px; }
-        .theme-pixel { --main: #00ff00; --bg: #000; --font: #00ff00; --btn-clip: none; --radius: 0px; }
-
-        * { font-family: 'SatanaCustomFont', sans-serif !important; box-sizing: border-box; }
-        body { background: var(--bg); color: var(--font); margin: 0; overflow: hidden; transition: 0.4s; user-select: none; }
-        .page { display: none; width: 100vw; height: 100vh; padding: 20px; overflow-y: auto; position: relative; }
-        .active { display: block; }
-        .hooligan-header { text-align: center; font-size: 24px; font-weight: 900; color: var(--main); border-bottom: 2px solid var(--main); padding-bottom: 5px; margin-bottom: 15px; text-transform: uppercase; }
-        .menu-btn { width: 100%; padding: 15px; margin: 10px 0; background: rgba(0,0,0,0.05); border: 2px solid var(--main); color: var(--main); font-weight: bold; text-transform: uppercase; clip-path: var(--btn-clip); border-radius: var(--radius); cursor: pointer; }
-        .content-box { border: 1px solid var(--main); border-radius: var(--radius); padding: 15px; background: rgba(0,0,0,0.05); margin-bottom: 20px; line-height: 1.4; white-space: pre-wrap; font-size: 14px; }
-        b { color: var(--main); font-weight: bold; }
-        .shaking-text { display: inline-block; animation: shake 0.4s infinite; color: var(--main); font-weight: bold; }
-        @keyframes shake { 0% {transform: translate(1px,1px)} 20% {transform: translate(-2px,-1px)} 100% {transform: translate(1px,-1px)} }
-        .shatter-char { display: inline-block; transition: transform 0.8s; pointer-events: none; }
-        #loader-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; background: #000; }
-        @keyframes bloodStream { 0% { transform: translateY(-100%); } 100% { transform: translateY(100vh); } }
+        .floating-user { position: absolute; color: rgba(255, 255, 255, 0.25); font-size: 0.9em; cursor: pointer; user-select: none; transition: 3s ease; }
+        .user-fade { opacity: 0 !important; transform: scale(2); pointer-events: none; }
+        .hooligan-header { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; color: #fff; }
+        .content-box { background: rgba(20, 20, 20, 0.9); border: 1px solid #333; padding: 15px; margin: 10px auto; max-width: 550px; text-align: left; }
+        .menu-btn { background: #1a1a1a; color: white; border: 1px solid #444; padding: 15px; margin: 8px; cursor: pointer; width: 280px; font-weight: bold; }
+        .menu-btn:hover { border-color: #f00; box-shadow: 0 0 10px #f00; }
+        .punishment { color: #ff0000 !important; font-weight: bold; }
+        .letter { display: inline-block; position: relative; }
+        .flying { position: absolute; pointer-events: none; animation: flyOut 1.2s forwards; }
+        @keyframes flyOut { to { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 0; } }
+        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; flex-direction: column; justify-content: center; align-items: center; }
+        .loader-bar { width: 200px; height: 2px; background: #222; overflow: hidden; }
+        .loader-progress { height: 100%; width: 0%; transition: 0.3s; }
+        .load-green { color: #0f0; } .load-green .loader-progress { background: #0f0; }
+        .load-red { color: #f00; } .load-red .loader-progress { background: #f00; }
+        .load-blue { color: #0cf; } .load-blue .loader-progress { background: #0cf; }
     </style>
 </head>
-<body id="body-tag">
-    <div id="loader-overlay"></div>
-
-    <div id="login-screen" class="page active">
-        <div style="text-align: center; padding-top: 50px;">
-            <div class="hooligan-header">SatanaCIub Project</div>
-            <input type="password" id="passInput" placeholder="CODE" maxlength="4" style="width:180px; text-align:center; font-size: 22px; background:none; border:2px solid var(--main); color:var(--font); padding: 10px; margin-bottom: 15px;">
-            <button class="menu-btn" style="width: 220px; margin: 0 auto 20px auto;" onclick="checkPass()">ACCESS</button>
-
-            <div style="display: flex; justify-content: center; gap: 5px; padding: 0 10px;">
-                <button class="menu-btn" style="font-size: 8px; padding: 10px 5px;" onclick="setTheme('blood')">BLOOD</button>
-                <button class="menu-btn" style="font-size: 8px; padding: 10px 5px;" onclick="setTheme('pickme')">PICKME</button>
-                <button class="menu-btn" style="font-size: 8px; padding: 10px 5px;" onclick="setTheme('blue')">BLUE</button>
-                <button class="menu-btn" style="font-size: 8px; padding: 10px 5px;" onclick="setTheme('pixel')">TERMINAL</button>
-            </div>
-        </div>
-    </div>
-    <div id="main-menu" class="page">
-        <div class="hooligan-header">
-            SatanaClub Project <span id="carrot-secret" style="cursor:pointer; opacity: 0.3;">🥕</span>
-        </div>
-        <button class="menu-btn" onclick="triggerLoad('rules-page')">📜 ПРАВИЛА AER</button>
-        <button class="menu-btn" onclick="triggerLoad('forms-page')">📝 АНКЕТЫ / АДМИН</button>
-        <button class="menu-btn" onclick="triggerLoad('help-page')">❓ ПОМОЩЬ</button>
-        <button class="menu-btn" onclick="handleSecretClick()">СКОРО</button>
-    </div>
-<div id="rules-page" class="page">
-        <div class="hooligan-header"Правила</div>
-        <button class="menu-btn" style="width:100px; padding:5px;" onclick="showPage('main-menu')">BACK</button>
-        <div class="content-box">
-<b>Данный AER является сводом правил. Незнание не освобождает от ответственности.</b><br><br>
-<b>1. Дискриминация:</b> Запрещена ксенофобия, расизм, агрессия.<br><b>Наказание:</b> Мут 20-45 мин.<br><br>
-<b>3. Спам:</b> Массовая отправка сообщений/стикеров.<br><b>Наказание:</b> Мут 120 мин / Бан.<br><br>
-<b>4. Флуд/Лестница:</b> 4+ сообщения подряд или дробление мысли.<br><b>Наказание:</b> Мут 30-180 мин.<br><br>
-<b>Политика:</b> Запрещена провокация и обсуждение.<br><b>Наказание:</b> Мут 220 мин / Бан навсегда.<br><br>
-<b>🚫 Раздел II (Баны)</b><br>
-<b>1. Обход наказаний:</b> Твинки в муте/бане — Бан всех аккаунтов.<br>
-<b>2. Контент 18+:</b> Порно, шок, насилие — Перманентный бан.<br>
-<b>3. Опасное поведение:</b> Доксинг, шантаж, вирусы — Глобальный бан.<br>
-<b>4. Фейк:</b> Копирование профиля админов — Перманентный бан.
-        </div>
+<body>
+<div id="loading-overlay">
+    <div id="loader-msg" style="font-size: 1.2em; letter-spacing: 2px;">INITIALIZING...</div>
+    <div class="loader-bar"><div id="loader-fill" class="loader-progress"></div></div>
 </div>
-    <div id="forms-page" class="page">
-        <div class="hooligan-header">Админка/Информация</div>
-        <button class="menu-btn" style="width:100px; padding:5px;" onclick="showPage('main-menu')">BACK</button>
-        <div class="content-box">
-<b>🛠 Раздел III: Информация для администрации</b><br><br>
-<b>Принцип прогрессии:</b> Повторное нарушение: <b>+15%, +25%, +30%</b> к муту.<br><br>
-<b>Пересыл сообщений:</b> Запрещено транслировать мысли забаненных/замученных.<br><br>
-<b>Префиксы:</b> Только доверенным лицам.<br><br>
-• Администрация не наказывает вне правил, если юзер не вредит атмосфере.
-        </div>
-        <div class="content-box">
-<b>АНКЕТА:</b><br>
-1. Ник и ID:<br>2. Возраст:<br>3. Опыт админа:<br>
-<span class="shaking-text">ЛС: @SatanaCIub</span>
-        </div>
+
+<div id="login-screen" class="page active">
+    <div class="hooligan-header">SYSTEM ACCESS</div>
+    <div class="content-box" style="text-align: center; border-color: #f00;">
+        <input type="password" id="pass" placeholder="PASSWORD" style="background: #000; color: #0f0; border: 1px solid #333; padding: 12px; width: 80%; text-align: center;">
+        <br><br><button class="menu-btn" style="width: 150px;" onclick="checkPass()">ENTER</button>
     </div>
-
-    <div id="help-page" class="page">
-        <div class="hooligan-header">SUPPORT</div>
-        <button class="menu-btn" style="width:100px; padding:5px;" onclick="showPage('main-menu')">BACK</button>
-        <div class="content-box">Владелец: <b>@SatanaCIub</b></div>
+</div>
+<div id="main-menu" class="page">
+    <div id="user-layer" style="position: absolute; top:0; left:0; width:100%; height:100%;"></div>
+    <div class="hooligan-header">MAIN TERMINAL</div>
+    <button class="menu-btn" onclick="triggerLoad('rules-page')">AER RULES</button><br>
+    <button class="menu-btn" onclick="triggerLoad('forms-page')">APPLICATIONS</button><br>
+    <button class="menu-btn" onclick="triggerLoad('shame-page')">SHAME LIST</button><br>
+    <button class="menu-btn" onclick="triggerLoad('help-page')" style="opacity:0.5;">HELP</button>
+</div>
+<div id="rules-page" class="page">
+    <div class="hooligan-header">AER RULES</div>
+    <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
+    <div class="content-box" style="color: #ffffff; border-color: #0f0; font-size: 0.85em; overflow-y: auto; max-height: 70vh;">
+        <b style="color: #0f0;">[ СИСТЕМА AER ]</b><br><br>
+        Данный AER является основном сводом правил чата. Незнание правил не освобождает от ответственности. Копирование структуры или содержания без разрешения автора запрещено.<br><br>
+        <b>1. Дискриминация и деструктив</b><br>
+        Запрещены любые формы ксенофобии, расизма, гомофобии, сексизма, травля. <br><span class="punishment">Наказание: Мут 20-45 мин.</span><br><br>
+        <b>3. Спам и рассылки</b><br>
+        Массовая отправка сообщений, стикеров, медиа. <br><span class="punishment">Наказание: Мут 120 мин. Рецидив — Бан.</span><br><br>
+        <b>4. Флуд и Лестница</b><br>
+        Флуд: 4+ сообщ. Лестница: 5+ сообщ. <br><span class="punishment">Наказание: Мут от 30 мин до 3 часов.</span><br><br>
+        <b>5. Политика и Конфликты</b><br>
+        Запрещено разжигание конфликтов, политика, войны. <br><span class="punishment">Наказание: Провокация — 220 мин. Политика — Бан навсегда.</span><br><br>
+        <b style="color: #f00;">🚫 Раздел II (баны)</b><br>
+        1. Твинки: <span class="punishment">Перманентный бан.</span><br>
+        2. NSFW 18+: <span class="punishment">Перманентный бан.</span><br>
+        3. Доксинг/Деанон: <span class="punishment">Перманентный бан + Глобал.</span><br>
+        4. Фейк-админ: <span class="punishment">Перманентный бан.</span><br><br>
+        <b style="color: #0cf;">🛠 Раздел III: Администрация</b><br>
+        Прогрессия: +15%, +25%, +30%. Пересыл забаненных запрещен. • Администрация не имеет право вынести наказание, не описанное в правилах, если действия юзера вредят атмосфере.
     </div>
-    <div id="shame-page" class="page">
-        <div class="hooligan-header">ДОСКА ПОЗОРА</div>
-        <button class="menu-btn" style="width:100px; padding:5px;" onclick="showPage('main-menu')">НАЗАД</button>
-        <div class="content-box">
-<b>АРХИВ ГЛАВНЫХ ФРИКОВ И ПРЕДАТЕЛЕЙ:</b><br><br>
+</div>
 
-<b>• VINAL</b> — Шантаж и угрозы рейдов. Потерял 5 своих клубов. Забанен.<br><br>
-<b>• ГРИГЕЙ</b> — Русофоб, ботовод и фрик. Полный неадекват.<br><br>
-<b>• РЕЛТИН</b> — Худший админ: ливнул после первого же мута в его сторону. Предатель.<br><br>
-<b>• ДЕД</b> — Пытался доксить участников. Был быстро слит и исчез.<br><br>
-<b>• ПСИХОКИД</b> — Агрессивный спамер. Перманентный бан за мусор в чате.<br><br>
-
-<span class="shaking-text">ПОМНИ: ТВОЁ ИМЯ МОЖЕТ БЫТЬ СЛЕДУЮЩИМ.</span>
-        </div>
+<div id="help-page" class="page">
+    <div class="hooligan-header">HELP</div>
+    <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
+    <div class="content-box" style="color: #fff; border-color: #0cf;">
+        • Нажми на фрика, чтобы изгнать его на 5 секунд.<br>
+        • VIP-пользователи неприкосновенны.<br>
+        • Код 6666 — системный сбой.
     </div>
+    <div class="content-box" style="color: #ffb6c1; border-color: #ffb6c1; margin-top: 15px;">
+        <b style="color: #ff69b4;">[ ПИКМИ СТАТУС ]</b><br>
+        Система работает в штатном режиме. Защита активна.
+    </div>
+</div>
+    <div id="rules-page" class="page">
+    <div class="hooligan-header">AER RULES</div>
+    <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
+    <div class="content-box" style="color: #ffffff; border-color: #0f0; font-size: 0.85em; overflow-y: auto; max-height: 70vh;">
+        <b style="color: #0f0;">[ СИСТЕМА AER ]</b><br><br>
+        Данный AER является основном сводом правил чата. Незнание правил не освобождает от ответственности. Копирование структуры или содержания без разрешения автора запрещено.<br><br>
+        <b>1. Дискриминация и деструктив</b><br>
+        Запрещены любые формы ксенофобии, расизма, гомофобии, сексизма, травля. <br><span class="punishment">Наказание: Мут 20-45 мин.</span><br><br>
+        <b>3. Спам и рассылки</b><br>
+        Массовая отправка сообщений, стикеров, медиа. <br><span class="punishment">Наказание: Мут 120 мин. Рецидив — Бан.</span><br><br>
+        <b>4. Флуд и Лестница</b><br>
+        Флуд: 4+ сообщ. Лестница: 5+ сообщ. <br><span class="punishment">Наказание: Мут от 30 мин до 3 часов.</span><br><br>
+        <b>5. Политика и Конфликты</b><br>
+        Запрещено разжигание конфликтов, политика, войны. <br><span class="punishment">Наказание: Провокация — 220 мин. Политика — Бан навсегда.</span><br><br>
+        <b style="color: #f00;">🚫 Раздел II (баны)</b><br>
+        1. Твинки: <span class="punishment">Перманентный бан.</span><br>
+        2. NSFW 18+: <span class="punishment">Перманентный бан.</span><br>
+        3. Доксинг/Деанон: <span class="punishment">Перманентный бан + Глобал.</span><br>
+        4. Фейк-админ: <span class="punishment">Перманентный бан.</span><br><br>
+        <b style="color: #0cf;">🛠 Раздел III: Администрация</b><br>
+        Прогрессия: +15%, +25%, +30%. Пересыл забаненных запрещен. • Администрация не имеет право вынести наказание, не описанное в правилах, если действия юзера вредят атмосфере.
+    </div>
+</div>
 
-    <script>
-        let secretCounter = 0;
+<div id="help-page" class="page">
+    <div class="hooligan-header">HELP</div>
+    <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
+    <div class="content-box" style="color: #fff; border-color: #0cf;">
+        • Нажми на фрика, чтобы изгнать его на 5 секунд.<br>
+        • VIP-пользователи неприкосновенны.<br>
+        • Код 6666 — системный сбой.
+    </div>
+    <div class="content-box" style="color: #ffb6c1; border-color: #ffb6c1; margin-top: 15px;">
+        <b style="color: #ff69b4;">[ ПИКМИ СТАТУС ]</b><br>
+        Система работает в штатном режиме. Защита активна.
+    </div>
+</div>
+<div id="forms-page" class="page">
+    <div class="hooligan-header">APPLICATIONS</div>
+    <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
+    <div class="content-box" style="color: #fff; border-color: #0cf;">
+        <b style="color: #0cf;">[ ADMIN ]</b><br>
+        1. Ник, @, ID, возраст, активность. 2. Пояс/Время. 3. Опыт (500+). 4. AER.<br><br>
+        <b style="color: #0cf;">[ ВИЦЕ ]</b><br>
+        1. 30к+ трофеев. 2. Скрин аккаунта.
+    </div>
+</div>
 
-        // ПРОВЕРКА ПАРОЛЯ ПРИ ВХОДЕ
-        function checkPass() {
-            const v = document.getElementById('passInput').value;
-            if(v === '2727') triggerLoad('main-menu');
-            else if(v === '6666') {
-                alert("VOID SYSTEM ACTIVATED");
-                document.body.style.filter = "invert(1) hue-rotate(90deg)";
-            }
-            else alert('ДОСТУП ЗАПРЕЩЕН');
-        }
+<div id="shame-page" class="page">
+    <div class="hooligan-header" style="color:red;">SHAME LIST</div>
+    <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
+    <div class="content-box" style="color: #fff; border-color: red; overflow-y: auto; max-height: 60vh;">
+        <b>1. Vinal</b> – Шантажист. Бан + снос клубов.<br>
+        <b>2. Григей</b> – Педофил/Русофоб. Удалил свой чат.<br>
+        <b>3. Релтин</b> – Худший админ. Нытик у оппов.<br>
+        <b>4. Дед</b> – Сливщик. Успокоился.<br>
+        <b>5. Психокид</b> – Агрессор. Забанен.
+    </div>
+</div>
+<script>
+    // Твои списки пользователей
+    const vipUsers = ['@satanacIub', '@hooligan_hooligan'];
+    const commonUsers = ['@Blood_Househ', '@Aaaaaaaaaafkrjfjfjso', '@VetalGeor', '@geniusmozer', '@aungakw'];
 
-        // ПЕРЕКЛЮЧЕНИЕ ТЕМ (BLOOD, PICKME И Т.Д.)
-        function setTheme(t) {
-            const b = document.getElementById('body-tag');
-            b.className = (t === 'blood') ? '' : 'theme-' + t;
-        }
-
-        // ПРОСТОЕ ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ
-        function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        // АНИМАЦИЯ ЗАГРУЗКИ С "КРОВЬЮ"
-        function triggerLoad(target) {
-            const l = document.getElementById('loader-overlay');
-            l.style.display = 'block'; l.innerHTML = '';
-            for(let i=0; i<30; i++) {
-                const e = document.createElement('div');
-                e.style = `position:absolute; color:red; font-size:10px; left:${Math.random()*100}vw; animation: bloodStream ${Math.random()+0.5}s linear infinite;`;
-                e.innerText = "VOID_DATA"; l.appendChild(e);
-            }
-            setTimeout(() => { l.style.display = 'none'; showPage(target); }, 1000);
-        }
-
-        // СЕКРЕТ КНОПКИ "СКОРО" (3 НАЖАТИЯ)
-        function handleSecretClick() {
-            secretCounter++;
-            if(secretCounter >= 3) {
-                secretCounter = 0;
-                triggerLoad('shame-page');
-            }
-        }
-
-        // ТОТ САМЫЙ ЭФФЕКТ РАЗРУШЕНИЯ БУКВ
-        document.addEventListener('mousedown', function(e) {
-            const radius = 110;
-            const x = e.clientX; const y = e.clientY;
-            const boxes = document.querySelectorAll('.content-box');
-
-            boxes.forEach(box => {
-                const rect = box.getBoundingClientRect();
-                if (x > rect.left - radius && x < rect.right + radius && y > rect.top - radius && y < rect.bottom + radius) {
-                    if (box.querySelectorAll('.shatter-char').length === 0) {
-                        const text = box.innerText;
-                        box.innerHTML = text.split('').map(c => `<span class="shatter-char">${c}</span>`).join('');
-                    }
-                    Array.from(box.querySelectorAll('.shatter-char')).forEach(span => {
-                        const sRect = span.getBoundingClientRect();
-                        const dist = Math.hypot(sRect.left - x, sRect.top - y);
-                        if (dist < radius) {
-                            const p = (radius - dist) / radius;
-                            const ang = Math.atan2(sRect.top - y, sRect.left - x);
-                            span.style.transform = `translate(${Math.cos(ang)*220*p}px, ${Math.sin(ang)*220*p}px) rotate(${(Math.random()-0.5)*700}deg)`;
-                            span.style.opacity = '0';
-                        }
-                    });
-                }
-            });
-       });
-      function triggerLoad(target) {
-        const l = document.getElementById('loader-overlay');
-        l.style.display = 'block'; 
-        l.innerHTML = '';
-        for(let i=0; i<30; i++) {
-            const e = document.createElement('div');
-            e.style = `position:absolute; color:red; font-size:10px; left:${Math.random()*100}vw; animation: bloodStream ${Math.random()+0.5}s linear infinite;`;
-            e.innerText = "VOID_DATA"; 
-            l.appendChild(e);
-        }
-        setTimeout(() => { 
-            l.style.display = 'none'; 
-            showPage(target); 
-        }, 1000);
-      }
-        // --- ГЛАВНАЯ ЛОГИКА ---
-    function checkPass() {
-        const v = document.getElementById('passInput').value;
-        if(v === '2727') triggerLoad('main-menu');
-        else if(v === '6666') {
-            alert("VOID SYSTEM ACTIVATED");
-            document.body.style.filter = "invert(1) hue-rotate(90deg)";
-        } else alert('ДОСТУП ЗАПРЕЩЕН');
+    function spawnFloatingUsers() {
+        const layer = document.getElementById('user-layer');
+        if (!layer) return; 
+        layer.innerHTML = ''; // Очистка слоя перед спавном
+        
+        vipUsers.forEach(name => createUser(name, true));
+        commonUsers.forEach(name => createUser(name, false));
     }
 
-function showPage(id) {
-        // Прячем абсолютно всё с классом page
-        const pages = document.querySelectorAll('.page');
-        pages.forEach(p => {
-            p.classList.remove('active');
-            p.style.display = 'none'; // Принудительно скрываем
-        });
+    function createUser(name, isVip) {
+        const span = document.createElement('span');
+        span.className = 'floating-user' + (isVip ? ' vip-user' : '');
+        span.innerText = name;
+        
+        // Рандомная позиция
+        span.style.left = Math.random() * 80 + 5 + '%';
+        span.style.top = Math.random() * 80 + 10 + '%';
+        document.getElementById('user-layer').appendChild(span);
 
-        // Ищем нашу страницу
-        const target = document.getElementById(id);
-        if(target) {
-            target.classList.add('active');
-            target.style.display = 'block'; // Принудительно показываем!
+        // Постоянное хаотичное движение
+        setInterval(() => {
+            if (!span.classList.contains('user-fade')) {
+                const x = (Math.random() - 0.5) * 120;
+                const y = (Math.random() - 0.5) * 120;
+                span.style.transform = `translate(${x}px, ${y}px)`;
+            }
+        }, 3000);
+
+        // Логика клика
+        span.onclick = (e) => {
+            e.stopPropagation();
+            if (isVip) {
+                // Клик по VIP — мгновенный вылет (защита)
+                triggerSecurityProtocol();
+            } else {
+                // Клик по обычному — изгнание на 5 сек
+                span.classList.add('user-fade');
+                setTimeout(() => {
+                    span.classList.remove('user-fade');
+                    span.style.left = Math.random() * 80 + 5 + '%';
+                    span.style.top = Math.random() * 80 + 10 + '%';
+                    span.style.opacity = "0"; 
+                    setTimeout(() => span.style.opacity = "0.25", 100);
+                }, 5000);
+            }
+        };
+    }
+
+    // Подготовка заголовков к "взрыву" (разбивка на буквы)
+    function prepareHeaders(el) {
+        const h = el || document.querySelector('.active .hooligan-header');
+        if (!h || h.querySelector('.letter')) return;
+        const txt = h.innerText; 
+        h.innerHTML = '';
+        [...txt].forEach(c => {
+            const s = document.createElement('span'); 
+            s.innerText = c === ' ' ? '\u00A0' : c; 
+            s.className = 'letter'; 
+            h.appendChild(s);
+        });
+    }
+
+    // Эффект разлета букв
+    function breakEffect(el) {
+        const letters = el.querySelectorAll('.letter');
+        letters.forEach((l, i) => {
+            setTimeout(() => {
+                const f = l.cloneNode(true); 
+                f.classList.add('flying');
+                f.style.setProperty('--x', (Math.random() * 400 - 200) + 'px');
+                f.style.setProperty('--y', (Math.random() * 400 - 200) + 'px');
+                f.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg');
+                f.style.color = '#00f'; // Синий след разлета
+                l.parentElement.appendChild(f);
+                l.classList.add('broken-red'); // Сама буква краснеет
+                if (Math.random() > 0.8) startInfection(l);
+            }, i * 60);
+        });
+    }
+
+    // "Заражение" соседних букв
+    function startInfection(l) {
+        if (!l || l.classList.contains('infected')) return;
+        l.classList.add('infected');
+        setTimeout(() => {
+            l.style.opacity = '0';
+            const n = l.nextElementSibling;
+            const p = l.previousElementSibling;
+            if (n && Math.random() > 0.4) startInfection(n);
+            if (p && Math.random() > 0.4) startInfection(p);
+        }, 2700);
+    }
+</script>
+
+  <script>
+    function triggerLoad(pageId) {
+        const overlay = document.getElementById('loading-overlay');
+        const fill = document.getElementById('loader-fill');
+        overlay.style.display = 'flex'; overlay.className = '';
+        
+        if(pageId === 'shame-page') overlay.classList.add('load-red');
+        else if(pageId === 'forms-page') overlay.classList.add('load-blue');
+        else overlay.classList.add('load-green');
+
+        if(Math.random() < 0.05 && pageId === 'main-menu') {
+            document.getElementById('loader-msg').innerText = "C:User/display: Err: NoneType";
+            setTimeout(() => { finishLoad(pageId); }, 2000);
         } else {
-            alert("Ошибка: страница " + id + " не найдена!");
+            document.getElementById('loader-msg').innerText = "LOADING...";
+            let p = 0;
+            const int = setInterval(() => {
+                p += 25; fill.style.width = p + '%';
+                if(p >= 100) { clearInterval(int); finishLoad(pageId); }
+            }, 150);
         }
-}
-
-    function setTheme(t) {
-        const b = document.getElementById('body-tag');
-        if(b) b.className = (t === 'blood') ? '' : 'theme-' + t;
     }
 
-    // --- МОРКОВНАЯ ПАСХАЛКА ---
-    let carrotClicks = 0;
-    document.addEventListener('click', function(e) {
-        if (e.target && e.target.id === 'carrot-secret') {
-            carrotClicks++;
-            e.target.style.opacity = 0.3 + (carrotClicks * 0.02);
-            if (carrotClicks === 27) triggerCarrotHell();
-        }
-    });
-
-    function triggerCarrotHell() {
-        document.body.style.animation = "shake 0.1s infinite";
-        document.body.style.filter = "invert(1) sepia(1) saturate(1000%) hue-rotate(0deg)";
-        document.querySelectorAll('b, span, button, div').forEach(el => {
-            if(el.children.length === 0) el.innerText = "🥕 МОРКОВЬ 🥕";
-        });
-        setTimeout(() => { location.reload(); }, 5000);
+    function finishLoad(pageId) {
+        document.getElementById('loading-overlay').style.display = 'none';
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        if(pageId === 'main-menu') spawnFloatingUsers();
+        prepareHeaders();
     }
-        </script>
+
+    function checkPass() {
+        const v = document.getElementById('pass').value;
+        if(v === '2727') triggerLoad('main-menu');
+        else if(v === '6666') triggerCrash();
+        else breakEffect(document.querySelector('.active .hooligan-header'));
+    }
+
+    function triggerCrash() {
+        document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20%'>CRITICAL ERROR: SYSTEM TERMINATED</h1>";
+        setTimeout(() => { window.location.href = "about:blank"; }, 2000);
+    }
+
+    window.onload = () => { prepareHeaders(); };
+</script>
 </body>
 </html>
