@@ -3,297 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Module</title>
+    <title>SatanaCIub Project</title>
     <style>
-        body { background: #0a0a0a; color: #eee; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; transition: box-shadow 0.5s ease; }
-        .page { display: none; padding: 20px; text-align: center; min-height: 100vh; box-sizing: border-box; position: relative; z-index: 5; }
-        .active { display: block; animation: fadeIn 0.5s; }
+        body { background: #000; color: #eee; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; transition: background 0.3s; }
+        .page { display: none; padding: 20px; text-align: center; min-height: 100vh; position: relative; z-index: 5; }
+        .active { display: flex; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .vip-user { font-weight: bold; z-index: 10; animation: rainbow-glow 3s linear infinite; }
-        @keyframes rainbow-glow {
-            0% { color: #f00; text-shadow: 0 0 10px #f00; }
-            33% { color: #0f0; text-shadow: 0 0 10px #0f0; }
-            66% { color: #00f; text-shadow: 0 0 10px #00f; }
-            100% { color: #f00; text-shadow: 0 0 10px #f00; }
-        }
-        .floating-user { position: absolute; color: rgba(255, 255, 255, 0.25); font-size: 0.9em; cursor: pointer; user-select: none; transition: 3s ease; }
-        .user-fade { opacity: 0 !important; transform: scale(2); pointer-events: none; }
-        .hooligan-header { font-size: 1.8em; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; color: #fff; }
-        .content-box { background: rgba(20, 20, 20, 0.9); border: 1px solid #333; padding: 15px; margin: 10px auto; max-width: 550px; text-align: left; }
-        .menu-btn { background: #1a1a1a; color: white; border: 1px solid #444; padding: 15px; margin: 8px; cursor: pointer; width: 280px; font-weight: bold; }
-        .menu-btn:hover { border-color: #f00; box-shadow: 0 0 10px #f00; }
-        .punishment { color: #ff0000 !important; font-weight: bold; }
-        .letter { display: inline-block; position: relative; }
-        .flying { position: absolute; pointer-events: none; animation: flyOut 1.2s forwards; }
-        @keyframes flyOut { to { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 0; } }
-        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; flex-direction: column; justify-content: center; align-items: center; }
-        .loader-bar { width: 200px; height: 2px; background: #222; overflow: hidden; }
-        .loader-progress { height: 100%; width: 0%; transition: 0.3s; }
-        .load-green { color: #0f0; } .load-green .loader-progress { background: #0f0; }
-        .load-red { color: #f00; } .load-red .loader-progress { background: #f00; }
-        .load-blue { color: #0cf; } .load-blue .loader-progress { background: #0cf; }
+        
+        /* Текстовые стили */
+        .hooligan-header { font-size: 2.8em; font-weight: bold; margin-bottom: 25px; color: #fff; cursor: pointer; user-select: none; text-transform: uppercase; }
+        .ultimate-header { color: #f00 !important; text-shadow: 0 0 20px #f00, 0 0 40px #f00; animation: breathe 2s infinite; }
+        @keyframes breathe { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(1.03); } }
+
+        /* Окно входа */
+        .login-box { background: #080808; border: 1px solid #222; padding: 50px; border-radius: 2px; box-shadow: 0 0 30px rgba(255,0,0,0.05); }
+        .blink-text { animation: blink 1s infinite; color: #0f0; margin-bottom: 20px; font-weight: bold; font-size: 1.1em; }
+        @keyframes blink { 50% { opacity: 0; } }
+        input { background: #000; color: #0f0; border: 1px solid #333; padding: 12px; width: 280px; text-align: center; outline: none; font-family: inherit; font-size: 1.1em; }
+        
+        /* Кнопки */
+        .menu-btn { background: transparent; color: #fff; border: 1px solid #333; padding: 15px 40px; margin: 10px; cursor: pointer; width: 350px; transition: 0.3s; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .menu-btn:hover { border-color: #f00; background: rgba(255,0,0,0.1); box-shadow: 0 0 15px rgba(255,0,0,0.2); }
+        
+        /* Контентные блоки */
+        .content-box { max-width: 700px; text-align: left; background: #050505; border: 1px solid #1a1a1a; padding: 25px; position: relative; line-height: 1.5; }
+        .owner-nick { color: #f00 !important; animation: breathe 1.5s infinite; font-weight: bold; display: inline-block; text-shadow: 0 0 10px rgba(255,0,0,0.5); }
+        
+        /* Эффекты */
+        .screen-shake { animation: shake 0.15s infinite; }
+        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -1px); } 100% { transform: translate(1px, -1px); } }
+        .fallen-text { position: absolute !important; transform: translateY(130vh) rotate(var(--fall-angle)) !important; transition: 1.2s cubic-bezier(0.4, 0, 1, 1); pointer-events: none; opacity: 0; }
+        .fragment { position: absolute; pointer-events: none; animation: fragFly 0.8s forwards; color: #f00; font-weight: bold; z-index: 100; }
+        @keyframes fragFly { to { transform: translate(var(--dx), var(--dy)) rotate(450deg); opacity: 0; } }
+        
+        /* Скроллбар */
+        .scrollable { max-height: 65vh; overflow-y: auto; padding-right: 10px; }
+        .scrollable::-webkit-scrollbar { width: 4px; }
+        .scrollable::-webkit-scrollbar-thumb { background: #333; }
     </style>
 </head>
 <body>
-<div id="loading-overlay">
-    <div id="loader-msg" style="font-size: 1.2em; letter-spacing: 2px;">INITIALIZING...</div>
-    <div class="loader-bar"><div id="loader-fill" class="loader-progress"></div></div>
+
+<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:1000; justify-content:center; align-items:center; flex-direction:column;">
+    <div style="color:#0f0; letter-spacing:5px; margin-bottom:15px; font-weight:bold;">INITIALIZING CT1C2...</div>
+    <div style="width:250px; height:2px; background:#111;"><div id="loader-fill" style="width:0; height:100%; background:#f00; transition:0.1s;"></div></div>
 </div>
 
 <div id="login-screen" class="page active">
-    <div class="hooligan-header">SYSTEM ACCESS</div>
-    <div class="content-box" style="text-align: center; border-color: #f00;">
-        <input type="password" id="pass" placeholder="PASSWORD" style="background: #000; color: #0f0; border: 1px solid #333; padding: 12px; width: 80%; text-align: center;">
-        <br><br><button class="menu-btn" style="width: 150px;" onclick="checkPass()">ENTER</button>
+    <div class="login-box">
+        <div class="blink-text" id="login-hint">СИСТЕМА ЗАБЛОКИРОВАНА. ВВЕДИТЕ КОД: 2727</div>
+        <input type="text" id="pass-input" placeholder="ACCESS_CODE" oninput="checkInfected(this)">
+        <br><br>
+        <button class="menu-btn" style="width:180px" onclick="validatePass()">LOGIN</button>
     </div>
 </div>
+
 <div id="main-menu" class="page">
-    <div id="user-layer" style="position: absolute; top:0; left:0; width:100%; height:100%;"></div>
-    <div class="hooligan-header">MAIN TERMINAL</div>
-    <button class="menu-btn" onclick="triggerLoad('rules-page')">AER RULES</button><br>
-    <button class="menu-btn" onclick="triggerLoad('forms-page')">APPLICATIONS</button><br>
-    <button class="menu-btn" onclick="triggerLoad('shame-page')">SHAME LIST</button><br>
-    <button class="menu-btn" onclick="triggerLoad('help-page')" style="opacity:0.5;">HELP</button>
+    <div id="user-layer" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events: none;"></div>
+    <div class="hooligan-header" id="main-header" onclick="evolveHeader(this)" style="z-index:10; position:relative;">Hooligan AER</div>
+    <button class="menu-btn" onclick="triggerLoad('rules-page')" style="z-index:10;">ПРАВИЛА AER</button>
+    <button class="menu-btn" onclick="triggerLoad('forms-page')" style="z-index:10;">АНКЕТЫ / СТАТУСЫ</button>
+    <button class="menu-btn" onclick="triggerLoad('shame-page')" style="z-index:10;">СТЕНА ПОЗОРА</button>
+    <button class="menu-btn" onclick="triggerLoad('help-page')" style="z-index:10; opacity:0.6;">ПОМОЩЬ</button>
 </div>
+
 <div id="rules-page" class="page">
-    <div class="hooligan-header">AER RULES</div>
-    <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
-    <div class="content-box" style="color: #ffffff; border-color: #0f0; font-size: 0.85em; overflow-y: auto; max-height: 70vh;">
-        <b style="color: #0f0;">[ СИСТЕМА AER ]</b><br><br>
-        Данный AER является основном сводом правил чата. Незнание правил не освобождает от ответственности. Копирование структуры или содержания без разрешения автора запрещено.<br><br>
-        <b>1. Дискриминация и деструктив</b><br>
-        Запрещены любые формы ксенофобии, расизма, гомофобии, сексизма, травля. <br><span class="punishment">Наказание: Мут 20-45 мин.</span><br><br>
-        <b>3. Спам и рассылки</b><br>
-        Массовая отправка сообщений, стикеров, медиа. <br><span class="punishment">Наказание: Мут 120 мин. Рецидив — Бан.</span><br><br>
-        <b>4. Флуд и Лестница</b><br>
-        Флуд: 4+ сообщ. Лестница: 5+ сообщ. <br><span class="punishment">Наказание: Мут от 30 мин до 3 часов.</span><br><br>
-        <b>5. Политика и Конфликты</b><br>
-        Запрещено разжигание конфликтов, политика, войны. <br><span class="punishment">Наказание: Провокация — 220 мин. Политика — Бан навсегда.</span><br><br>
-        <b style="color: #f00;">🚫 Раздел II (баны)</b><br>
-        1. Твинки: <span class="punishment">Перманентный бан.</span><br>
-        2. NSFW 18+: <span class="punishment">Перманентный бан.</span><br>
-        3. Доксинг/Деанон: <span class="punishment">Перманентный бан + Глобал.</span><br>
-        4. Фейк-админ: <span class="punishment">Перманентный бан.</span><br><br>
-        <b style="color: #0cf;">🛠 Раздел III: Администрация</b><br>
-        Прогрессия: +15%, +25%, +30%. Пересыл забаненных запрещен. • Администрация не имеет право вынести наказание, не описанное в правилах, если действия юзера вредят атмосфере.
+    <div class="hooligan-header">ПРАВИЛА AER</div>
+    <div class="content-box scrollable">
+        <b style="color:#0f0;" onclick="shakeMe(this)">[ СИСТЕМА AER — FULL VERSION ]</b><br><br>
+        Данный AER является основным сводом правил чата. Незнание не освобождает от ответственности. Копирование структуры запрещено автором <span class="owner-nick">@satanaCIub</span>.<br><br>
+        
+        <b onclick="shakeMe(this)">1. Дискриминация и деструктив</b><br>
+        Запрещены любые формы ксенофобии, расизма, гомофобии, сексизма, а также травля по религиозному или социальному признаку.<br>
+        <span style="color:red;">— Наказание: Мут от 20 до 45 минут.</span><br><br>
+
+        <b onclick="shakeMe(this)">3. Спам и рассылки</b><br>
+        Запрещена массовая отправка однотипных сообщений, стикеров, медиафайлов. Реклама сторонних ресурсов без согласования.<br>
+        <span style="color:red;">— Наказание: Мут 120 минут. Рецидив — Бан.</span><br><br>
+
+        <b onclick="shakeMe(this)">4. Флуд и Лестница</b><br>
+        Флуд (4+ сообщ.), Лестница (5+ сообщ. по одному слову). Бессмысленные наборы символов.<br>
+        <span style="color:red;">— Наказание: Мут от 30 минут до 3 часов.</span><br><br>
+
+        <b onclick="shakeMe(this)">5. Политика и Конфликты</b><br>
+        Запрещено разжигание межнациональных розней, обсуждение политики, войн и действий властей.<br>
+        <span style="color:red;">— Наказание: Провокация — 220 мин. Политика — БАН навсегда.</span><br><br>
+
+        <b style="color:red;" onclick="shakeMe(this)">🚫 РАЗДЕЛ II: БАНЫ (PERMANENT)</b><br>
+        1. Обход наказаний (использование твинков).<br>
+        2. Контент 18+ (NSFW, порнография, расчлененка).<br>
+        3. Доксинг/Шантаж: Слив личных данных или угрозы.<br>
+        4. Фейк-админ: Выдача себя за представителя власти.<br><br>
+
+        <b style="color:#0cf;" onclick="shakeMe(this)">🛠 РАЗДЕЛ III: АДМИНИСТРАЦИЯ</b><br>
+        • Прогрессия при рецидиве: +15%, +25%, +30% к сроку наказания.<br>
+        • Запрещен пересыл сообщений забаненных пользователей.<br>
+        • Префиксы выдаются только доверенным лицам.<br>
+        • Администрация не имеет права выносить наказание, не описанное в правилах, если действия юзера напрямую не вредят чату.<br>
     </div>
+    <button class="menu-btn" onclick="triggerLoad('main-menu')">НАЗАД</button>
 </div>
 
-<div id="help-page" class="page">
-    <div class="hooligan-header">HELP</div>
-    <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
-    <div class="content-box" style="color: #fff; border-color: #0cf;">
-        • Нажми на фрика, чтобы изгнать его на 5 секунд.<br>
-        • VIP-пользователи неприкосновенны.<br>
-        • Код 6666 — системный сбой.
-    </div>
-    <div class="content-box" style="color: #ffb6c1; border-color: #ffb6c1; margin-top: 15px;">
-        <b style="color: #ff69b4;">[ ПИКМИ СТАТУС ]</b><br>
-        Система работает в штатном режиме. Защита активна.
-    </div>
-</div>
-    <div id="rules-page" class="page">
-    <div class="hooligan-header">AER RULES</div>
-    <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
-    <div class="content-box" style="color: #ffffff; border-color: #0f0; font-size: 0.85em; overflow-y: auto; max-height: 70vh;">
-        <b style="color: #0f0;">[ СИСТЕМА AER ]</b><br><br>
-        Данный AER является основном сводом правил чата. Незнание правил не освобождает от ответственности. Копирование структуры или содержания без разрешения автора запрещено.<br><br>
-        <b>1. Дискриминация и деструктив</b><br>
-        Запрещены любые формы ксенофобии, расизма, гомофобии, сексизма, травля. <br><span class="punishment">Наказание: Мут 20-45 мин.</span><br><br>
-        <b>3. Спам и рассылки</b><br>
-        Массовая отправка сообщений, стикеров, медиа. <br><span class="punishment">Наказание: Мут 120 мин. Рецидив — Бан.</span><br><br>
-        <b>4. Флуд и Лестница</b><br>
-        Флуд: 4+ сообщ. Лестница: 5+ сообщ. <br><span class="punishment">Наказание: Мут от 30 мин до 3 часов.</span><br><br>
-        <b>5. Политика и Конфликты</b><br>
-        Запрещено разжигание конфликтов, политика, войны. <br><span class="punishment">Наказание: Провокация — 220 мин. Политика — Бан навсегда.</span><br><br>
-        <b style="color: #f00;">🚫 Раздел II (баны)</b><br>
-        1. Твинки: <span class="punishment">Перманентный бан.</span><br>
-        2. NSFW 18+: <span class="punishment">Перманентный бан.</span><br>
-        3. Доксинг/Деанон: <span class="punishment">Перманентный бан + Глобал.</span><br>
-        4. Фейк-админ: <span class="punishment">Перманентный бан.</span><br><br>
-        <b style="color: #0cf;">🛠 Раздел III: Администрация</b><br>
-        Прогрессия: +15%, +25%, +30%. Пересыл забаненных запрещен. • Администрация не имеет право вынести наказание, не описанное в правилах, если действия юзера вредят атмосфере.
-    </div>
-</div>
-
-<div id="help-page" class="page">
-    <div class="hooligan-header">HELP</div>
-    <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
-    <div class="content-box" style="color: #fff; border-color: #0cf;">
-        • Нажми на фрика, чтобы изгнать его на 5 секунд.<br>
-        • VIP-пользователи неприкосновенны.<br>
-        • Код 6666 — системный сбой.
-    </div>
-    <div class="content-box" style="color: #ffb6c1; border-color: #ffb6c1; margin-top: 15px;">
-        <b style="color: #ff69b4;">[ ПИКМИ СТАТУС ]</b><br>
-        Система работает в штатном режиме. Защита активна.
-    </div>
-</div>
 <div id="forms-page" class="page">
-    <div class="hooligan-header">APPLICATIONS</div>
-    <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
-    <div class="content-box" style="color: #fff; border-color: #0cf;">
-        <b style="color: #0cf;">[ ADMIN ]</b><br>
-        1. Ник, @, ID, возраст, активность. 2. Пояс/Время. 3. Опыт (500+). 4. AER.<br><br>
-        <b style="color: #0cf;">[ ВИЦЕ ]</b><br>
-        1. 30к+ трофеев. 2. Скрин аккаунта.
+    <div class="hooligan-header">АНКЕТЫ / СТАТУСЫ</div>
+    <div class="content-box">
+        <b style="color:#0f0;">[ АНКЕТА В АДМИН-СОСТАВ ]</b><br>
+        1. Ник, @, ID.<br>
+        2. Возраст (14+), суточный актив.<br>
+        3. На каких проектах были админом?<br>
+        4. Опыт (500+ м в основной чат).<br>
+        5. Согласие с правилами AER.<br><br>
+        
+        <b style="color:#0cf;">[ СТАТУС ВИЦЕ ]</b><br>
+        1. 30к+ трофеев в основной игре.<br>
+        2. Скрин профиля и аккаунта.<br>
+        3. Активное участие в жизни сообщества.<br><br>
+        <i>Рассмотрением занимается: <span class="owner-nick">@satanaCIub</span></i>
     </div>
+    <button class="menu-btn" onclick="triggerLoad('main-menu')">НАЗАД</button>
 </div>
 
 <div id="shame-page" class="page">
-    <div class="hooligan-header" style="color:red;">SHAME LIST</div>
-    <button class="menu-btn" style="width:100px; padding:5px;" onclick="triggerLoad('main-menu')">BACK</button>
-    <div class="content-box" style="color: #fff; border-color: red; overflow-y: auto; max-height: 60vh;">
-        <b>1. Vinal</b> – Шантажист. Бан + снос клубов.<br>
-        <b>2. Григей</b> – Педофил/Русофоб. Удалил свой чат.<br>
-        <b>3. Релтин</b> – Худший админ. Нытик у оппов.<br>
-        <b>4. Дед</b> – Сливщик. Успокоился.<br>
-        <b>5. Психокид</b> – Агрессор. Забанен.
+    <div class="hooligan-header" style="color:red;">СТЕНА ПОЗОРА</div>
+    <div class="content-box" id="shame-container">
+        <p onclick="collapsePage(this)"><b>1. Vinal</b> — Шантажист. Бан + попытка сноса клубов. Позор проекта.</p>
+        <p onclick="collapsePage(this)"><b>2. Григей</b> — Педофил и русофоб. Удалил свой чат после слива.</p>
+        <p onclick="collapsePage(this)"><b>3. Релтин</b> — Худший админ в истории. Нытик, перебежал к оппам.</p>
+        <p onclick="collapsePage(this)"><b>4. Дед</b> — Сливщик конфиденциальной инфы. Временно успокоился.</p>
+        <p onclick="collapsePage(this)"><b>5. Психокид</b> — Неадекватный агрессор. Забанен во всех ветках.</p>
+        <p style="opacity:0.5; font-size:0.8em; margin-top:20px;">* Клик по нику активирует протокол удаления данных.</p>
     </div>
+    <button class="menu-btn" onclick="triggerLoad('main-menu')">НАЗАД</button>
 </div>
+
+<div id="help-page" class="page">
+    <div class="hooligan-header">ПОМОЩЬ</div>
+    <div class="content-box">
+        <b>[ ГАЙД ПО ИНТЕРФЕЙСУ ]</b><br><br>
+        • <b>Удаление фриков:</b> Нажми на падающий ник, чтобы разбить его на части. Он вернется через 5 секунд.<br>
+        • <b>VIP-защита:</b> Ники <span class="owner-nick">@satanaCIub</span> и @hooligan_hooligan нельзя трогать. Попытка нажатия приведет к вылету.<br>
+        • <b>Код 6666:</b> Ввод этого кода в терминале уничтожает сессию.<br><br>
+        <div style="border: 1px solid #ff69b4; padding: 10px; color: #ffb6c1;">
+            <b>СТАТУС: ПИКМИ</b><br>
+            Защита активна. Все системы функционируют в штатном режиме.
+        </div>
+    </div>
+    <button class="menu-btn" onclick="triggerLoad('main-menu')">НАЗАД</button>
+</div>
+
 <script>
-    // Твои списки пользователей
-    const vipUsers = ['@satanacIub', '@hooligan_hooligan'];
-    const commonUsers = ['@Blood_Househ', '@Aaaaaaaaaafkrjfjfjso', '@VetalGeor', '@geniusmozer', '@aungakw'];
+let elements = [];
+let headerStage = 0;
+const vipUsers = ['@satanacIub', '@hooligan_hooligan'];
+const commonUsers = ['@Blood_Househ', '@Aaaaaaaaaafkrjfjfjso', '@VetalGeor', '@geniusmozer', '@aungakw', '@shame_user', '@traitor_1'];
 
-    function spawnFloatingUsers() {
-        const layer = document.getElementById('user-layer');
-        if (!layer) return; 
-        layer.innerHTML = ''; // Очистка слоя перед спавном
-        
-        vipUsers.forEach(name => createUser(name, true));
-        commonUsers.forEach(name => createUser(name, false));
-    }
-
-    function createUser(name, isVip) {
-        const span = document.createElement('span');
-        span.className = 'floating-user' + (isVip ? ' vip-user' : '');
-        span.innerText = name;
-        
-        // Рандомная позиция
-        span.style.left = Math.random() * 80 + 5 + '%';
-        span.style.top = Math.random() * 80 + 10 + '%';
-        document.getElementById('user-layer').appendChild(span);
-
-        // Постоянное хаотичное движение
-        setInterval(() => {
-            if (!span.classList.contains('user-fade')) {
-                const x = (Math.random() - 0.5) * 120;
-                const y = (Math.random() - 0.5) * 120;
-                span.style.transform = `translate(${x}px, ${y}px)`;
+// ЭФФЕКТ КИРИЕШКИ
+function checkInfected(input) {
+    if (input.value.toLowerCase() === 'кириешка лох') {
+        let chars = "#$##&$&%@*!/\\";
+        let hint = document.getElementById('login-hint');
+        input.disabled = true;
+        let i = 0;
+        const interval = setInterval(() => {
+            hint.innerText = hint.innerText.split('').map(c => Math.random() > 0.3 ? chars[Math.floor(Math.random()*chars.length)] : c).join('');
+            if(i++ > 40) { 
+                clearInterval(interval); 
+                hint.innerText = "CRITICAL_ERROR: SYSTEM_INFECTED_BY_KIRIESHKA"; 
+                hint.style.color = "red"; 
+                document.body.style.background = "#200";
             }
-        }, 3000);
+        }, 80);
+    }
+}
 
-        // Логика клика
-        span.onclick = (e) => {
-            e.stopPropagation();
-            if (isVip) {
-                // Клик по VIP — мгновенный вылет (защита)
-                triggerSecurityProtocol();
-            } else {
-                // Клик по обычному — изгнание на 5 сек
-                span.classList.add('user-fade');
-                setTimeout(() => {
-                    span.classList.remove('user-fade');
-                    span.style.left = Math.random() * 80 + 5 + '%';
-                    span.style.top = Math.random() * 80 + 10 + '%';
-                    span.style.opacity = "0"; 
-                    setTimeout(() => span.style.opacity = "0.25", 100);
-                }, 5000);
+// ВОДОПАД ЮЗЕРОВ
+function spawnFloatingUsers() {
+    const layer = document.getElementById('user-layer');
+    layer.innerHTML = ''; elements = [];
+    layer.style.pointerEvents = 'auto';
+    vipUsers.forEach(n => createPhysicUser(n, true));
+    commonUsers.forEach(n => createPhysicUser(n, false));
+    requestAnimationFrame(updatePhysics);
+}
+
+function createPhysicUser(name, isVip) {
+    const el = document.createElement('div');
+    const isOwner = name.includes('satanacIub');
+    el.className = 'floating-user' + (isVip ? ' vip-user' : '') + (isOwner ? ' owner-nick' : '');
+    el.innerText = name;
+    el.style.position = 'absolute';
+    el.style.color = isVip ? '#f00' : '#fff';
+    el.style.cursor = 'pointer';
+    el.style.zIndex = "2";
+    el.style.whiteSpace = "nowrap";
+    document.getElementById('user-layer').appendChild(el);
+    
+    let data = { el, isVip, isOwner, x: Math.random()*window.innerWidth, y: -100 - (Math.random()*1000), vy: 1.5+Math.random()*2.5, vx: Math.random()-0.5, angle: 0, va: (Math.random()-0.5)*4 };
+    
+    el.onclick = (e) => {
+        e.stopPropagation();
+        if(!isVip) {
+            const rect = el.getBoundingClientRect();
+            for(let i=0; i<el.innerText.length; i++) {
+                const f = document.createElement('span'); f.className='fragment'; f.innerText=el.innerText[i];
+                f.style.left = rect.left + (i*10) + 'px'; f.style.top = rect.top + 'px';
+                f.style.setProperty('--dx', (Math.random()*300-150)+'px'); f.style.setProperty('--dy', (Math.random()*300-150)+'px');
+                document.body.appendChild(f); setTimeout(()=>f.remove(), 800);
             }
-        };
-    }
+            el.style.display = 'none'; setTimeout(()=>el.style.display='block', 5000);
+        } else if(!isOwner) { window.location.href="about:blank"; }
+    };
+    elements.push(data);
+}
 
-    // Подготовка заголовков к "взрыву" (разбивка на буквы)
-    function prepareHeaders(el) {
-        const h = el || document.querySelector('.active .hooligan-header');
-        if (!h || h.querySelector('.letter')) return;
-        const txt = h.innerText; 
-        h.innerHTML = '';
-        [...txt].forEach(c => {
-            const s = document.createElement('span'); 
-            s.innerText = c === ' ' ? '\u00A0' : c; 
-            s.className = 'letter'; 
-            h.appendChild(s);
-        });
-    }
-
-    // Эффект разлета букв
-    function breakEffect(el) {
-        const letters = el.querySelectorAll('.letter');
-        letters.forEach((l, i) => {
-            setTimeout(() => {
-                const f = l.cloneNode(true); 
-                f.classList.add('flying');
-                f.style.setProperty('--x', (Math.random() * 400 - 200) + 'px');
-                f.style.setProperty('--y', (Math.random() * 400 - 200) + 'px');
-                f.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg');
-                f.style.color = '#00f'; // Синий след разлета
-                l.parentElement.appendChild(f);
-                l.classList.add('broken-red'); // Сама буква краснеет
-                if (Math.random() > 0.8) startInfection(l);
-            }, i * 60);
-        });
-    }
-
-    // "Заражение" соседних букв
-    function startInfection(l) {
-        if (!l || l.classList.contains('infected')) return;
-        l.classList.add('infected');
-        setTimeout(() => {
-            l.style.opacity = '0';
-            const n = l.nextElementSibling;
-            const p = l.previousElementSibling;
-            if (n && Math.random() > 0.4) startInfection(n);
-            if (p && Math.random() > 0.4) startInfection(p);
-        }, 2700);
-    }
-</script>
-
-  <script>
-    function triggerLoad(pageId) {
-        const overlay = document.getElementById('loading-overlay');
-        const fill = document.getElementById('loader-fill');
-        overlay.style.display = 'flex'; overlay.className = '';
-        
-        if(pageId === 'shame-page') overlay.classList.add('load-red');
-        else if(pageId === 'forms-page') overlay.classList.add('load-blue');
-        else overlay.classList.add('load-green');
-
-        if(Math.random() < 0.05 && pageId === 'main-menu') {
-            document.getElementById('loader-msg').innerText = "C:User/display: Err: NoneType";
-            setTimeout(() => { finishLoad(pageId); }, 2000);
-        } else {
-            document.getElementById('loader-msg').innerText = "LOADING...";
-            let p = 0;
-            const int = setInterval(() => {
-                p += 25; fill.style.width = p + '%';
-                if(p >= 100) { clearInterval(int); finishLoad(pageId); }
-            }, 150);
+function updatePhysics() {
+    elements.forEach(d => {
+        d.y += d.vy; d.x += d.vx; d.angle += d.va;
+        if(d.y > window.innerHeight) { d.y = -100; d.x = Math.random()*window.innerWidth; }
+        d.el.style.transform = `translate(${d.x}px, ${d.y}px) rotate(${d.angle}deg)`;
+        if(!d.isVip) {
+            elements.forEach(other => {
+                if(other.isVip && Math.hypot(d.x - other.x, d.y - other.y) < 60) d.y = -300;
+            });
         }
-    }
+    });
+    requestAnimationFrame(updatePhysics);
+}
 
-    function finishLoad(pageId) {
-        document.getElementById('loading-overlay').style.display = 'none';
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        if(pageId === 'main-menu') spawnFloatingUsers();
-        prepareHeaders();
-    }
+// СИСТЕМНАЯ ЛОГИКА
+function validatePass() {
+    const val = document.getElementById('pass-input').value;
+    if(val === '2727') triggerLoad('main-menu');
+    else if(val === '6666') { document.body.classList.add('screen-shake'); setTimeout(()=>window.location.href="about:blank", 1500); }
+}
 
-    function checkPass() {
-        const v = document.getElementById('pass').value;
-        if(v === '2727') triggerLoad('main-menu');
-        else if(v === '6666') triggerCrash();
-        else breakEffect(document.querySelector('.active .hooligan-header'));
-    }
+function triggerLoad(pageId) {
+    const overlay = document.getElementById('loading-overlay');
+    const fill = document.getElementById('loader-fill');
+    overlay.style.display = 'flex'; fill.style.width = '0%';
+    let p = 0;
+    const int = setInterval(() => {
+        p += 20; fill.style.width = p + '%';
+        if(p >= 100) { clearInterval(int); overlay.style.display='none'; showPage(pageId); }
+    }, 120);
+}
 
-    function triggerCrash() {
-        document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20%'>CRITICAL ERROR: SYSTEM TERMINATED</h1>";
-        setTimeout(() => { window.location.href = "about:blank"; }, 2000);
-    }
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(id === 'main-menu') spawnFloatingUsers();
+}
 
-    window.onload = () => { prepareHeaders(); };
+function evolveHeader(el) {
+    headerStage++;
+    if(headerStage === 1) { document.body.classList.add('screen-shake'); setTimeout(()=>document.body.classList.remove('screen-shake'), 300); }
+    if(headerStage === 2) { el.innerText = "Hoolig n AER"; el.style.color = "#f55"; }
+    if(headerStage === 3) {
+        el.innerHTML = "SATANACLUB AER"; el.classList.add('ultimate-header');
+        el.onclick = () => { document.body.classList.add('screen-shake'); setTimeout(()=>document.body.classList.remove('screen-shake'), 100); };
+    }
+}
+
+function collapsePage(clicked) {
+    document.body.classList.add('screen-shake');
+    document.body.style.background = "#400";
+    setTimeout(()=>document.body.style.background="#000", 250);
+    const box = clicked.closest('.content-box');
+    box.querySelectorAll('p, b, span, div').forEach((el, i) => {
+        setTimeout(() => {
+            el.style.setProperty('--fall-angle', (Math.random()*50-25)+'deg');
+            el.classList.add('fallen-text');
+        }, i * 40);
+    });
+}
+
+function shakeMe(el) { el.classList.add('screen-shake'); setTimeout(()=>el.classList.remove('screen-shake'), 200); }
 </script>
 </body>
 </html>
