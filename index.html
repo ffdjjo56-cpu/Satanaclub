@@ -1,533 +1,219 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SatanaCIub Project | CT1C2 SUPREME CORE</title>
-    
+    <title>SatanaCIub Project | CT1C2 FULL SYSTEM</title>
     <style>
-        /* --- CSS MODULE 1: CORE VARIABLES --- */
-        :root {
-            --main-cyan: #00f2ff;
-            --main-red: #ff0000;
-            --main-pink: #ff00ff;
-            --main-green: #00ff00;
-            --pure-white: #ffffff;
-            --pure-black: #000000;
-            
-            --current-color: var(--main-cyan);
-            --bg-layer: var(--pure-black);
-            --font-prime: 'Courier New', Courier, monospace;
-            --fx-speed: 0.1s;
+        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=JetBrains+Mono:wght@800&family=Rubik+Mono+One&display=swap');
+
+        :root { --m: #00f2ff; --bg: #000; --t: #fff; --rd: 0px; }
+
+        /* ТЕМЫ */
+        body.p-mode { --m: #ffb7d5; --bg: #ffffff; --t: #ff69b4; --rd: 45px; font-family: 'Comfortaa', cursive; }
+        body.n-mode { --m: #0080ff; --bg: #f5faff; --t: #004080; --rd: 15px; font-family: 'Segoe UI', sans-serif; }
+        body.r-mode { --m: #ff0000; --bg: #000000; --t: #ffffff; --rd: 0px; font-family: 'Georgia', serif; }
+        body.g-mode { --m: #00ff00; --bg: #000000; --t: #00ff00; --rd: 0px; font-family: 'JetBrains Mono', monospace; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--t); height: 100vh; width: 100vw; overflow: hidden; user-select: none; }
+
+        /* ФОНОВАЯ НАДПИСЬ */
+        #big-bg-text {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-family: 'Rubik Mono One', sans-serif; font-size: 13vw;
+            color: var(--m); opacity: 0.1; z-index: 0; pointer-events: none;
+            text-align: center; line-height: 0.8;
         }
 
-        /* --- CSS MODULE 2: RESET & BASE --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            outline: none;
-            font-family: var(--font-prime);
+        /* ЭФФЕКТЫ */
+        @keyframes struggle {
+            0%, 100% { transform: translate(0,0); }
+            10% { transform: translate(-10px, 5px) rotate(-1deg); }
+            20% { transform: translate(15px, -10px) rotate(2deg); opacity: 0.6; }
         }
+        .btn-lag { animation: struggle 1.5s infinite linear; }
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: var(--bg-layer);
-            color: var(--pure-white);
-            user-select: none;
-        }
+        /* ЛОАДЕРЫ */
+        #loader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .star-box span { font-size: 50px; color: #222; margin: 5px; }
+        .star-active { color: red !important; text-shadow: 0 0 20px red; }
 
-        /* --- CSS MODULE 3: THEME ANIMATIONS (VIPS) --- */
-        /* Красно-Белый */
-        @keyframes flash-red-white {
-            0%, 100% { color: var(--main-red); text-shadow: 0 0 5px var(--main-red); }
-            50% { color: var(--pure-white); text-shadow: 0 0 10px var(--pure-white); }
-        }
-        /* Розовый-Голубой */
-        @keyframes flash-pink-blue {
-            0%, 100% { color: var(--main-pink); text-shadow: 0 0 5px var(--main-pink); }
-            50% { color: var(--main-cyan); text-shadow: 0 0 10px var(--main-cyan); }
-        }
-        /* Голубой-Розовый */
-        @keyframes flash-blue-pink {
-            0%, 100% { color: var(--main-cyan); text-shadow: 0 0 5px var(--main-cyan); }
-            50% { color: var(--main-pink); text-shadow: 0 0 10px var(--main-pink); }
-        }
-
-        /* Эффекты системы */
-        @keyframes purge-blast {
-            0% { transform: scale(1); opacity: 1; filter: brightness(1); }
-            100% { transform: scale(15); opacity: 0; filter: blur(40px) invert(1); }
-        }
+        /* ИНТЕРФЕЙС */
+        .screen { display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
+        .screen-active { display: flex; }
+        .panel { width: 90%; max-width: 1100px; background: rgba(0,0,0,0.04); border: 5px solid var(--m); border-radius: var(--rd); padding: 40px; backdrop-filter: blur(15px); max-height: 80vh; overflow-y: auto; z-index: 10; }
         
-        @keyframes system-shake {
-            0% { transform: translate(4px, 4px); }
-            20% { transform: translate(-4px, -2px); }
-            40% { transform: translate(-1px, 3px); }
-            60% { transform: translate(3px, -4px); }
-            80% { transform: translate(-2px, 1px); }
-            100% { transform: translate(2px, 2px); }
+        .main-btn { 
+            width: 500px; padding: 22px; background: transparent; color: var(--t); 
+            border: 3px solid var(--m); border-radius: var(--rd); font-size: 1.2rem; font-weight: 900; 
+            cursor: pointer; margin: 10px; position: relative; z-index: 100; text-transform: uppercase;
         }
+        .main-btn:hover { background: var(--m); color: var(--bg); box-shadow: 0 0 30px var(--m); }
 
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
+        .vip { position: absolute; font-weight: 900; pointer-events: none; z-index: 200; white-space: nowrap; }
+        @keyframes fl-rw { 0%, 100% { color: red; } 50% { color: #fff; } }
+        @keyframes fl-pb { 0%, 100% { color: #ff69b4; } 50% { color: #00f2ff; } }
+        .vip-r { animation: fl-rw 0.4s infinite; }
+        .vip-p { animation: fl-pb 0.4s infinite; }
 
-        /* --- CSS MODULE 4: UI COMPONENTS --- */
-        #fx-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 9999; pointer-events: none; opacity: 0;
-        }
-        .fx-on { background: #fff; opacity: 1 !important; transition: opacity 0.4s ease-out; }
-        .shake-on { animation: system-shake 0.1s infinite; }
-
-        #dvd-container {
-            position: fixed; white-space: pre; font-size: 9px; line-height: 1;
-            color: var(--current-color); z-index: 50; pointer-events: none;
-            filter: drop-shadow(0 0 8px var(--current-color));
-            font-weight: 900;
-        }
-
-        .casino-glitch-header {
-            font-size: 4.5rem; height: 10rem; display: flex; align-items: center;
-            justify-content: center; font-weight: 900; letter-spacing: 20px;
-            width: 100%; text-transform: uppercase;
-        }
-
-        /* Screens Layout */
-        .ui-screen {
-            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            flex-direction: column; align-items: center; justify-content: center;
-            z-index: 100; background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
-        }
-        .ui-screen-active { display: flex; }
-
-        .main-panel {
-            width: 85%; max-width: 1000px; background: rgba(0,0,0,0.95);
-            border: 5px double var(--current-color); padding: 50px;
-            max-height: 75vh; overflow-y: auto; scrollbar-width: thin;
-        }
-        .main-panel::-webkit-scrollbar { width: 4px; }
-        .main-panel::-webkit-scrollbar-thumb { background: var(--current-color); }
-
-        .btn-orbit-zone {
-            position: relative; margin: 25px; width: 500px; height: 80px;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .action-button {
-            width: 100%; height: 100%; background: transparent; color: #fff;
-            border: 2px solid var(--current-color); font-size: 1.3rem; font-weight: bold;
-            text-transform: uppercase; cursor: pointer; letter-spacing: 5px;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 20; position: relative;
-        }
-        .action-button:hover {
-            background: var(--current-color); color: #000;
-            box-shadow: 0 0 50px var(--current-color); transform: scale(1.05);
-        }
-
-        /* VIP Tags */
-        .vip-orbital-node {
-            position: absolute; white-space: nowrap; font-size: 1.1rem;
-            font-weight: 900; pointer-events: none; z-index: 50;
-            text-shadow: 0 0 10px #000;
-        }
-        
-        .class-red-white { animation: flash-red-white 0.4s infinite; }
-        .class-pink-blue { animation: flash-pink-blue 0.4s infinite; }
-        .class-blue-pink { animation: flash-blue-pink 0.4s infinite; }
-
-        /* Rain System */
-        #rain-viewport { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
-        .entity-unit { position: absolute; cursor: crosshair; font-size: 1.3rem; z-index: 15; }
-        .is-dead { animation: purge-blast 0.6s forwards; pointer-events: none; }
-
-        /* Rules Cards */
-        .rule-box {
-            border-left: 8px solid var(--current-color); padding: 20px 30px;
-            margin-bottom: 35px; background: rgba(255,255,255,0.02);
-            transition: 0.3s;
-        }
-        .rule-box:hover { background: rgba(255,255,255,0.05); }
-        .rule-box h3 { color: var(--current-color); margin-bottom: 12px; font-size: 1.6rem; }
-        .rule-box p { line-height: 1.7; font-size: 1.1rem; color: #ddd; }
-        .rule-ban { color: #ff0000; font-weight: 900; text-transform: uppercase; margin-top: 10px; display: block; }
-
+        .rain { position: absolute; font-size: 2rem; pointer-events: none; z-index: 1; }
+        h2 { border-bottom: 3px solid var(--m); margin-bottom: 20px; padding-bottom: 10px; text-transform: uppercase; }
+        .rank-item { margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.05); }
     </style>
 </head>
-<body id="main-body">
+<body class="n-mode">
 
-<div id="fx-canvas"></div>
+<div id="loader"></div>
+<div id="big-bg-text">SATANA<br>CIUB</div>
+<div id="rain-layer"></div>
 
-<div id="dvd-container">
- ██████  █████  ████████  █████  ███    ██  █████  
-██      ██   ██    ██    ██   ██ ████   ██ ██   ██ 
-███████ ███████    ██    ███████ ██ ██  ██ ███████ 
-     ██ ██   ██    ██    ██   ██ ██  ██ ██ ██   ██ 
-███████ ██   ██    ██    ██   ██ ██   ████ ██   ██
+<div id="scr-auth" class="screen screen-active">
+    <h1 style="font-size: 5rem; margin-bottom: 30px; text-shadow: 0 0 20px var(--m);">HOOLIGAN AER</h1>
+    <input type="password" id="pass" placeholder="ПАРОЛЬ" style="background:none; border:3px solid var(--m); color:var(--t); padding:20px; width:400px; text-align:center; border-radius:var(--rd); font-size: 2rem;">
+    <button class="main-btn" onclick="Core.auth()" style="margin-top:20px;">ВОЙТИ</button>
 </div>
 
-<div id="rain-viewport"></div>
-
-<div id="scr-auth" class="ui-screen ui-screen-active">
-    <div class="casino-glitch-header glitch-trigger">HOOLIGAN AER</div>
-    <div style="display: flex; flex-direction: column; gap: 20px;">
-        <input type="password" id="auth-input" placeholder="ACCESS CODE" 
-               style="background:none; border:4px solid var(--current-color); color:var(--current-color); 
-               padding:25px; font-size:2.5rem; width:400px; text-align:center;">
-        <button class="action-button" onclick="Security.check()">INITIALIZE CORE</button>
-    </div>
-</div>
-
-<div id="scr-main" class="ui-screen">
-    <div class="casino-glitch-header glitch-trigger">HOOLIGAN AER</div>
+<div id="scr-menu" class="screen">
+    <button class="main-btn btn-lag" onclick="Nav.to('scr-ranks')">ОБЯЗАННОСТИ</button>
+    <button class="main-btn" onclick="Nav.to('scr-rules')">ПРАВИЛА AER</button>
+    <button class="main-btn" onclick="Nav.to('scr-anketa')">АНКЕТИРОВАНИЕ</button>
+    <button class="main-btn" onclick="alert('ДОСКА ПОЗОРА: СКОРО...')">ДОСКА ПОЗОРА</button>
     
-    <div class="btn-orbit-zone" id="zone-1">
-        <button class="action-button" onclick="View.switch('scr-rules')">ПРАВИЛА AER</button>
-    </div>
-    
-    <div class="btn-orbit-zone" id="zone-2">
-        <button class="action-button" onclick="View.switch('scr-anketa')">АНКЕТИРОВАНИЕ</button>
-    </div>
-
-    <div class="btn-orbit-zone" id="zone-3">
-        <button class="action-button" onclick="View.switch('scr-info')">INFO / DATABASE</button>
-    </div>
-
-    <div style="margin-top:60px; display:flex; gap:20px;">
-        <button onclick="System.setMode('blue')" style="color:var(--main-cyan); border:2px solid var(--main-cyan); background:none; padding:15px 30px; cursor:pointer; font-weight:bold;">BLUE-PINK</button>
-        <button onclick="System.setMode('red')" style="color:var(--main-red); border:2px solid var(--main-red); background:none; padding:15px 30px; cursor:pointer; font-weight:bold;">RED-WHITE</button>
-        <button onclick="System.setMode('pink')" style="color:var(--main-pink); border:2px solid var(--main-pink); background:none; padding:15px 30px; cursor:pointer; font-weight:bold;">PICKME</button>
-        <button onclick="System.setMode('green')" style="color:var(--main-green); border:2px solid var(--main-green); background:none; padding:15px 30px; cursor:pointer; font-weight:bold;">CONSOLE</button>
+    <div style="margin-top:40px; display:flex; gap:10px;">
+        <button onclick="Core.setTheme('p')" style="background:#ffb7d5; padding:15px; border:none; cursor:pointer; font-weight:bold;">PICKME</button>
+        <button onclick="Core.setTheme('n')" style="background:#0080ff; padding:15px; border:none; cursor:pointer; font-weight:bold; color:#fff;">ОБЫЧНАЯ</button>
+        <button onclick="Core.setTheme('r')" style="background:#f00; padding:15px; border:none; cursor:pointer; font-weight:bold; color:#fff;">КРАСНАЯ</button>
+        <button onclick="Core.setTheme('g')" style="background:#0f0; padding:15px; border:none; cursor:pointer; font-weight:bold;">ЗЕЛЕНАЯ (1s)</button>
     </div>
 </div>
 
-<div id="scr-rules" class="ui-screen">
-    <div class="casino-glitch-header">RULES AER</div>
-    <div class="main-panel">
-        <div class="rule-box">
-            <h3>1. Дискриминация</h3>
-            <p>Запрещены любые формы ксенофобии, расизма, гомофобии, сексизма, а также травля (буллинг) участников. Мы поддерживаем здоровую атмосферу.</p>
-            <span class="rule-ban">Наказание: Мут от 20 до 45 минут.</span>
-        </div>
-        <div class="rule-box">
-            <h3>2. Деструктив</h3>
-            <p>Попытки дестабилизации работы чата, обход фильтров, вредоносные ссылки или провокации администрации.</p>
-            <span class="rule-ban">Наказание: Бан / Перманентный бан.</span>
-        </div>
-        <div class="rule-box">
-            <h3>3. Спам и рассылки</h3>
-            <p>Массовая отправка одинаковых сообщений (3+), стикеров, медиафайлов или команд ботов. Реклама сторонних ресурсов без согласования.</p>
-            <span class="rule-ban">Наказание: Мут 120 минут.</span>
-        </div>
-        <div class="rule-box">
-            <h3>4. Флуд и Лестница</h3>
-            <p>Флуд: более 4 сообщений подряд. Лестница: разделение одной короткой мысли на 5 и более сообщений.</p>
-            <span class="rule-ban">Наказание: Мут от 30 минут до 3 часов.</span>
-        </div>
-        <div class="rule-box">
-            <h3>5. Политика</h3>
-            <p>Запрещено разжигание межнациональных конфликтов, обсуждение политических новостей, деятелей и войн в любой форме.</p>
-            <span class="rule-ban">Провокация: 220 мин. Политика: БАН НАВСЕГДА.</span>
-        </div>
+<div id="scr-ranks" class="screen">
+    <div class="panel">
+        <h2>ОБЯЗАННОСТИ И ПРАВА РАНГОВ</h2>
+        <div class="rank-item"><b>1 Ранг – Префикс:</b> Банлист ; Причина бана [ Причина @ ] ; Кто назначил ; Удаление сообщений [ -смс (ответом на сообщение) ] ; Списки пользователей ; Привязать к лс [ .Привязать] (Доступно с 0 ранга) ; Каталог</div>
+        <div class="rank-item"><b>2 Ранг:</b> Банлист ; Причина бана [ Причина @ ] ; Кто назначил ; Удаление сообщений [ -смс (ответом на сообщение) ] ; Списки пользователей ; Привязать к лс [ .Привязать] ; Кик [ Кик (ответом на сообщение / Кик @) ]</div>
+        <div class="rank-item"><b>3 ранг – Доступ к закрытым темам:</b> Банлист ; Причина бана [ Причина @ ] ; Кто назначил ; Удаление сообщений [ -смс (ответом на сообщение) ] ; Списки пользователей ; Привязать к лс [ .Привязать] ; Кик [ Кик (ответом на сообщение / Кик @) ] ; Бан ; Закреп сообщений ; Созвать всех молчунов ; Разбан ;</div>
+        <div class="rank-item"><b>4 ранг:</b> Банлист ; Причина бана [ Причина @ ] ; Кто назначил ; Удаление сообщений [ -смс (ответом на сообщение) ] ; Списки пользователей ; Привязать к лс [ .Привязать] ; Кик [ Кик (ответом на сообщение / Кик @) ] ; Бан ; Закреп сообщений ; Созвать всех молчунов ; Разбан ; Вызов ДК ; Массовое удаление сообщений ; Лог назначий админов ; Темы модераторов ; Назначение админов ; Настройки модерации</div>
     </div>
-    <button class="action-button" onclick="View.switch('scr-main')" style="margin-top:40px; width:400px;">BACK TO CORE</button>
+    <button class="main-btn" onclick="Nav.to('scr-menu')">НАЗАД</button>
 </div>
 
-<div id="scr-anketa" class="ui-screen">
-    <div class="casino-glitch-header">ANKETA</div>
-    <div class="main-panel">
-        <h2 style="color:var(--current-color); margin-bottom:20px;">ФОРМА ПОДАЧИ ЗАЯВКИ:</h2>
-        <p style="font-size:1.3rem; line-height:2;">
-            1. Ваш основной никнейм (Telegram ID).<br>
-            2. Реальный возраст (Строго от 14 лет).<br>
-            3. Согласны ли вы с правилами AER?<br>
-            4. Ваша цель в SatanaCIub Project?<br>
-            5. Наличие опыта в подобных проектах.
-        </p>
+<div id="scr-rules" class="screen">
+    <div class="panel">
+        <h2>ПОЛНЫЕ ПРАВИЛА AER</h2>
+        <p><b>1 ЧАСТЬ: ОСНОВЫ</b><br>Запрещена дискриминация, ксенофобия и оскорбление участников. Наказание: Мут от 45 до 120 минут.</p><br>
+        <p><b>2 ЧАСТЬ: ПОРЯДОК</b><br>Запрещен спам (3+ сообщения), флуд и злоупотребление командами бота. Наказание: Мут 120 минут / Ограничение команд.</p><br>
+        <p><b>3 ЧАСТЬ: ТАБУ</b><br>Обсуждение политики, войн и любой деструктив проекта — <b>БАН НАВСЕГДА</b>. Реклама сторонних ресурсов без одобрения — БАН.</p>
     </div>
-    <button class="action-button" onclick="View.switch('scr-main')" style="margin-top:40px; width:400px;">BACK TO CORE</button>
+    <button class="main-btn" onclick="Nav.to('scr-menu')">НАЗАД</button>
 </div>
 
-<div id="scr-info" class="ui-screen">
-    <div class="casino-glitch-header">DATABASE</div>
-    <div class="main-panel" style="text-align:center;">
-        <h1 style="color:var(--current-color); font-size:3rem;">CT1C2 SUPREME</h1>
-        <p style="margin: 30px 0; font-size:1.4rem;">Legacy Module: R2D2 REBORN</p>
-        <p style="color:#777;">Developed for SatanaCIub Project Community</p>
-        <div style="border: 2px dashed var(--current-color); padding:30px; margin-top:40px;">
-            <p>АВТОМАТИЧЕСКАЯ ОЧИСТКА: Включена</p>
-            <p>ОХОТНИК: @ebu_Dokki (Активен)</p>
-            <p>ПРИОРИТЕТ: Стабильность и Безопасность</p>
-        </div>
+<div id="scr-anketa" class="screen">
+    <div class="panel">
+        <h2>АНКЕТИРОВАНИЕ НА ДОЛЖНОСТИ</h2>
+        <p><b>АНКЕТА НА АДМИНКУ:</b><br>1. Ник/ID. 2. Возраст. 3. Сколько времени готовы уделять проекту? 4. Был ли опыт ранее? 5. Почему именно вы?</p><br>
+        <p><b>АНКЕТА НА ВИЦЕ:</b><br>1. Текущий ранг. 2. Рекомендации от действующей администрации. 3. Ваши предложения по улучшению AER.</p><br>
+        <p><b>АНКЕТА НА ВЕТЕРАНА:</b><br>1. Дата вступления в SatanaCIub. 2. Ваши основные достижения в сообществе.</p>
     </div>
-    <button class="action-button" onclick="View.switch('scr-main')" style="margin-top:40px; width:400px;">BACK TO CORE</button>
+    <button class="main-btn" onclick="Nav.to('scr-menu')">НАЗАД</button>
 </div>
 
 <script>
-    /* --- JS MODULE 1: CONSTANTS & CONFIG ---
-    */
-    const Config = {
+    const Data = {
         VIPS: ['@satanacIub', '@hooligan_hooligan'],
-        ENEMIES: ['@Blood_Househ', '@Aaaaaaaaaafkrjfjfjso', '@VetalGeor', '@geniusmozer', '@aungakw', '@hater_01', '@dummy_unit'],
-        GLITCH_CHARS: ["#","₽","&","!","♠","♥","♦","♣","🎲","🎰","🃏","➔","➲","➹","▼","☢","☣","⚛","⚇","⚡","🔥"],
-        TITLES: ["HOOLIGAN AER", "SATANACIUB WWW", "SYSTEM OVERRIDE", "ACCESS GRANTED"],
-        MODES: {
-            blue: { color: '#00f2ff', vipClass: 'class-blue-pink' },
-            red: { color: '#ff0000', vipClass: 'class-red-white' },
-            pink: { color: '#ff00ff', vipClass: 'class-pink-blue' },
-            green: { color: '#00ff00', vipClass: '' } // Green is JS Glitched
+        RAIN: {
+            r: ['†', '🃜', '🃚', '🃖', '🃁', '⛥', '⭑', '⛤'],
+            p: ['‹𝟹', '༝', 'ꨄ︎', '୨ৎ', '𐚁', '>⩊<', '♪', '𐙚'],
+            n: ['➢', '❯❯❯', '↓', '➤', '⟢', '»', '➜'],
+            g: ['▓▓', '██', '⬚', '❖', '𖣯', '⮞', '░', '⛶']
         }
     };
 
-    const Global = {
-        currentMode: 'blue',
-        units: [],
-        vips: [],
-        dvd: { x: 50, y: 50, dx: 4, dy: 4, w: 340, h: 70 },
-        hunter: { x: window.innerWidth/2, y: window.innerHeight/2, target: null, el: null, lastPulse: 0 }
-    };
+    let State = { theme: 'n', angle: 0, lastTick: 0 };
 
-    /* --- JS MODULE 2: SECURITY & NAVIGATION ---
-    */
-    const Security = {
-        check() {
-            const val = document.getElementById('auth-input').value;
-            if(val === '2727') {
-                View.switch('scr-main');
-            } else {
-                System.triggerFX();
-                document.getElementById('auth-input').value = '';
-            }
-        }
-    };
-
-    const View = {
-        switch(id) {
-            document.querySelectorAll('.ui-screen').forEach(s => s.classList.remove('ui-screen-active'));
-            document.getElementById(id).classList.add('ui-screen-active');
-            System.triggerFX();
-        }
-    };
-
-    /* --- JS MODULE 3: SYSTEM CORE ---
-    */
-    const System = {
-        init() {
-            this.setMode('blue');
-            this.startCasinoGlitch();
-            this.physicsLoop();
-            window.addEventListener('resize', () => this.rebuildUnits());
-        },
-
-        setMode(m) {
-            Global.currentMode = m;
-            document.documentElement.style.setProperty('--current-color', Config.MODES[m].color);
-            this.rebuildUnits();
-        },
-
-        triggerFX() {
-            const canvas = document.getElementById('fx-canvas');
-            canvas.classList.add('fx-on');
-            document.body.classList.add('shake-on');
+    const Core = {
+        init() { this.setTheme('n'); this.loop(); },
+        auth() { if(document.getElementById('pass').value === '2727') Nav.to('scr-menu'); },
+        setTheme(t) {
+            State.theme = t;
+            document.body.className = t + '-mode';
+            this.loader(t);
             setTimeout(() => {
-                canvas.classList.remove('fx-on');
-                document.body.classList.remove('shake-on');
-            }, 300);
+                document.getElementById('loader').style.display = 'none';
+                this.rebuildRain();
+                this.rebuildVips();
+            }, 2500);
         },
-
-        rebuildUnits() {
-            // Clear Rain
-            document.getElementById('rain-viewport').innerHTML = '';
-            Global.units = [];
-            for(let i=0; i<20; i++) this.spawnEnemy();
-
-            // Setup Hunter
-            if(Global.currentMode !== 'pink') {
-                const h = document.createElement('div');
-                h.className = 'entity-unit';
-                h.innerText = '@ebu_Dokki';
-                h.style.color = '#ffff00';
-                h.style.fontWeight = 'bold';
-                h.style.zIndex = '1000';
-                document.getElementById('rain-viewport').appendChild(h);
-                Global.hunter.el = h;
+        loader(t) {
+            const l = document.getElementById('loader');
+            l.style.display = 'flex'; l.innerHTML = '';
+            if(t==='p') l.innerHTML = '<div style="font-size:100px; animation:carrot-breath 1s infinite;">🥕</div>';
+            if(t==='n') l.innerHTML = '<div style="font-size:60px; position:absolute; animation:f1-move 1s infinite linear;">🏎️</div>';
+            if(t==='r') {
+                l.innerHTML = '<div class="star-box">' + '⛥'.repeat(8).split('').map((s,i)=>`<span id="st${i}">${s}</span>`).join('') + '</div>';
+                let s = 0; setInterval(() => { if(s<8) document.getElementById('st'+s++).className='star-active'; }, 300);
             }
-
-            // Rebuild VIP Orbitals
-            Global.vips.forEach(v => v.el.remove());
-            Global.vips = [];
-            const wrappers = document.querySelectorAll('.btn-orbit-zone');
-            wrappers.forEach((wrap, wrapIdx) => {
-                Config.VIPS.forEach((name, vipIdx) => {
-                    const el = document.createElement('div');
-                    el.className = `vip-orbital-node ${Config.MODES[Global.currentMode].vipClass}`;
-                    el.innerText = name;
-                    wrap.appendChild(el);
-                    Global.vips.push({
-                        el: el,
-                        name: name,
-                        angle: (vipIdx * Math.PI) + (wrapIdx * 2),
-                        wrap: wrap
-                    });
+            if(t==='g') {
+                l.innerHTML = '<div id="g-l" style="font-size:30px; color:#0f0;">LOADING: ▫▫▫▫</div>';
+                let b = 0; setInterval(() => { b=(b+1)%5; document.getElementById('g-l').innerText='LOADING: '+'🟩'.repeat(b)+'▫'.repeat(4-b); }, 400);
+            }
+        },
+        rebuildRain() {
+            const layer = document.getElementById('rain-layer'); layer.innerHTML = '';
+            for(let i=0; i<35; i++) {
+                const r = document.createElement('div'); r.className = 'rain';
+                r.innerText = Data.RAIN[State.theme][Math.floor(Math.random()*Data.RAIN[State.theme].length)];
+                r.style.left = Math.random()*100+'vw'; r.style.top = Math.random()*-100+'vh';
+                layer.appendChild(r);
+            }
+        },
+        rebuildVips() {
+            document.querySelectorAll('.vip').forEach(v=>v.remove());
+            document.querySelectorAll('.main-btn').forEach((btn, bIdx) => {
+                Data.VIPS.forEach((name, vIdx) => {
+                    const v = document.createElement('div');
+                    v.className = 'vip ' + (State.theme==='r'?'vip-r':State.theme==='p'?'vip-p':'');
+                    v.innerText = name; v.dataset.b = bIdx; v.dataset.v = vIdx;
+                    btn.parentElement.appendChild(v);
                 });
             });
         },
-
-        spawnEnemy() {
-            const e = document.createElement('div');
-            e.className = 'entity-unit';
-            e.innerText = Config.ENEMIES[Math.floor(Math.random()*Config.ENEMIES.length)];
-            let x = Math.random() * (window.innerWidth - 200);
-            document.getElementById('rain-viewport').appendChild(e);
-            
-            Global.units.push({
-                el: e,
-                x: x,
-                y: -150 - (Math.random() * 800),
-                speed: 3 + (Math.random() * 5)
-            });
-
-            e.onclick = (event) => {
-                event.stopPropagation();
-                e.classList.add('is-dead');
-                this.triggerFX();
-                setTimeout(() => e.remove(), 600);
-            };
-        },
-
-        startCasinoGlitch() {
-            let titleIdx = 0;
-            setInterval(() => {
-                const targets = document.querySelectorAll('.glitch-trigger');
-                const targetText = Config.TITLES[titleIdx];
-                targets.forEach(node => {
-                    let progress = 0;
-                    const frame = setInterval(() => {
-                        node.innerHTML = targetText.split("").map((letter, i) => {
-                            if(i < progress) return letter;
-                            const char = Config.GLITCH_CHARS[Math.floor(Math.random()*Config.GLITCH_CHARS.length)];
-                            return `<span style="color:${Math.random()>0.7?'var(--current-color)':'#fff'}">${char}</span>`;
-                        }).join("");
-                        if(progress >= targetText.length) clearInterval(frame);
-                        progress += 0.4;
-                    }, 50);
-                });
-                titleIdx = (titleIdx + 1) % Config.TITLES.length;
-            }, 6000);
-        },
-
-        /* --- JS MODULE 4: PHYSICS HEARTBEAT ---
-        */
-        physicsLoop() {
+        loop() {
             const now = Date.now();
+            let canUpdate = true;
+            if(State.theme === 'g' && now - State.lastTick < 1000) canUpdate = false;
+            
+            if(canUpdate) {
+                if(State.theme === 'g') State.lastTick = now;
+                State.angle += (State.theme === 'p' ? 0.015 : 0.04);
+                
+                document.querySelectorAll('.rain').forEach(r => {
+                    let y = parseFloat(r.style.top) || 0;
+                    y += (State.theme === 'g' ? 12 : 1.5);
+                    if(y > 110) y = -10;
+                    r.style.top = y + 'vh';
+                });
 
-            // 1. DVD LOGIC
-            const dvd = document.getElementById('dvd-container');
-            Global.dvd.x += Global.dvd.dx;
-            Global.dvd.y += Global.dvd.dy;
-
-            if(Global.dvd.x <= 0 || Global.dvd.x >= window.innerWidth - Global.dvd.w) Global.dvd.dx *= -1;
-            if(Global.dvd.y <= 0 || Global.dvd.y >= window.innerHeight - Global.dvd.h) Global.dvd.dy *= -1;
-
-            // Bounce from enemies
-            Global.units.forEach(u => {
-                if(u.el.parentNode) {
-                    const dist = Math.sqrt(Math.pow((Global.dvd.x + 170) - u.x, 2) + Math.pow((Global.dvd.y + 35) - u.y, 2));
-                    if(dist < 130) { Global.dvd.dx *= -1; Global.dvd.dy *= -1; }
-                }
-            });
-            dvd.style.transform = `translate(${Global.dvd.x}px, ${Global.dvd.y}px)`;
-
-            // 2. RAIN REGENERATION
-            Global.units.forEach((u, idx) => {
-                if(!u.el.parentNode) {
-                    Global.units.splice(idx, 1);
-                    this.spawnEnemy();
-                    return;
-                }
-                u.y += u.speed;
-                if(u.y > window.innerHeight + 150) {
-                    u.y = -150;
-                    u.x = Math.random() * (window.innerWidth - 200);
-                }
-                u.el.style.transform = `translate(${u.x}px, ${u.y}px)`;
-            });
-
-            // 3. VIP ORBITALS ENGINE
-            Global.vips.forEach(v => {
-                v.angle += 0.035; // Orbital speed
-                const radiusX = 300;
-                const radiusY = 70;
-                const tx = Math.cos(v.angle) * radiusX;
-                const ty = Math.sin(v.angle) * radiusY;
-
-                // SPECIAL: Green Mode Corruption
-                if(Global.currentMode === 'green') {
-                    if(Math.random() > 0.85) {
-                        v.el.innerText = v.name.split("").map(l => Math.random()>0.7 ? Config.GLITCH_CHARS[Math.floor(Math.random()*6)] : l).join("");
-                        v.el.style.color = Math.random()>0.5 ? '#0f0' : '#fff';
-                    } else {
-                        v.el.innerText = v.name;
-                        v.el.style.color = '#0f0';
-                    }
-                }
-                v.el.style.transform = `translate(${tx}px, ${ty}px)`;
-            });
-
-            // 4. AI HUNTER (Dokki)
-            this.processHunter(now);
-
-            requestAnimationFrame(() => this.physicsLoop());
-        },
-
-        processHunter(time) {
-            if(!Global.hunter.el || Global.currentMode === 'pink') return;
-
-            let allowMove = true;
-            // 1Hz Tick for Green Mode
-            if(Global.currentMode === 'green') {
-                if(time - Global.hunter.lastPulse < 1000) allowMove = false;
-                else Global.hunter.lastPulse = time;
+                document.querySelectorAll('.vip').forEach(v => {
+                    const btn = document.querySelectorAll('.main-btn')[v.dataset.b];
+                    if(!btn) return;
+                    const r = btn.getBoundingClientRect();
+                    const a = State.angle + (v.dataset.v * Math.PI);
+                    const x = r.left + r.width/2 + Math.cos(a)*300 - 50;
+                    const y = r.top + r.height/2 + Math.sin(a)*75 - 10;
+                    v.style.transform = `translate(${x}px, ${y}px)`;
+                });
             }
-
-            if(allowMove) {
-                if(!Global.hunter.target || !Global.hunter.target.el.parentNode) {
-                    Global.hunter.target = Global.units.find(u => u.el.parentNode);
-                } else {
-                    const tgt = Global.hunter.target;
-                    const dx = tgt.x - Global.hunter.x;
-                    const dy = tgt.y - Global.hunter.y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    
-                    const pwr = (Global.currentMode === 'green') ? 140 : 0.08;
-
-                    if(dist < 50) {
-                        tgt.el.classList.add('is-dead');
-                        this.triggerFX();
-                        Global.hunter.target = null;
-                    } else {
-                        if(Global.currentMode === 'green') {
-                            Global.hunter.x += (dx/dist) * pwr;
-                            Global.hunter.y += (dy/dist) * pwr;
-                        } else {
-                            Global.hunter.x += dx * pwr;
-                            Global.hunter.y += dy * pwr;
-                        }
-                    }
-                }
-            }
-            Global.hunter.el.style.transform = `translate(${Global.hunter.x}px, ${Global.hunter.y}px)`;
+            requestAnimationFrame(() => this.loop());
         }
     };
-
-    // BOOTSTRAP
-    window.onload = () => System.init();
-
+    const Nav = { to(id) { 
+        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('screen-active'));
+        document.getElementById(id).classList.add('screen-active');
+        Core.rebuildRain();
+    }};
+    window.onload = () => Core.init();
 </script>
 </body>
 </html>
