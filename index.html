@@ -6,43 +6,60 @@
     <title>SatanaCIub Project | CT1C2 System</title>
     
     <style>
-        /* --- СЕКЦИЯ ШРИФТОВ --- */
-        @font-face { font-family: 'ThemeRed'; src: url('https://docs.google.com/uc?export=download&id=18J81MIy2OUKc58Jt0LBc-dAhYchXDaO_') format('truetype'); }
-        @font-face { font-family: 'ThemePink'; src: url('https://docs.google.com/uc?export=download&id=1wdla8zZGUrpEld3ecbjCinwzD3TSIw-v') format('truetype'); }
-        @font-face { font-family: 'ThemeRegular'; src: url('https://docs.google.com/uc?export=download&id=1LRjzzPgXkdKqyP_xrbjN2r2RAt-snk25') format('truetype'); }
-
-        /* --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ --- */
+        /* [CSS VARIABLES - THEME ENGINE]
+        */
         :root {
-            --main-color: #f00;
-            --bg-color: #000;
-            --text-color: #eee;
-            --btn-text: #eee;
-            --glow-color: rgba(255, 0, 0, 0.6);
-            --box-bg: rgba(10, 10, 10, 0.95);
+            --main-color: #ff0000;
+            --bg-color: #000000;
+            --text-color: #eeeeee;
+            --btn-text: #eeeeee;
+            --glow-color: rgba(255, 0, 0, 0.8);
+            --box-bg: rgba(0, 0, 0, 0.95);
+            --vip-glow: #ffffff;
+            --transition-speed: 0.5s;
+            --font-main: 'ThemeRed', 'Segoe UI', Tahoma, sans-serif;
         }
 
-        /* --- БАЗОВЫЕ СТИЛИ --- */
-        * { box-sizing: border-box; outline: none; }
+        /* [FONTS RESOURCE ARCHIVE]
+        */
+        @font-face { 
+            font-family: 'ThemeRed'; 
+            src: url('https://docs.google.com/uc?export=download&id=18J81MIy2OUKc58Jt0LBc-dAhYchXDaO_') format('truetype'); 
+        }
+        @font-face { 
+            font-family: 'ThemePink'; 
+            src: url('https://docs.google.com/uc?export=download&id=1wdla8zZGUrpEld3ecbjCinwzD3TSIw-v') format('truetype'); 
+        }
+        @font-face { 
+            font-family: 'ThemeGreen'; 
+            src: url('https://docs.google.com/uc?export=download&id=14BkdIiQxcNk_1LWi8SdpEbkV7Qdzze5J') format('truetype'); 
+        }
 
-        body { 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-            font-family: 'ThemeRed', sans-serif; 
-            margin: 0; 
+        /* [BASE RESET & GLOBAL STYLES]
+        */
+        * {
+            box-sizing: border-box;
+            outline: none;
+            margin: 0;
             padding: 0;
-            overflow: hidden; 
-            height: 100vh; 
-            transition: background-color 0.5s, color 0.5s;
-            user-select: none;
         }
 
-        /* --- ЭФФЕКТЫ ТРЯСКИ --- */
-        .screen-shake { 
-            animation: heavyShake 0.3s infinite; 
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            user-select: none;
+            -webkit-user-select: none;
         }
-        
+
+        /* [ANIMATION KEYFRAMES]
+        */
         @keyframes heavyShake {
-            0% { transform: translate(2px, 2px) rotate(0deg); }
+            0% { transform: translate(4px, 4px) rotate(0deg); }
             10% { transform: translate(-3px, -2px) rotate(-1deg); }
             20% { transform: translate(-5px, 0px) rotate(1deg); }
             30% { transform: translate(0px, 4px) rotate(0deg); }
@@ -55,193 +72,232 @@
             100% { transform: translate(1px, -2px) rotate(-1deg); }
         }
 
-        .shake-active { 
-            animation: heavyShake 0.1s infinite !important; 
-            color: #fff !important; 
-            text-shadow: 0 0 25px #f00 !important; 
+        @keyframes vipNeonPulse {
+            0% { 
+                filter: drop-shadow(0 0 5px var(--main-color)); 
+                color: var(--main-color); 
+            }
+            50% { 
+                filter: drop-shadow(0 0 25px var(--vip-glow)); 
+                color: var(--vip-glow); 
+                transform: scale(1.1);
+            }
+            100% { 
+                filter: drop-shadow(0 0 5px var(--main-color)); 
+                color: var(--main-color); 
+            }
         }
 
-        /* --- ВСПЫШКА --- */
-        #flash-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; opacity: 0; pointer-events: none; z-index: 9999;
+        @keyframes explodeFX {
+            0% { transform: scale(1); opacity: 1; filter: brightness(1); }
+            100% { transform: scale(8); opacity: 0; filter: blur(30px) brightness(10); }
         }
-        .flash-active { animation: flashEffect 0.4s ease-out forwards; }
+
         @keyframes flashEffect {
-            0% { opacity: 0.9; }
+            0% { opacity: 1; }
             100% { opacity: 0; }
         }
 
-        /* --- ЛЕТАЮЩИЙ ЛОГОТИП SATANACLUB --- */
+        /* [UTILITY CLASSES]
+        */
+        .screen-shake {
+            animation: heavyShake 0.2s infinite;
+        }
+
+        .flash-active {
+            animation: flashEffect 0.35s ease-out forwards;
+        }
+
+        .vip-user {
+            animation: vipNeonPulse 2.5s infinite ease-in-out !important;
+            font-weight: 900 !important;
+            z-index: 100 !important;
+        }
+
+        /* [SYSTEM OVERLAYS]
+        */
+        #flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
         #satan-logo {
-            position: fixed; 
-            white-space: pre; 
-            font-size: 10px; 
+            position: fixed;
+            white-space: pre;
+            font-size: 11px;
             line-height: 1.1;
-            z-index: 2; 
-            pointer-events: none; 
-            display: block;
-            opacity: 0.7;
-            animation: logoPulse 4s infinite alternate;
-        }
-        
-        @keyframes logoPulse {
-            0% { color: #f00; text-shadow: 0 0 5px #f00; transform: scale(1); }
-            100% { color: #fff; text-shadow: 0 0 30px #fff; transform: scale(1.1); }
+            z-index: 5;
+            pointer-events: none;
+            color: var(--main-color);
+            transition: opacity 0.5s;
         }
 
-        /* --- КОНТЕЙНЕР ДОЖДЯ --- */
-        #rain-container { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            z-index: 1; 
-            pointer-events: none; 
+        #rain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
         }
 
-        .rain-item { 
-            position: absolute; 
-            opacity: 0.8; 
-            will-change: transform; 
-            white-space: nowrap; 
-            font-size: 1.2rem; 
-            pointer-events: auto; 
-            cursor: pointer; 
-            font-weight: 900;
+        /* [INTERACTABLE ELEMENTS]
+        */
+        .rain-item {
+            position: absolute;
+            will-change: transform;
+            white-space: nowrap;
+            font-size: 1.25rem;
+            pointer-events: auto;
+            cursor: crosshair;
             transition: color 0.2s;
         }
 
-        .exploding { 
-            animation: explodeAnim 0.5s ease-out forwards !important; 
-        }
-        
-        @keyframes explodeAnim {
-            0% { transform: scale(1); filter: brightness(1); }
-            100% { transform: scale(8); opacity: 0; filter: blur(30px) brightness(5); }
+        .exploding {
+            animation: explodeFX 0.5s forwards !important;
+            pointer-events: none !important;
         }
 
-        /* --- ГЛАВНЫЕ СТРАНИЦЫ --- */
-        .page { 
-            display: none; 
-            position: absolute; 
-            width: 100%; 
-            height: 100%; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            z-index: 10; 
-            padding: 40px;
-            backdrop-filter: blur(2px);
+        /* [UI LAYOUT & COMPONENTS]
+        */
+        .page {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            padding: 25px;
+            /* NO BLUR AS REQUESTED */
         }
-        
-        .active-page { display: flex; }
 
-        /* --- ЗАГОЛОВКИ --- */
-        .hooligan-header { 
-            font-size: 4rem; 
-            color: var(--main-color); 
-            text-shadow: 0 0 20px var(--glow-color); 
-            cursor: pointer; 
-            user-select: none; 
+        .active-page {
+            display: flex;
+        }
+
+        .hooligan-header {
+            font-size: 4.5rem;
+            color: var(--main-color);
+            text-shadow: 0 0 25px var(--glow-color);
+            cursor: pointer;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            letter-spacing: 8px;
             text-transform: uppercase;
-            letter-spacing: 5px;
         }
 
-        /* --- КАРТОЧКИ КОНТЕНТА --- */
-        .content-card { 
-            width: 100%; 
-            max-width: 900px; 
-            background: var(--box-bg); 
-            border: 2px solid var(--main-color); 
-            padding: 40px; 
-            overflow-y: auto; 
-            max-height: 70vh; 
-            line-height: 1.8;
-            box-shadow: 0 0 50px rgba(0,0,0,0.9);
+        .content-card {
+            width: 100%;
+            max-width: 900px;
+            background: var(--box-bg);
+            border: 4px solid var(--main-color);
+            padding: 45px;
+            overflow-y: auto;
+            max-height: 65vh;
+            line-height: 1.9;
+            box-shadow: 0 0 60px rgba(0,0,0,1);
             position: relative;
         }
 
-        .content-card::-webkit-scrollbar { width: 5px; }
-        .content-card::-webkit-scrollbar-thumb { background: var(--main-color); }
+        .content-card::-webkit-scrollbar {
+            width: 6px;
+        }
+        .content-card::-webkit-scrollbar-thumb {
+            background: var(--main-color);
+        }
 
-        /* --- КНОПКИ --- */
-        .menu-btn { 
-            width: 350px; 
-            padding: 20px; 
-            margin: 10px; 
-            background: rgba(0,0,0,0.5); 
-            color: var(--btn-text); 
-            border: 2px solid var(--main-color); 
-            font-weight: 900; 
-            font-size: 1rem;
-            cursor: pointer; 
-            text-transform: uppercase; 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            letter-spacing: 2px;
+        .menu-btn {
+            width: 360px;
+            padding: 22px;
+            margin: 12px;
+            background: transparent;
+            color: var(--btn-text);
+            border: 2px solid var(--main-color);
+            font-weight: 900;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            letter-spacing: 3px;
             position: relative;
             overflow: hidden;
         }
 
-        .menu-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
+        .menu-btn:hover {
+            background: var(--main-color);
+            color: #000000 !important;
+            box-shadow: 0 0 35px var(--glow-color);
+            transform: scale(1.03);
         }
 
-        .menu-btn:hover::before { left: 100%; }
-
-        .menu-btn:hover { 
-            background: var(--main-color); 
-            color: #000 !important; 
-            transform: scale(1.05);
-            box-shadow: 0 0 30px var(--glow-color);
+        .shame-box {
+            border-left: 6px solid var(--main-color);
+            padding: 20px;
+            margin-bottom: 25px;
+            background: rgba(255, 0, 0, 0.03);
+            transition: background 0.3s;
         }
 
-        /* --- ЭЛЕМЕНТЫ СТЕНЫ ПОЗОРА --- */
-        .shame-box { 
-            background: rgba(20, 0, 0, 0.8); 
-            padding: 20px; 
-            margin-bottom: 20px; 
-            border: 1px solid #300;
-            border-left: 5px solid var(--main-color);
-            transition: 0.3s;
-        }
-        
         .shame-box:hover {
-            border-left-width: 15px;
-            background: rgba(40, 0, 0, 0.9);
+            background: rgba(255, 0, 0, 0.1);
         }
 
-        .accent { color: var(--main-color); font-weight: bold; text-shadow: 0 0 5px var(--main-color); }
-
-        /* --- ФУТЕР И ПЕРЕКЛЮЧАТЕЛИ --- */
-        .system-footer { 
-            position: fixed; 
-            bottom: 30px; 
-            display: flex; 
-            gap: 20px; 
-            z-index: 1000; 
+        .accent {
+            color: var(--main-color);
+            font-weight: bold;
+            text-shadow: 0 0 5px var(--main-color);
         }
-        
-        .t-orb { 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            border: 2px solid #fff; 
-            cursor: pointer; 
-            transition: 0.3s;
-            box-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
-        
-        .t-orb:hover { transform: scale(1.2); }
 
+        /* [SYSTEM FOOTER & THEME ORBS]
+        */
+        .system-footer {
+            position: fixed;
+            bottom: 40px;
+            display: flex;
+            gap: 25px;
+            z-index: 1000;
+        }
+
+        .t-orb {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid #ffffff;
+            cursor: pointer;
+            transition: transform 0.4s, box-shadow 0.4s;
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+        }
+
+        .t-orb:hover {
+            transform: translateY(-10px) scale(1.15);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        /* [FORMS & INPUTS]
+        */
+        .system-input {
+            background: none;
+            border: 3px solid var(--main-color);
+            color: var(--main-color);
+            padding: 20px;
+            text-align: center;
+            font-size: 2.8rem;
+            width: 220px;
+            margin-bottom: 25px;
+            font-family: inherit;
+        }
     </style>
 </head>
 <body id="main-body">
@@ -254,366 +310,418 @@
     </div>
     
     <div id="rain-container"></div>
-
-    <div id="page-login" class="page active-page">
-        <h1 class="hooligan-header" onclick="triggerHeaderShake(this)">HOOLIGAN AER</h1>
-        <div style="background: rgba(0,0,0,0.6); padding: 30px; border: 1px solid #333;">
-            <p style="text-align: center; letter-spacing: 3px; margin-bottom: 20px;">ENTER ACCESS CODE</p>
-            <input type="password" id="pass" maxlength="4" placeholder="****" 
-                   style="background:none; border:2px solid var(--main-color); color:var(--main-color); 
-                   padding:15px; text-align:center; font-size:2.5rem; width:180px; display:block; margin: 0 auto 20px auto;">
-            <button class="menu-btn" style="width:100%" onclick="tryLogin()">INITIALIZE</button>
-        </div>
-    </div>
-
-    <div id="page-menu" class="page">
-        <h1 class="hooligan-header" onclick="triggerHeaderShake(this)">HOOLIGAN AER</h1>
+    <section id="page-login" class="page active-page">
+        <h1 class="hooligan-header" id="main-title">HOOLIGAN AER</h1>
         <div style="display: flex; flex-direction: column; align-items: center;">
-            <button class="menu-btn" onclick="nav('page-rules')">📜 ПРАВИЛА ПРОЕКТА</button>
-            <button class="menu-btn" onclick="nav('page-forms')">📝 АНКЕТЫ СОСТАВА</button>
-            <button class="menu-btn" onclick="nav('page-duty')">⚖️ ОБЯЗАННОСТИ</button>
-            <button class="menu-btn" onclick="nav('page-shame')">👺 СТЕНА ПОЗОРА</button>
-            <button class="menu-btn" onclick="nav('page-help')">🛡️ ТЕХ. ПОДДЕРЖКА</button>
+            <p style="margin-bottom: 15px; letter-spacing: 5px;">AUTHORIZATION REQUIRED</p>
+            <input type="password" id="pass-field" maxlength="4" placeholder="****" class="system-input">
+            <button class="menu-btn" onclick="SystemInterface.auth()">INITIALIZE ACCESS</button>
         </div>
+    </section>
+
+    <section id="page-menu" class="page">
+        <h1 class="hooligan-header">SYSTEM CORE</h1>
+        <nav style="display: flex; flex-direction: column; align-items: center;">
+            <button class="menu-btn" onclick="SystemInterface.navigate('page-rules')">📜 PROJECT LAWS</button>
+            <button class="menu-btn" onclick="SystemInterface.navigate('page-duty')">⚖️ STAFF DUTIES</button>
+            <button class="menu-btn" onclick="SystemInterface.navigate('page-shame')">👺 HALL OF SHAME</button>
+            <button class="menu-btn" onclick="SystemInterface.navigate('page-help')">🛠️ TECH SUPPORT</button>
+        </nav>
         
         <div class="system-footer">
-            <div class="t-orb" style="background:#f00" onclick="applyTheme('red')"></div>
-            <div class="t-orb" style="background:#ffb6c1" onclick="applyTheme('pink')"></div>
-            <div class="t-orb" style="background:#00bfff" onclick="applyTheme('blue')"></div>
+            <div class="t-orb" style="background: #ff0000;" onclick="ThemeEngine.apply('red')" title="Satanic Red"></div>
+            <div class="t-orb" style="background: #ffb6c1;" onclick="ThemeEngine.apply('pink')" title="Pick-me Pink"></div>
+            <div class="t-orb" style="background: #00ff00;" onclick="ThemeEngine.apply('green')" title="Matrix Green"></div>
+            <div class="t-orb" style="background: #00bfff;" onclick="ThemeEngine.apply('blue')" title="Regular Blue"></div>
         </div>
-    </div>
+    </section>
 
-    <div id="page-rules" class="page">
-        <h1 class="hooligan-header" onclick="transformToSatana(this)">ПРАВИЛА AER</h1>
+    <section id="page-rules" class="page">
+        <h1 class="hooligan-header">PROJECT LAWS</h1>
         <div class="content-card">
-            <h2 class="accent">ГЛАВА I: ОБЩЕЕ ПОВЕДЕНИЕ</h2>
-            <p>1.1. <span class="accent">Дискриминация:</span> Любые формы расизма, сексизма или унижения по нац. признаку караются мутом от 45 минут или баном при рецидиве.</p>
-            <p>1.2. <span class="accent">Оскорбление родных:</span> Самое тяжкое нарушение. Бан навсегда без возможности выкупа или обжалования.</p>
-            <p>1.3. <span class="accent">Политика:</span> Проект вне политики. Любые обсуждения — моментальный бан.</p>
+            <h2 class="accent">§1. FUNDAMENTAL PRINCIPLES</h2>
+            <p>1.1. <span class="accent">The Sovereign:</span> @SatanaCIub holds absolute authority. Any directive from the owner is non-negotiable.</p>
+            <p>1.2. <span class="accent">System Integrity:</span> Any attempt to exploit EblCurrency or bypass CT1C2 security is a terminal offense.</p>
             
-            <h2 class="accent">ГЛАВА II: ПОРЯДОК В ЧАТЕ</h2>
-            <p>2.1. <span class="accent">Спам и реклама:</span> Запрещено кидать ссылки на сторонние ресурсы без согласования с @SatanaCIub. Наказание: Бан.</p>
-            <p>2.2. <span class="accent">Флуд:</span> Более 3-х одинаковых сообщений подряд — мут на 60 минут.</p>
-            <p>2.3. <span class="accent">Конфликты:</span> Для личных разборок используйте ЛС. В общем чате — мут обоим сторонам.</p>
+            <h2 class="accent">§2. BEHAVIORAL PROTOCOLS</h2>
+            <p>2.1. <span class="accent">Discrimination:</span> Racism, sexism, or hate speech will result in immediate extraction from the project.</p>
+            <p>2.2. <span class="accent">Family Honor:</span> Insulting family members is the highest sin. <span style="color:red">PERMANENT BAN.</span></p>
+            <p>2.3. <span class="accent">Political Neutrality:</span> SatanaCIub is a neutral zone. Political agendas are prohibited.</p>
             
-            <h2 class="accent">ГЛАВА III: АДМИНИСТРАЦИЯ</h2>
-            <p>3.1. Запрещено выпрашивать права, валюту <span class="accent">EblCurrency</span> или разбан. Мут 30 минут.</p>
-            <p>3.2. Решение высшей администрации (@SatanaCIub) является окончательным.</p>
+            <h2 class="accent">§3. COMMUNICATION</h2>
+            <p>3.1. <span class="accent">Spam & Ads:</span> Unauthorized promotion leads to a permanent block.</p>
+            <p>3.2. <span class="accent">Harassment:</span> Respect the private space of staff and users.</p>
         </div>
-        <button class="menu-btn" onclick="nav('page-menu')">ВЕРНУТЬСЯ</button>
-    </div>
+        <button class="menu-btn" onclick="SystemInterface.navigate('page-menu')">RETURN</button>
+    </section>
 
-    <div id="page-forms" class="page">
-        <h1 class="hooligan-header">АНКЕТЫ СОСТАВА</h1>
-        <div class="content-card">
-            <h3 class="accent">ТРЕБОВАНИЯ К КАНДИДАТУ:</h3>
-            <p>● Возрастной порог: строго 14 лет и старше (возможны исключения за адекватность).</p>
-            <p>● Статистика: не менее 500 осмысленных сообщений в основном чате.</p>
-            <p>● Онлайн: стабильные 3-5 часов в сутки для контроля порядка.</p>
-            <p>● Репутация: отсутствие серьезных нарушений за последний месяц.</p>
-            
-            <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-            
-            <h3 class="accent">ОБРАЗЕЦ ЗАЯВКИ:</h3>
-            <p>1. Ваше реальное имя и никнейм в Telegram.</p>
-            <p>2. Полных лет на момент подачи анкеты.</p>
-            <p>3. В каких проектах работали ранее (указать роль и причину ухода).</p>
-            <p>4. Почему именно вы должны занять пост в <span class="accent">SatanaCIub Project</span>?</p>
-            <p>5. Напишите фразу: "Я обязуюсь соблюдать устав CT1C2".</p>
-        </div>
-        <button class="menu-btn" onclick="nav('page-menu')">ВЕРНУТЬСЯ</button>
-    </div>
-
-    <div id="page-duty" class="page">
-        <h1 class="hooligan-header">ОБЯЗАННОСТИ</h1>
+    <section id="page-duty" class="page">
+        <h1 class="hooligan-header">STAFF DUTIES</h1>
         <div class="content-card">
             <div class="shame-box">
-                <span class="accent">СТАЖЕР [I]:</span> Обучающаяся единица. Обязан фиксировать нарушения и передавать их старшим. Нет прав на самостоятельный бан.
+                <h3 class="accent">TRAINEE [RANK I]</h3>
+                <p>Observe chat activity. Report violations. No execution rights.</p>
             </div>
             <div class="shame-box">
-                <span class="accent">МОДЕРАТОР [II]:</span> Хранитель тишины. Выдает муты, чистит чат от спама, следит за соблюдением правил ГЛАВЫ II.
+                <h3 class="accent">MODERATOR [RANK II]</h3>
+                <p>Chat purification. Issue mutes up to 24h. Enforce Rule §2.</p>
             </div>
             <div class="shame-box">
-                <span class="accent">АДМИНИСТРАТОР [III]:</span> Судья. Разбирает сложные жалобы, выдает баны, следит за работой младшего состава.
+                <h3 class="accent">ADMINISTRATOR [RANK III]</h3>
+                <p>Full ban capability. Management of Rank I and II. Conflict resolution.</p>
             </div>
-            <div class="shame-box">
-                <span class="accent">КУРАТОР [IV]:</span> Правая рука создателя. Занимается набором персонала и технической частью модуля <span class="accent">CT1C2</span>.
-            </div>
-            <p style="text-align: center; color: red; font-size: 1.2rem; margin-top: 20px; font-weight: bold;">
-                СТРОГО ЗАПРЕЩЕНО: Накручивать себе или друзьям EblCurrency. Снятие + ЧС.
+            <p style="color: #ff0000; text-align: center; font-weight: 900; margin-top: 20px;">
+                WARNING: STAFF ARE STRICTLY FORBIDDEN FROM GENERATING EBLCURRENCY FOR THEMSELVES.
             </p>
         </div>
-        <button class="menu-btn" onclick="nav('page-menu')">ВЕРНУТЬСЯ</button>
-    </div>
+        <button class="menu-btn" onclick="SystemInterface.navigate('page-menu')">RETURN</button>
+    </section>
 
-    <div id="page-shame" class="page">
-        <h1 class="hooligan-header">СТЕНА ПОЗОРА</h1>
+    <section id="page-shame" class="page">
+        <h1 class="hooligan-header">HALL OF SHAME</h1>
         <div class="content-card">
-            <p style="text-align: center; color: #f00;">НИЖЕ ПРЕДСТАВЛЕНЫ ЛИЦА, УТРАТИВШИЕ ДОВЕРИЕ ПРОЕКТА</p>
-            
             <div class="shame-box">
-                <h3 class="accent">1. Vinal (The Traitor)</h3>
-                <p>Пытался шантажировать администрацию сливом личных данных. Итог: все его клубы уничтожены, сам находится в глобальном ЧС всех крупных проектов.</p>
+                <h3 class="accent">VINAL</h3>
+                <p>Traitors' legacy. Attempted blackmail. Status: TERMINATED.</p>
             </div>
-            
             <div class="shame-box">
-                <h3 class="accent">2. Григей (The Fake)</h3>
-                <p>Русофобская позиция, покрытая детскими травмами. Пытается казаться лидером, имея чат из мертвых ботов. Обходит стороной адекватных людей.</p>
+                <h3 class="accent">GRIGEY</h3>
+                <p>Russophobe and bot-master. Status: DISGRACED.</p>
             </div>
-            
             <div class="shame-box">
-                <h3 class="accent">3. Релтин (The Crybaby)</h3>
-                <p>Был админом, но не выдержал ответственности. Ливнул после первой же конструктивной критики. Теперь "подлизывает" оппам в надежде на признание.</p>
+                <h3 class="accent">RELTIN</h3>
+                <p>Fragile ego. Betrayed the project for minor reasons. Status: IGNORED.</p>
             </div>
-
             <div class="shame-box">
-                <h3 class="accent">4. Дед & Психокид</h3>
-                <p>Мелкие пакостники. Один сливает инфу из конф, второй пытается агрессировать в чатах, получая мут через 5 секунд. Нищие оппы.</p>
+                <h3 class="accent">DED & PSYCHOKID</h3>
+                <p>Bottom-tier pests. Status: BLOCKED.</p>
             </div>
         </div>
-        <button class="menu-btn" onclick="nav('page-menu')">ВЕРНУТЬСЯ</button>
-    </div>
+        <button class="menu-btn" onclick="SystemInterface.navigate('page-menu')">RETURN</button>
+    </section>
 
-    <div id="page-help" class="page">
-        <h1 class="hooligan-header">ТЕХ. ПОДДЕРЖКА</h1>
+    <section id="page-help" class="page">
+        <h1 class="hooligan-header">TERMINAL HELP</h1>
         <div class="content-card" style="text-align: center;">
-            <img src="https://via.placeholder.com/100/ff0000/ffffff?text=CT1C2" style="border-radius: 50%; margin-bottom: 20px; border: 2px solid #f00;">
-            <p>Модуль управления: <span class="accent">CT1C2 v2.5.0</span></p>
-            <p>База данных: <span class="accent">EblCurrency Global Database</span></p>
-            <p>Владелец прав: <span class="accent">SatanaCIub Project</span></p>
-            <hr style="border: 0; border-top: 1px solid #333; margin: 30px 0;">
-            <p>Если вы нашли баг в работе охотника <span class="accent">@ebu_Dokki</span> или интерфейс перестал дрожать при клике — немедленно сообщите создателю.</p>
-            <p style="margin-top: 40px; font-style: italic;">"В хаосе рождается порядок, в Сатане — сила."</p>
+            <p>Current Module: <span class="accent">CT1C2 Supreme Build</span></p>
+            <p>Database: <span class="accent">EblCurrency v4.2</span></p>
+            <p>Operator: <span class="accent">Authorized Staff Only</span></p>
+            <div style="margin-top: 30px; border: 1px dashed var(--main-color); padding: 15px;">
+                <p>Manual Attack Protocol: Click on any unauthorized entity (@user) to execute immediate purge.</p>
+            </div>
+            <p style="margin-top: 30px; font-style: italic;">"In Chaos we find Strength. In Satana we find Unity."</p>
         </div>
-        <button class="menu-btn" onclick="nav('page-menu')">ВЕРНУТЬСЯ</button>
-    </div>
+        <button class="menu-btn" onclick="SystemInterface.navigate('page-menu')">RETURN</button>
+    </section>
 
     <script>
-        /* --- СКРИПТОВАЯ ЧАСТЬ (LOGIC CORE) --- */
-        let currentMode = 'red';
-        let rainItems = [];
-        let hunter = null;
-        let logoPos = { x: 50, y: 50, dx: 2, dy: 2 };
-        let shakeCounters = new Map();
-
-        const usersPool = [
-            '@SatanaCIub', '@hooligan', '@ebu_Dokki', 
-            '@Vinal', '@Grigey', '@Reltin', '@Ded', '@Psychokid',
-            '†', '⛥', '⌗', '666', 'ERROR', 'AER'
-        ];
-
-        const themes = {
-            red: { bg:'#000', main:'#f00', text:'#eee', btnText:'#eee', glow:'rgba(255,0,0,0.6)' },
-            pink: { bg:'#fff0f5', main:'#ff69b4', text:'#000', btnText:'#111', glow:'rgba(255,105,180,0.4)' },
-            blue: { bg:'#f0f8ff', main:'#00bfff', text:'#000', btnText:'#111', glow:'rgba(0,191,255,0.4)' }
+        /**
+         * GLOBAL CONFIGURATION
+         */
+        const Config = {
+            VIP_LIST: ['@satanacIub', '@hooligan_hooligan'],
+            TARGET_LIST: [
+                '@Blood_Househ', 
+                '@Aaaaaaaaaafkrjfjfjso', 
+                '@VetalGeor', 
+                '@geniusmozer', 
+                '@aungakw'
+            ],
+            THEMES: {
+                red: {
+                    main: '#ff0000',
+                    bg: '#000000',
+                    glow: 'rgba(255,0,0,0.8)',
+                    font: 'ThemeRed'
+                },
+                pink: {
+                    main: '#ff69b4',
+                    bg: '#fff0f5',
+                    glow: 'rgba(255,105,180,0.4)',
+                    font: 'ThemePink'
+                },
+                green: {
+                    main: '#00ff00',
+                    bg: '#000000',
+                    glow: 'rgba(0,255,0,0.8)',
+                    font: 'ThemeGreen'
+                },
+                blue: {
+                    main: '#00bfff',
+                    bg: '#f0f8ff',
+                    glow: 'rgba(0,191,255,0.4)',
+                    font: 'sans-serif'
+                }
+            }
         };
 
-        // Тряска при тройном клике
-        function triggerHeaderShake(el) {
-            let count = (shakeCounters.get(el) || 0) + 1;
-            shakeCounters.set(el, count);
-            if(count >= 3) {
-                el.classList.add('shake-active');
-                setTimeout(() => { 
-                    el.classList.remove('shake-active'); 
-                    shakeCounters.set(el, 0); 
-                }, 2500);
+        /**
+         * STATE MANAGEMENT
+         */
+        const State = {
+            currentMode: 'red',
+            rainItems: [],
+            hunter: null,
+            logoPosition: { x: 50, y: 50, dx: 1.5, dy: 1.5 },
+            isAuthenticating: false
+        };
+
+        /**
+         * THEME ENGINE
+         */
+        const ThemeEngine = {
+            apply(mode) {
+                State.currentMode = mode;
+                const theme = Config.THEMES[mode];
+                const root = document.documentElement.style;
+
+                // Update CSS Variables
+                root.setProperty('--main-color', theme.main);
+                root.setProperty('--bg-color', theme.bg);
+                root.setProperty('--glow-color', theme.glow);
+                document.body.style.fontFamily = theme.font;
+
+                // Visibility of Satan Logo
+                const logo = document.getElementById('satan-logo');
+                logo.style.display = (mode === 'red' || mode === 'green') ? 'block' : 'none';
+
+                // Reset Rain System for new theme
+                RainEngine.init();
             }
-        }
+        };
 
-        // Секрет SATANA AER
-        function transformToSatana(el) {
-            let count = (shakeCounters.get(el) || 0) + 1;
-            shakeCounters.set(el, count);
-            if(count >= 3) {
-                let original = el.innerText;
-                el.innerText = "SATANA AER";
-                el.classList.add('shake-active');
-                setTimeout(() => { 
-                    el.innerText = original; 
-                    el.classList.remove('shake-active'); 
-                    shakeCounters.set(el, 0);
-                }, 4000);
+        /**
+         * VISUAL EFFECTS ENGINE
+         */
+        const FXEngine = {
+            triggerCarnage() {
+                const body = document.getElementById('main-body');
+                const flash = document.getElementById('flash-overlay');
+
+                flash.classList.add('flash-active');
+                body.classList.add('screen-shake');
+
+                setTimeout(() => {
+                    flash.classList.remove('flash-active');
+                    body.classList.remove('screen-shake');
+                }, 300);
             }
-        }
+        };
 
-        // Смена темы
-        function applyTheme(mode) {
-            currentMode = mode;
-            const cfg = themes[mode];
-            const root = document.documentElement.style;
-            
-            root.setProperty('--bg-color', cfg.bg);
-            root.setProperty('--main-color', cfg.main);
-            root.setProperty('--text-color', cfg.text);
-            root.setProperty('--btn-text', cfg.btnText);
-            root.setProperty('--glow-color', cfg.glow);
+        /**
+         * RAIN & ENTITY ENGINE
+         */
+        const RainEngine = {
+            init() {
+                const container = document.getElementById('rain-container');
+                container.innerHTML = '';
+                State.rainItems = [];
 
-            // Логотип виден только в красном режиме
-            document.getElementById('satan-logo').style.display = (mode === 'red') ? 'block' : 'none';
-            
-            initRain();
-        }
+                // 1. Initialize Hunter @ebu_Dokki
+                this.spawnHunter(container);
 
-        // Эффект удара (вспышка + тряска)
-        function triggerCarnageEffect() {
-            const body = document.getElementById('main-body');
-            const flash = document.getElementById('flash-overlay');
-            
-            flash.classList.add('flash-active');
-            body.classList.add('screen-shake');
-            
-            setTimeout(() => {
-                flash.classList.remove('flash-active');
-                body.classList.remove('screen-shake');
-            }, 350);
-        }
+                // 2. Initialize Rain Entities
+                const combinedList = [...Config.VIP_LIST, ...Config.TARGET_LIST];
+                
+                for (let i = 0; i < 35; i++) {
+                    const username = combinedList[Math.floor(Math.random() * combinedList.length)];
+                    this.spawnUser(container, username);
+                }
+            },
 
-        // Инициализация дождя и охотника
-        function initRain() {
-            const container = document.getElementById('rain-container');
-            container.innerHTML = '';
-            rainItems = [];
+            spawnHunter(container) {
+                const hEl = document.createElement('div');
+                hEl.className = 'rain-item';
+                hEl.innerText = '@ebu_Dokki';
+                hEl.style.color = (State.currentMode === 'green') ? '#00ff00' : '#ffff00';
+                hEl.style.textShadow = '0 0 15px currentcolor';
+                hEl.style.zIndex = '500';
+                
+                container.appendChild(hEl);
+                State.hunter = {
+                    el: hEl,
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    target: null,
+                    isAttacking: false
+                };
+            },
 
-            // Создаем охотника @ebu_Dokki
-            const hEl = document.createElement('div');
-            hEl.className = 'rain-item';
-            hEl.innerText = '@ebu_Dokki';
-            hEl.style.color = '#ffff00';
-            hEl.style.fontSize = '1.5rem';
-            hEl.style.zIndex = '500';
-            hEl.style.textShadow = '0 0 10px #ff0';
-            container.appendChild(hEl);
-            
-            hunter = { el: hEl, x: window.innerWidth/2, y: window.innerHeight/2, target: null, isAttacking: false };
-
-            // Создаем капли дождя (ники и символы)
-            for(let i=0; i < 40; i++) {
-                const val = usersPool[Math.floor(Math.random() * usersPool.length)];
+            spawnUser(container, name) {
                 const el = document.createElement('div');
                 el.className = 'rain-item';
-                el.innerText = val;
-                
-                let startX = Math.random() * window.innerWidth;
-                el.style.left = startX + 'px';
-                
-                // Цветовая логика
-                if(val === '@SatanaCIub' || val === '@hooligan') {
-                    el.style.color = 'var(--main-color)';
-                } else if(['@Vinal', '@Grigey', '@Reltin', '@Ded', '@Psychokid'].includes(val)) {
-                    el.style.color = '#444'; // Нищие оппы серые
-                } else {
-                    el.style.color = '#fff';
+                el.innerText = name;
+
+                const isVip = Config.VIP_LIST.includes(name);
+                if (isVip) {
+                    el.classList.add('vip-user');
                 }
 
-                // Клик - ломание ника
+                const startX = Math.random() * window.innerWidth;
+                el.style.left = startX + 'px';
+                
+                // Interaction Logic
                 el.onclick = () => {
-                    el.style.animation = "heavyShake 0.1s infinite";
-                    el.style.color = "#fff";
-                    setTimeout(() => { if(!el.classList.contains('exploding')) el.style.animation = ""; }, 2000);
+                    if (isVip) return; // VIPs are immortal
+                    this.executeUser(el);
                 };
 
                 container.appendChild(el);
-                rainItems.push({
+                State.rainItems.push({
                     el: el,
                     x: startX,
                     y: Math.random() * window.innerHeight,
-                    speed: 1.5 + Math.random() * 2.5,
-                    dead: false
+                    speed: 1.2 + Math.random() * 2.5,
+                    isDead: false,
+                    isVip: isVip
                 });
+            },
+
+            executeUser(element) {
+                element.classList.add('exploding');
+                FXEngine.triggerCarnage();
+                setTimeout(() => {
+                    if (element.parentNode) element.remove();
+                }, 450);
             }
-        }
+        };
 
-        // Основной цикл анимации
-        function update() {
-            // 1. Движение логотипа (Bounce эффект)
-            if(currentMode === 'red') {
-                const logo = document.getElementById('satan-logo');
-                logoPos.x += logoPos.dx;
-                logoPos.y += logoPos.dy;
+        /**
+         * ARTIFICIAL INTELLIGENCE (HUNTER)
+         */
+        const HunterAI = {
+            process() {
+                if (!State.hunter || State.hunter.isAttacking || State.currentMode === 'pink') return;
 
-                if(logoPos.x <= 0 || logoPos.x >= window.innerWidth - 320) logoPos.dx *= -1;
-                if(logoPos.y <= 0 || logoPos.y >= window.innerHeight - 60) logoPos.dy *= -1;
+                // Target Acquisition
+                if (!State.hunter.target || State.hunter.target.isDead || !State.hunter.target.el.parentNode) {
+                    State.hunter.target = State.rainItems.find(item => 
+                        !item.isDead && 
+                        item.el.parentNode && 
+                        !item.isVip
+                    );
+                } else {
+                    this.moveTowardsTarget();
+                }
+            },
 
-                logo.style.left = logoPos.x + 'px';
-                logo.style.top = logoPos.y + 'px';
-            }
+            moveTowardsTarget() {
+                const h = State.hunter;
+                const t = h.target;
 
-            // 2. Движение дождя
-            rainItems.forEach(item => {
-                if(item.dead) return;
+                const dx = t.x - h.x;
+                const dy = t.y - h.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                // Speed multiplier for Green Mode
+                let lerpFactor = (State.currentMode === 'green') ? 0.22 : 0.085;
+
+                if (distance < 45) {
+                    this.attack(t);
+                } else {
+                    // Unique movement for Green theme (Row-by-row step)
+                    if (State.currentMode === 'green') {
+                        h.x += dx * lerpFactor;
+                        if (Math.abs(dx) < 12) h.y += dy * lerpFactor;
+                    } else {
+                        h.x += dx * lerpFactor;
+                        h.y += dy * lerpFactor;
+                    }
+                }
+            },
+
+            attack(target) {
+                State.hunter.isAttacking = true;
+                target.isDead = true;
                 
+                target.el.classList.add('exploding');
+                FXEngine.triggerCarnage();
+
+                setTimeout(() => {
+                    if (target.el.parentNode) target.el.remove();
+                    State.hunter.isAttacking = false;
+                    State.hunter.target = null;
+                }, 450);
+            }
+        };
+
+        /**
+         * UI & NAVIGATION INTERFACE
+         */
+        const SystemInterface = {
+            navigate(pageId) {
+                const pages = document.querySelectorAll('.page');
+                pages.forEach(p => p.classList.remove('active-page'));
+                
+                const target = document.getElementById(pageId);
+                if (target) target.classList.add('active-page');
+            },
+
+            auth() {
+                const field = document.getElementById('pass-field');
+                if (field.value === '2727') {
+                    this.navigate('page-menu');
+                } else {
+                    alert("CRITICAL ERROR: ACCESS DENIED");
+                    field.value = "";
+                }
+            }
+        };
+
+        /**
+         * MAIN LOOP
+         */
+        function MainLoop() {
+            // 1. Logo Bouncing Logic
+            if (State.currentMode === 'red' || State.currentMode === 'green') {
+                const logo = document.getElementById('satan-logo');
+                const p = State.logoPosition;
+
+                p.x += p.dx;
+                p.y += p.dy;
+
+                if (p.x <= 0 || p.x >= window.innerWidth - 320) p.dx *= -1;
+                if (p.y <= 0 || p.y >= window.innerHeight - 60) p.dy *= -1;
+
+                logo.style.left = p.x + 'px';
+                logo.style.top = p.y + 'px';
+            }
+
+            // 2. Rain Entities Movement
+            State.rainItems.forEach(item => {
+                if (item.isDead || !item.el.parentNode) return;
+
                 item.y += item.speed;
-                if(item.y > window.innerHeight + 100) {
-                    item.y = -100;
+                if (item.y > window.innerHeight + 60) {
+                    item.y = -80;
                     item.x = Math.random() * window.innerWidth;
                 }
                 
                 item.el.style.transform = `translate(${item.x}px, ${item.y}px)`;
             });
 
-            // 3. Логика Охотника @ebu_Dokki
-            if(hunter && !hunter.isAttacking) {
-                // Выбор цели (не трогает создателей)
-                if(!hunter.target || hunter.target.dead) {
-                    hunter.target = rainItems.find(i => 
-                        !i.dead && 
-                        i.el.innerText !== '@SatanaCIub' && 
-                        i.el.innerText !== '@hooligan' && 
-                        i.el.innerText !== '@ebu_Dokki'
-                    );
-                } else {
-                    // Погоня за целью
-                    const dx = hunter.target.x - hunter.x;
-                    const dy = hunter.target.y - hunter.y;
-                    const distance = Math.sqrt(dx*dx + dy*dy);
+            // 3. AI Processing
+            HunterAI.process();
 
-                    if(distance < 45) {
-                        // ФАЗА УДАРА
-                        hunter.isAttacking = true;
-                        const victim = hunter.target;
-                        victim.dead = true;
-                        victim.el.classList.add('exploding');
-                        
-                        triggerCarnageEffect();
-
-                        setTimeout(() => {
-                            victim.el.style.display = 'none';
-                            hunter.isAttacking = false;
-                            hunter.target = null;
-                        }, 550);
-                    } else {
-                        // Движение к цели
-                        hunter.x += dx * 0.07;
-                        hunter.y += dy * 0.07;
-                    }
-                }
-                hunter.el.style.transform = `translate(${hunter.x}px, ${hunter.y}px)`;
+            // 4. Update Hunter Position
+            if (State.hunter) {
+                State.hunter.el.style.transform = `translate(${State.hunter.x}px, ${State.hunter.y}px)`;
             }
 
-            requestAnimationFrame(update);
+            requestAnimationFrame(MainLoop);
         }
 
-        // Навигация
-        function nav(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            document.getElementById(pageId).classList.add('active-page');
-        }
+        /**
+         * INITIALIZATION
+         */
+        window.addEventListener('load', () => {
+            ThemeEngine.apply('red');
+            MainLoop();
+        });
 
-        // Логин
-        function tryLogin() {
-            const p = document.getElementById('pass').value;
-            if(p === '2727') {
-                nav('page-menu');
-            } else {
-                alert("ACCESS DENIED: INCORRECT CODE");
-            }
-        }
-
-        // Запуск системы
-        window.onresize = initRain;
-        applyTheme('red');
-        update();
+        window.addEventListener('resize', () => {
+            RainEngine.init();
+        });
 
     </script>
 </body>
