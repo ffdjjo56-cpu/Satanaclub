@@ -46,15 +46,15 @@
             </div>
         </div>
     </div>
-
     <div id="main-menu" class="page">
-<div id="main-menu" class="page">
-    <div class="hooligan-header">Hooligan AER <span id="carrot-secret" style="cursor:pointer; opacity: 0.3;">🥕</span></div>
-    <button class="menu-btn" onclick="triggerLoad('rules-page')">📜 ПРАВИЛА AER</button>
-    <button class="menu-btn" onclick="triggerLoad('forms-page')">📝 АНКЕТЫ / АДМИН</button>
-    <button class="menu-btn" onclick="triggerLoad('help-page')">❓ ПОМОЩЬ</button>
-    <button class="menu-btn" onclick="handleSecretClick()">СКОРО</button>
-</div>
+        <div class="hooligan-header">
+            SatanaClub Project <span id="carrot-secret" style="cursor:pointer; opacity: 0.3;">🥕</span>
+        </div>
+        <button class="menu-btn" onclick="triggerLoad('rules-page')">📜 ПРАВИЛА AER</button>
+        <button class="menu-btn" onclick="triggerLoad('forms-page')">📝 АНКЕТЫ / АДМИН</button>
+        <button class="menu-btn" onclick="triggerLoad('help-page')">❓ ПОМОЩЬ</button>
+        <button class="menu-btn" onclick="handleSecretClick()">СКОРО</button>
+    </div>
 <div id="rules-page" class="page">
         <div class="hooligan-header"Правила</div>
         <button class="menu-btn" style="width:100px; padding:5px;" onclick="showPage('main-menu')">BACK</button>
@@ -207,11 +207,23 @@
         } else alert('ДОСТУП ЗАПРЕЩЕН');
     }
 
-    function showPage(id) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+function showPage(id) {
+        // Прячем абсолютно всё с классом page
+        const pages = document.querySelectorAll('.page');
+        pages.forEach(p => {
+            p.classList.remove('active');
+            p.style.display = 'none'; // Принудительно скрываем
+        });
+
+        // Ищем нашу страницу
         const target = document.getElementById(id);
-        if(target) target.classList.add('active');
-    }
+        if(target) {
+            target.classList.add('active');
+            target.style.display = 'block'; // Принудительно показываем!
+        } else {
+            alert("Ошибка: страница " + id + " не найдена!");
+        }
+}
 
     function setTheme(t) {
         const b = document.getElementById('body-tag');
