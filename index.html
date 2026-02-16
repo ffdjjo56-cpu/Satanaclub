@@ -1,350 +1,258 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SatanaCIub Project | CT1C2 FINAL EDITION</title>
+    <title>SatanaCIub Project | CT1C2 DVD EDITION</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&family=Rubik+Mono+One&family=Comfortaa:wght@700&display=swap');
 
-        :root { --m: #ff0000; --bg: #000; --t: #fff; --rd: 0px; }
+        :root { 
+            --m: #ff0000; --bg: #000; --t: #fff; --glow: rgba(255, 0, 0, 0.9);
+            --font-sq: 'JetBrains Mono', monospace;
+            --font-logo: 'Rubik Mono One', sans-serif;
+            --rd: 0px;
+        }
         
-        body.r-mode { --m: #ff0000; --bg: #000; --t: #fff; --rd: 0px; font-family: 'Rubik Mono One', sans-serif; }
-        body.p-mode { --m: #ffb7d5; --bg: #fff; --t: #ff69b4; --rd: 50px; font-family: 'Comfortaa', cursive; }
-        body.g-mode { --m: #00ff00; --bg: #000; --t: #00ff00; --rd: 0px; font-family: 'JetBrains Mono', monospace; }
-        body.n-mode { --m: #0080ff; --bg: #f5faff; --t: #004080; --rd: 20px; font-family: sans-serif; }
+        body.r-mode { --m: #ff0000; --bg: #000; --t: #fff; --glow: rgba(255, 0, 0, 0.9); --rd: 0px; }
+        body.p-mode { --m: #ffb7d5; --bg: #fff; --t: #ff69b4; --glow: rgba(255, 183, 213, 0.9); font-family: 'Comfortaa', cursive !important; --rd: 50px; }
+        body.g-mode { --m: #00ff00; --bg: #000; --t: #00ff00; --glow: rgba(0, 255, 0, 0.9); --rd: 0px; }
+        body.n-mode { --m: #0080ff; --bg: #050505; --t: #fff; --glow: rgba(0, 128, 255, 0.9); --rd: 15px; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-        body { background: var(--bg); color: var(--t); height: 100vh; width: 100vw; overflow: hidden; user-select: none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; font-family: var(--font-sq); }
+        body { background: var(--bg); color: var(--t); height: 100vh; width: 100vw; overflow: hidden; transition: 0.4s; }
 
-        /* INTRO & LOGIN SYSTEM */
-        #intro-layer { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #0f0; font-family: 'JetBrains Mono'; }
-        #console-log { width: 450px; height: 180px; overflow: hidden; font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4; }
-        #fog-nick { font-size: 4rem; opacity: 0; filter: blur(25px); transition: 3.5s ease-out; color: #fff; position: absolute; }
-        #fog-nick.show { opacity: 1; filter: blur(0px); }
-        
-        #auth-box { display: none; background: #0a0a0a; border: 3px solid var(--m); padding: 40px; border-radius: 15px; text-align: center; color: #fff; box-shadow: 0 0 50px rgba(255,0,0,0.2); }
-        .auth-input { background: #000; border: 2px solid var(--m); color: #fff; padding: 10px; margin: 15px 0; width: 100%; text-align: center; font-size: 1.2rem; }
+        #bg-chaos { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.3; }
+        .bg-text { position: absolute; font-size: 0.7rem; color: var(--m); font-weight: bold; }
 
-        /* UI ELEMENTS */
-        #header-title { font-size: 3.5rem; color: var(--m); text-align: center; margin-top: 20px; min-height: 100px; text-transform: uppercase; }
-        .btn-container { display: flex; flex-direction: column; align-items: center; gap: 18px; margin-top: 20px; position: relative; z-index: 500; }
-        .main-btn { width: 480px; padding: 22px; font-size: 1.3rem; cursor: pointer; border: 4px solid var(--m); background: transparent; color: var(--t); border-radius: var(--rd); transition: 0.2s; font-weight: 900; }
-        
-        .r-mode .main-btn { animation: tremble 0.25s infinite; border-color: #fff; }
-        .r-mode .main-btn:hover { background: #ff0000; color: #000; border-color: #ff0000; transform: scale(1.05); }
-        @keyframes tremble { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -1px); } 100% { transform: translate(1px, -1px); } }
+        #fx-layer { position: fixed; inset: 0; z-index: 10000; pointer-events: none; opacity: 0; background: #fff; }
+        .flash { animation: fsh 0.25s forwards; }
+        @keyframes fsh { 0% { opacity: 1; } 100% { opacity: 0; } }
 
-        /* ENTITIES (USERS, VIPS, KILLER) */
-        .entity { position: fixed; white-space: nowrap; cursor: pointer; z-index: 100; font-weight: bold; transition: color 0.3s; }
-        .vip { position: fixed; font-weight: 900; z-index: 600; pointer-events: none; text-shadow: 0 0 15px var(--m); animation: blink 0.8s infinite; font-size: 1.1rem; }
-        @keyframes blink { 0%, 100% { opacity: 1; filter: brightness(1.5); } 50% { opacity: 0.6; filter: brightness(1); } }
-        
-        .attacker { position: fixed; font-weight: 900; z-index: 200; pointer-events: none; transition: 0.1s; font-family: 'Rubik Mono One'; }
-        .falling-emoji { position: fixed; pointer-events: none; z-index: 50; opacity: 0.6; font-size: 1.4rem; }
-        
-        #flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 1000; }
-        .explosion { position: fixed; width: 120px; height: 120px; background: radial-gradient(circle, #f00, transparent); border-radius: 50%; transform: scale(0); animation: explode 0.6s forwards; z-index: 150; }
-        @keyframes explode { from { transform: scale(0); opacity: 1; } to { transform: scale(3.5); opacity: 0; } }
+        /* DVD LOGO STYLE */
+        #logo-dvd {
+            position: fixed; white-space: pre; font-size: 10px; line-height: 1;
+            color: var(--m); z-index: 50; pointer-events: none; font-weight: bold;
+            filter: drop-shadow(0 0 8px var(--m));
+        }
 
-        /* SCREENS & CONTENT */
-        .screen { display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; background: var(--bg); padding: 25px; }
+        .casino-title { 
+            font-family: var(--font-logo); font-size: 3.2rem; text-align: center; margin-top: 40px; 
+            color: transparent; -webkit-text-stroke: 1.5px var(--m);
+            text-shadow: 0 0 20px var(--glow); position: relative; z-index: 10;
+        }
+
+        .screen { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
         .screen-active { display: flex; }
-        .content-box { width: 95%; max-width: 1000px; height: 75vh; overflow-y: auto; border: 5px solid var(--m); padding: 40px; background: rgba(0,0,0,0.6); border-radius: var(--rd); line-height: 1.6; }
         
-        .theme-switches { position: fixed; bottom: 20px; left: 20px; display: flex; gap: 15px; z-index: 2000; align-items: center; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 50px; }
-        .t-btn { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 3px solid #fff; transition: 0.3s; }
-        .t-btn:hover { transform: translateY(-5px); }
-        
-        #term-input { background: #000; border: 1px solid #0f0; color: #0f0; width: 180px; padding: 8px; display: none; font-family: 'JetBrains Mono'; }
+        .content-panel { 
+            width: 90%; max-width: 900px; height: 60vh; overflow-y: auto; 
+            border: 4px solid var(--m); padding: 30px; background: rgba(0,0,0,0.98);
+            box-shadow: 0 0 40px rgba(0,0,0,1); border-radius: var(--rd);
+        }
+
+        .btn-action { 
+            width: 420px; padding: 20px; margin: 8px; background: transparent; color: var(--t); 
+            border: 3px solid var(--m); font-size: 1.1rem; cursor: pointer;
+            text-transform: uppercase; font-weight: 800; border-radius: var(--rd);
+        }
+        .btn-action:hover { background: var(--m); color: #000; box-shadow: 0 0 20px var(--glow); }
+
+        #term-input { 
+            width: 420px; background: #000; border: 2px solid var(--m); color: var(--m); 
+            padding: 10px; margin-top: 15px; display: none;
+        }
         .g-mode #term-input { display: block; }
-        input[type=range] { cursor: pointer; accent-color: var(--m); }
+
+        .unit { position: fixed; z-index: 100; cursor: crosshair; white-space: nowrap; font-weight: 900; }
+        .is-vip { text-shadow: 0 0 10px var(--m); animation: blink 0.6s infinite; }
+        @keyframes blink { 50% { opacity: 0.2; } }
+        .muted { opacity: 0.1 !important; filter: blur(2px); }
+
+        .theme-nav { position: fixed; bottom: 20px; left: 20px; display: flex; gap: 15px; z-index: 2000; }
+        .t-dot { width: 35px; height: 35px; border: 3px solid #fff; cursor: pointer; }
     </style>
 </head>
 <body class="r-mode">
 
-<div id="intro-layer">
-    <div id="console-log"></div>
-    <div id="fog-nick">@satanacIub</div>
-    <div id="auth-box">
-        <h2 style="color:var(--m)">ДОСТУП ОГРАНИЧЕН</h2><br>
-        <p style="font-size: 0.9rem; opacity: 0.8;">Согласен с правилами чата AER?</p>
-        <label style="cursor:pointer; font-size: 1.5rem;"><input type="checkbox" id="accept-check"> [ДА]</label><br><br>
-        <p style="color:#aaa">Угадай код доступа:</p>
-        <input type="password" id="access-code" class="auth-input" placeholder="****" maxlength="4">
-        <button class="main-btn" style="width:100%" onclick="Core.verifyAuth()">CONNECT</button>
-    </div>
+<div id="fx-layer"></div>
+<div id="bg-chaos"></div>
+
+<div id="logo-dvd">
+ ██████  █████  ████████  █████  ███    ██  █████  
+██      ██   ██    ██    ██   ██ ████   ██ ██   ██ 
+███████ ███████    ██    ███████ ██ ██  ██ ███████ 
+     ██ ██   ██    ██    ██   ██ ██  ██ ██ ██   ██ 
+███████ ██   ██    ██    ██   ██ ██   ████ ██   ██
 </div>
 
-<div id="flash"></div>
-<h1 id="header-title">Hooligan AER</h1>
-
-<div class="btn-container" id="menu-main">
-    <button class="main-btn" onclick="Nav.to('scr-rules')">Правила чата AER</button>
-    <button class="main-btn" onclick="Nav.to('scr-anketa-main')">Анкеты чата</button>
-    <button class="main-btn" onclick="Nav.to('scr-help')">Помощь в чате</button>
-    <button class="main-btn" id="btn-soon" onclick="Core.handleSoon()">Скоро...</button>
+<div id="scr-login" class="screen screen-active" style="background:#000;">
+    <div class="casino-title">HOOLIGAN AER</div>
+    <div style="margin: 20px 0;"><input type="checkbox" id="accept-check"> [ACCEPT PROTOCOL]</div>
+    <input type="password" id="pass-field" placeholder="####" maxlength="4" style="background:none; border:3px solid var(--m); color:var(--m); padding:15px; width:180px; text-align:center; font-size:2rem;">
+    <button class="btn-action" onclick="Kernel.auth()" style="margin-top:20px;">CONNECT</button>
 </div>
 
-<div class="theme-switches">
-    <div class="t-btn" style="background:#f00" onclick="Core.setTheme('r')"></div>
-    <div class="t-btn" style="background:#ffb7d5" onclick="Core.setTheme('p')"></div>
-    <div class="t-btn" style="background:#0f0" onclick="Core.setTheme('g')"></div>
-    <div class="t-btn" style="background:#0080ff" onclick="Core.setTheme('n')"></div>
-    <input type="range" id="emoji-speed" min="0.1" max="10" step="0.1" value="1.5" title="Emoji Speed Control">
-    <input type="text" id="term-input" placeholder="root@satana:~#">
+<div id="scr-menu" class="screen">
+    <div class="casino-title glitch-node">HOOLIGAN AER</div>
+    <button class="btn-action" onclick="View.to('scr-rules')">ПРАВИЛА AER</button>
+    <button class="btn-action" onclick="View.to('scr-anketa-main')">АНКЕТЫ</button>
+    <button class="btn-action" id="btn-soon" onclick="Kernel.handleSoon()">СКОРО...</button>
+    <input type="text" id="term-input" placeholder="root@ct1c2:~# @ban / @mute">
 </div>
 
 <div id="scr-rules" class="screen">
-    <div class="content-box">
-        <h2>ПРАВИЛА AER</h2><br>
-        <p>Данный AER является основном сводом правил чата. Незнание правил не освобождает от ответственности. Копирование структуры или содержания без разрешения автора @SatanaCIub запрещено<br><br>
-        1. Дискриминация и деструктив<br>
-        Запрещены любые формы ксенофобии, расизма, гомофобии, сексизма, а также травля по религиозному или социальному признаку.<br>
-        Запрещена прямая или завуалированная агрессия в адрес участников или третьих лиц.<br>
-        3. Спам и рассылки<br>
-        Наказание: Мут 120 минут. При рецидиве — Бан.<br> 
-        4. Флуд и Лестница<br>
-        Флуд: Отправка более 4-х бессмысленных сообщений подряд.<br>
-        Лестница: Дробление одной мысли на 5 и более сообщений.<br>
-        Наказание: Мут от 30 минут до 3 часов мута<br>
-        Запрещено разжигание конфликтов, обсуждение политических событий, деятелей и войн. Любая попытка поднять острую социальную тему карается незамедлительно.<br>
-        Наказание: За провокацию — 220 минут мута. За политику — бан навсегда<br>
-        Наказание: Мут 12 часов или Бан (на усмотрение модератора).<br>
-        1. Обход наказаний<br>
-        🛠 Раздел III: Информация для администрации<br>
-        Принцип прогрессии: Если пользователь продолжает нарушать после мута, длительность наказания увеличивается: +15%, +25%, +30% и т.д., вплоть до бана на 1800 дней.<br>
-        • Администрация не имеет право вынести наказание, не описанное в правилах, если действия юзера вредят атмосфере</p>
+    <div class="content-panel">
+        <h2 style="color:var(--m);">ПРАВИЛА AER</h2>
+        <p>Данный AER является основном сводом правил чата. Незнание правил не освобождает от ответственности. Копирование структуры или содержания без разрешения автора @SatanaCIub запрещено</p>
+        <h3>1. Дискриминация и деструктив</h3>
+        <p>Запрещены любые формы ксенофобии, расизма, гомофобии, сексизма, а также травля. Наказание: Мут 20-45 минут.</p>
+        <h3>3. Спам и рассылки</h3>
+        <p>Наказание: Мут 120 минут. При рецидиве — Бан.</p>
+        <h3>4. Флуд и Лестница</h3>
+        <p>Флуд: 4+ сообщения. Лестница: 5+ сообщений. Наказание: Мут 30м - 3ч.</p>
+        <h3>5. Политика</h3>
+        <p>Запрещено обсуждение политики и войн. Наказание: Провокация — 220м. Политика — БАН.</p>
     </div>
-    <button class="main-btn" onclick="Nav.to('main')">ВЕРНУТЬСЯ</button>
+    <button class="btn-action" onclick="View.to('scr-menu')">BACK</button>
 </div>
 
 <div id="scr-anketa-main" class="screen">
-    <div class="btn-container">
-        <button class="main-btn" onclick="Nav.to('scr-ank-admin')">Анкета на админку</button>
-        <button class="main-btn" onclick="Nav.to('scr-ank-vice')">Анкета на вице-президента</button>
-        <button class="main-btn" onclick="Nav.to('scr-ank-vet')">Анкета на ветерана</button>
-        <button class="main-btn" onclick="Nav.to('main')">BACK</button>
-    </div>
+    <button class="btn-action" onclick="View.to('scr-ank-admin')">Админка</button>
+    <button class="btn-action" onclick="View.to('scr-ank-vice')">Вице</button>
+    <button class="btn-action" onclick="View.to('scr-menu')">НАЗАД</button>
 </div>
 
 <div id="scr-ank-admin" class="screen">
-    <div class="content-box">
-        <h2>АНКЕТА НА АДМИНКУ</h2><br>
-        <p>1. Твой ник, @, айди (если не знаешь как посмотреть пиши в общий чат .ид), возраст и активность в чате за неделю<br>
-        2. Твой часовой пояс, сколько ты готов потратить часов работы в чате<br>
-        3. Что ты будешь делать если в чате нарушают, а ты не можешь выдать бан или мут?<br>
-        4. В каких чатах ты был админом? (500+ человек в чате)<br>
-        5. Краткий пересказ AER [Правило - наказание]</p>
+    <div class="content-panel">
+        <h2 style="color:var(--m);">АНКЕТА НА АДМИНКУ</h2>
+        <p>1. Твой ник, @, айди, возраст и активность в чате за неделю;<br>2. Твой часовой пояс, сколько ты готов потратить часов работы в чате;<br>3. Что ты будешь делать, если в чате нарушают, а ты не можешь выдать бан или мут?;<br>4. В каких чатах ты был админом? (500+ человек в чате);<br>5. Краткий пересказ AER [Правило - наказание].</p>
     </div>
-    <button class="main-btn" onclick="Nav.to('scr-anketa-main')">BACK</button>
-</div>
-
-<div id="scr-ank-vice" class="screen">
-    <div class="content-box">
-        <h2>АНКЕТА НА ВИЦЕ-ПРЕЗИДЕНТА</h2><br>
-        <p>1. Количество трофеев от 30000 тыс. (30k)<br>
-        2. Сколько в день ты сможешь сидеть и работать в клубе?<br>
-        3. Скриншот аккаунта<br>
-        4. Сделать 2 рекламы нашего тгч в других клубах.</p>
-    </div>
-    <button class="main-btn" onclick="Nav.to('scr-anketa-main')">BACK</button>
-</div>
-
-<div id="scr-ank-vet" class="screen">
-    <div class="content-box">
-        <h2>АНКЕТА НА ВЕТЕРАНА</h2><br>
-        <p>1. Скрин аккаунта.</p>
-    </div>
-    <button class="main-btn" onclick="Nav.to('scr-anketa-main')">BACK</button>
+    <button class="btn-action" onclick="View.to('scr-anketa-main')">BACK</button>
 </div>
 
 <div id="scr-shame" class="screen">
-    <div class="content-box">
-        <h2>Топ 5 фриков чата которые тупее чем иван сало:</h2><br>
-        <div class="shame-item"><b>1. Vinal</b> – Просил союз с нашим чатом, при получении отказа начал говорить что будет рейдить наши кланы. Записывал гс где оскробил Украину и выставил Россию лучшей. Итог: Остался без чата. Находится в чате.</div>
-        <div class="shame-item"><b>2. Григей</b> – 18 Летний русофоб педофил играющий в нулс. Боится общаться с русскими людьми 10-15 лет. Итог: Создал чат где 3 онлайна и 80 ботов и удалил его.</div>
-        <div class="shame-item"><b>3. Релтин</b> – Самый худший админ в мире. Получил мут на 1 час и вышел с чата навсегда. Обиженный фрик. Итог: Находится в чате нищих оппов.</div>
-        <div class="shame-item"><b>4. Дед</b> – Сливал инфу про участников чата, успокоился после того как нашли его фото и страницу в вк его мамы. Итог: Стал нормальным (вроде).</div>
-        <div class="shame-item"><b>5. Психокид</b> – Оскроблял всех участников в чате, разданивался несколько раз. Итог: Забанен в чате.</div>
+    <div class="content-panel">
+        <h2 style="color:var(--m);">ТОП 5 ФРИКОВ</h2>
+        <p>1. Vinal – Угрожал рейдом. 2. Григей – Русофоб. 3. Релтин – Обиделся на мут. 4. Дед – Сливал инфу. 5. Психокид – Бан навсегда.</p>
     </div>
-    <button class="main-btn" onclick="Nav.to('main')">BACK</button>
+    <button class="btn-action" onclick="View.to('scr-menu')">BACK</button>
 </div>
 
-<div id="scr-help" class="screen">
-    <div class="content-box"><h2>ПОМОЩЬ</h2><br><p>Система CT1C2 активна. Модуль защиты: SatanaCIub Project. Контакт: @SatanaCIub</p></div>
-    <button class="main-btn" onclick="Nav.to('main')">BACK</button>
+<div class="theme-nav">
+    <div class="t-dot" style="background:red" onclick="Kernel.setMode('r')"></div>
+    <div class="t-dot" style="background:pink" onclick="Kernel.setMode('p')"></div>
+    <div class="t-dot" style="background:green" onclick="Kernel.setMode('g')"></div>
+    <div class="t-dot" style="background:blue" onclick="Kernel.setMode('n')"></div>
 </div>
 
 <script>
-    const USERS = ['@Blood_Househ', '@Aaaaaaaaaafkrjfjfjso', '@VetalGeor', '@geniusmozer', '@aungakw'];
-    const VIPS = ['@satanacIub', '@hooligan_hooligan'];
-    const EMOJIS = {
-        r: ['†', '🃜', '🃚', '🃖', '🃁', '⛥', '⭑', '⛤'],
-        p: ['‹𝟹', '༝', '༚', 'ꨄ︎', '୨ৎ', '𐚁', '>⩊<', '♪', '𐙚', '𖣠'],
-        g: ['▓▓', '██', '⬚', '❖', '⌗', '𖣯', '⮞', '𓊌', '░', '「 」', '⛶'],
-        n: ['➢', '❯❯❯❯', '↓', '➤', '⟢', '»', '➜']
+    const Static = {
+        VIPS: ['@satanacIub', '@hooligan_hooligan'],
+        TARGETS: ['@Blood_Househ', '@VetalGeor', '@geniusmozer', '@aungakw', '@ebu_Dokki'],
+        SYMBOLS: ['#', '&', '₽', '%', '$', '†', '0', '1'],
+        TITLES: ["HOOLIGAN AER", "SATANACIUB WWW"]
     };
 
-    let State = {
-        theme: 'r', soonClicks: 0, lastTick: 0,
-        entities: USERS.map(n => ({ n, x: Math.random()*80, y: Math.random()*80, speed: 0.6+Math.random(), el: null, dead: false })),
-        vips: VIPS.map(n => ({ n, x: 50, y: 50, angle: Math.random()*Math.PI*2, el: null })),
-        killer: { x: 0, y: 0, el: null },
-        emojis: Array.from({length: 30}, () => ({ x: Math.random()*100, y: -10, s: 1, el: null }))
+    let Global = { 
+        mode: 'r', units: [], banned: [], muted: [], lastTick: 0, soonClicks: 0,
+        dvd: { x: 50, y: 50, dx: 3, dy: 3, w: 320, h: 60 }
     };
 
-    const Core = {
+    const Kernel = {
         init() {
-            this.runIntro();
-            this.createElements();
-            this.headerAnim();
+            this.createChaos();
+            this.spawnUnits();
+            this.runCasinoEngine();
+            this.heartbeat();
+            this.initConsole();
         },
-        runIntro() {
-            const log = document.getElementById('console-log');
-            const lines = ["> Init CT1C2_SEC...", "> SatanaCIub Assets OK", "> AER Protocol: ONLINE", "> Port 2727: LISTENING", "> Finalizing..."];
+        createChaos() {
+            const bg = document.getElementById('bg-chaos');
+            for(let i=0; i<40; i++) {
+                let d = document.createElement('div'); d.className = 'bg-text';
+                d.innerText = Static.SYMBOLS[Math.floor(Math.random()*Static.SYMBOLS.length)];
+                d.style.left = Math.random()*100+'vw'; d.style.top = Math.random()*100+'vh';
+                bg.appendChild(d);
+            }
+        },
+        auth() {
+            if(document.getElementById('pass-field').value === '2727') View.to('scr-menu');
+            else { this.fx(); }
+        },
+        setMode(m) { Global.mode = m; document.body.className = m + '-mode'; this.fx(); },
+        fx() { const l = document.getElementById('fx-layer'); l.classList.add('flash'); setTimeout(() => l.classList.remove('flash'), 250); },
+        spawnUnits() {
+            [...Static.VIPS, ...Static.TARGETS].forEach(name => {
+                if(Global.banned.includes(name)) return;
+                let d = document.createElement('div');
+                d.className = 'unit' + (Static.VIPS.includes(name) ? ' is-vip' : '');
+                if(Global.muted.includes(name)) d.classList.add('muted');
+                d.innerText = name;
+                document.body.appendChild(d);
+                Global.units.push({ name, el: d, x: Math.random()*90, y: Math.random()*90, dx: (Math.random()-0.5)*0.6, dy: (Math.random()-0.5)*0.6 });
+            });
+        },
+        initConsole() {
+            document.getElementById('term-input').addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') {
+                    const val = e.target.value.split(' ');
+                    if(val[0] === '@ban') Global.banned.push(val[1]);
+                    if(val[0] === '@mute') Global.muted.push(val[1]);
+                    this.refresh(); e.target.value = '';
+                }
+            });
+        },
+        refresh() { Global.units.forEach(u => u.el.remove()); Global.units = []; this.spawnUnits(); },
+        runCasinoEngine() {
             let i = 0;
-            let itv = setInterval(() => {
-                log.innerHTML += lines[i] + "<br>"; i++;
-                if(i >= lines.length) {
-                    clearInterval(itv);
-                    setTimeout(() => {
-                        document.getElementById('fog-nick').classList.add('show');
-                        setTimeout(() => {
-                            document.getElementById('fog-nick').classList.remove('show');
-                            setTimeout(() => {
-                                document.getElementById('console-log').style.display = 'none';
-                                document.getElementById('auth-box').style.display = 'block';
-                            }, 1800);
-                        }, 3200);
-                    }, 1000);
-                }
-            }, 600);
-        },
-        verifyAuth() {
-            const pass = document.getElementById('access-code').value;
-            const check = document.getElementById('accept-check').checked;
-            if(!check) return alert("Подтверди согласие с AER!");
-            if(pass === '2727') {
-                document.getElementById('intro-layer').style.display = 'none';
-                requestAnimationFrame(t => this.loop(t));
-            } else {
-                alert("НЕВЕРНЫЙ КОД ДОСТУПА");
-                document.getElementById('access-code').value = '';
-            }
-        },
-        createElements() {
-            State.entities.forEach(u => {
-                let d = document.createElement('div'); d.className = 'entity'; d.innerText = u.n;
-                d.onclick = () => this.explode(u); document.body.appendChild(d); u.el = d;
-            });
-            State.vips.forEach(v => {
-                let d = document.createElement('div'); d.className = 'vip'; d.innerText = v.n;
-                document.body.appendChild(d); v.el = d;
-            });
-            let k = document.createElement('div'); k.className = 'attacker'; k.id = 'killer'; k.innerText = '@ebu_Dokki';
-            document.body.appendChild(k); State.killer.el = k;
-            State.emojis.forEach(e => {
-                let d = document.createElement('div'); d.className = 'falling-emoji'; document.body.appendChild(d); e.el = d;
-            });
-        },
-        setTheme(t) {
-            State.theme = t; document.body.className = t + '-mode';
-            State.entities.forEach(u => u.el.style.color = (t==='r'?'#fff':(t==='p'?'#ff69b4':'var(--t)')));
-        },
-        headerAnim() {
-            const h = document.getElementById('header-title');
             setInterval(() => {
-                if(State.theme === 'r') {
-                    h.innerText = Math.random() > 0.4 ? "SatanaCIub WWW" : "#₽%&@*№§";
-                    h.style.color = Math.random() > 0.5 ? "#fff" : "#f00";
-                } else if(State.theme === 'p') { h.innerText = "MRKBYE :3"; h.style.color = "#ff69b4"; }
-                else { h.innerText = "Hooligan AER"; h.style.color = "var(--m)"; }
-            }, 550);
+                const nodes = document.querySelectorAll('.glitch-node');
+                const target = Static.TITLES[i];
+                nodes.forEach(n => {
+                    let p = 0;
+                    const f = setInterval(() => {
+                        n.innerHTML = target.split("").map((c, idx) => (idx < p) ? c : Static.SYMBOLS[Math.floor(Math.random()*Static.SYMBOLS.length)]).join("");
+                        p += 0.5; if(p > target.length) clearInterval(f);
+                    }, 50);
+                });
+                i = (i + 1) % Static.TITLES.length;
+            }, 5000);
         },
-        explode(u) {
-            if(u.dead) return; u.dead = true; u.el.style.color = '#f00';
-            setTimeout(() => {
-                let r = u.el.getBoundingClientRect();
-                let exp = document.createElement('div'); exp.className = 'explosion';
-                exp.style.left = r.left + 'px'; exp.style.top = r.top + 'px';
-                document.body.appendChild(exp);
-                if(State.theme === 'r') {
-                    document.getElementById('flash').style.opacity = '1';
-                    setTimeout(() => document.getElementById('flash').style.opacity = '0', 120);
-                    State.entities.forEach(o => {
-                        let r2 = o.el.getBoundingClientRect();
-                        if(Math.hypot(r.x-r2.x, r.y-r2.y) < 160) this.explode(o);
-                    });
-                }
-                u.el.style.display = 'none';
-                setTimeout(() => { u.dead = false; u.el.style.display = 'block'; u.y = -10; }, 4500);
-                setTimeout(() => exp.remove(), 600);
-            }, 600);
-        },
-        handleSoon() {
-            State.soonClicks++;
-            if(State.soonClicks >= 3) { Nav.to('scr-shame'); State.soonClicks = 0; }
-        },
-        loop(t) {
-            let iv = State.theme === 'g' ? 800 : 20;
-            if(t - State.lastTick > iv) { this.update(); State.lastTick = t; }
-            requestAnimationFrame(t => this.loop(t));
-        },
-        update() {
-            const mod = parseFloat(document.getElementById('emoji-speed').value);
-            const isG = State.theme === 'g';
+        handleSoon() { Global.soonClicks++; if(Global.soonClicks >= 3) View.to('scr-shame'); },
+        heartbeat() {
+            const now = Date.now();
+            let step = (Global.mode === 'g') ? (now - Global.lastTick > 1000) : true;
 
-            // Emojis rain
-            State.emojis.forEach(e => {
-                e.y += mod * (isG ? 10 : 3.5);
-                if(e.y > 105) { e.y = -5; e.x = Math.random()*100; e.el.innerText = EMOJIS[State.theme][Math.floor(Math.random()*EMOJIS[State.theme].length)]; }
-                e.el.style.left = e.x + 'vw'; e.el.style.top = e.y + 'vh';
-            });
+            // DVD PHYSICS
+            const dvdEl = document.getElementById('logo-dvd');
+            Global.dvd.x += Global.dvd.dx; Global.dvd.y += Global.dvd.dy;
+            if(Global.dvd.x < 0 || Global.dvd.x > window.innerWidth - Global.dvd.w) Global.dvd.dx *= -1;
+            if(Global.dvd.y < 0 || Global.dvd.y > window.innerHeight - Global.dvd.h) Global.dvd.dy *= -1;
+            dvdEl.style.left = Global.dvd.x + 'px'; dvdEl.style.top = Global.dvd.y + 'px';
 
-            // VIP Orbit around buttons
-            State.vips.forEach((v, i) => {
-                v.angle += isG ? 0.3 : 0.04;
-                let bx = window.innerWidth/2, by = 250;
-                v.el.style.left = (bx - 50 + Math.cos(v.angle + i*3)*280) + 'px';
-                v.el.style.top = (by + Math.sin(v.angle + i*3)*180) + 'px';
-                v.el.style.color = 'var(--m)';
-            });
-
-            // Users
-            State.entities.forEach(u => {
-                if(u.dead) return;
-                if(State.theme === 'p') { u.x += (Math.random()-0.5)*3; u.y += (Math.random()-0.5)*3; }
-                else { u.y += (isG ? 4 : 0.7); if(u.y > 105) { u.y = -5; u.x = Math.random()*90; } }
-                u.el.style.left = u.x + 'vw'; u.el.style.top = u.y + 'vh';
-            });
-
-            // Killer AI
-            if(State.theme !== 'p') {
-                let target = State.entities.find(u => !u.dead && u.y > 0);
-                if(target) {
-                    let tx = target.x * window.innerWidth / 100, ty = target.y * window.innerHeight / 100;
-                    let kS = isG ? 1 : 0.07;
-                    State.killer.x += (tx - State.killer.x) * kS;
-                    State.killer.y += (ty - State.killer.y) * kS;
-                    if(Math.hypot(State.killer.x - tx, State.killer.y - ty) < 45) this.explode(target);
-                }
-            } else {
-                let t = State.entities[0];
-                State.killer.x += (t.x * window.innerWidth/100 - State.killer.x)*0.06;
-                State.killer.y += (t.y * window.innerHeight/100 - State.killer.y)*0.06;
-                State.killer.el.innerText = "@ebu_Dokki 🌹";
+            if(step) {
+                Global.lastTick = now;
+                Global.units.forEach(u => {
+                    u.x += u.dx * (Global.mode === 'g' ? 15 : 1.2);
+                    u.y += u.dy * (Global.mode === 'g' ? 15 : 1.2);
+                    if(u.x < 0 || u.x > 90) u.dx *= -1;
+                    if(u.y < 0 || u.y > 90) u.dy *= -1;
+                    u.el.style.left = u.x + 'vw'; u.el.style.top = u.y + 'vh';
+                });
             }
-            State.killer.el.style.left = State.killer.x + 'px'; State.killer.el.style.top = State.killer.y + 'px';
+            requestAnimationFrame(() => this.heartbeat());
         }
     };
 
-    const Nav = { to(id) {
+    const View = { to(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('screen-active'));
-        if(id !== 'main') document.getElementById(id).classList.add('screen-active');
+        document.getElementById(id).classList.add('screen-active');
+        Kernel.fx();
     }};
 
-    window.onload = () => Core.init();
+    window.onload = () => Kernel.init();
 </script>
 </body>
 </html>
