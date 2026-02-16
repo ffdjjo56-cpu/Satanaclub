@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SatanaCIub Project | CT1C2 OFFICIAL</title>
+    <title>SatanaCIub | MOBILE CT1C2</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&family=Rubik+Mono+One&display=swap');
 
@@ -12,78 +12,88 @@
             --font-sq: 'JetBrains Mono', monospace; --rd: 0px;
         }
 
-        /* ТЕМЫ */
-        body.r-mode { --m: #ff0000; --bg: #000; --t: #fff; --glow: rgba(255,0,0,0.8); --rd: 0px; }
-        body.p-mode { --m: #ffb7d5; --bg: #fff; --t: #ffb7d5; --glow: rgba(255,183,213,0.5); --rd: 50px; }
-        body.g-mode { --m: #00ff00; --bg: #000; --t: #00ff00; --glow: rgba(0,255,0,0.8); --rd: 0px; }
-        body.n-mode { --m: #87cefa; --bg: #fff; --t: #00bfff; --glow: rgba(135,206,250,0.5); --rd: 15px; }
+        /* МОБИЛЬНЫЕ ТЕМЫ */
+        body.r-mode { --m: #ff0000; --bg: #000; --t: #fff; --rd: 0px; }
+        body.p-mode { --m: #ffb7d5; --bg: #ffffff; --t: #ffb7d5; --rd: 40px; }
+        body.g-mode { --m: #00ff00; --bg: #000; --t: #00ff00; --rd: 0px; }
+        body.n-mode { --m: #00bfff; --bg: #ffffff; --t: #00bfff; --rd: 15px; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        
         body { 
             background: var(--bg); color: var(--t); font-family: var(--font-sq); 
-            height: 100vh; width: 100vw; overflow: hidden; position: fixed; transition: background 0.4s; 
+            height: 100dvh; width: 100vw; overflow: hidden; position: fixed; 
+            transition: background 0.3s;
         }
 
-        /* ЭМОДЗИ/СИМВОЛЫ */
-        .emoji-drop { position: fixed; top: -50px; pointer-events: none; z-index: 5; font-size: 1.5rem; animation: fall linear forwards; opacity: 0.6; }
+        /* ЧАСТИЦЫ */
+        .emoji-drop { position: fixed; top: -50px; pointer-events: none; z-index: 5; font-size: 1.2rem; animation: fall linear forwards; }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
-
-        /* СНЕГ */
-        .snowflake { position: fixed; background: #fff; border-radius: 50%; pointer-events: none; z-index: 1000; }
+        .snowflake { position: fixed; background: #fff; border-radius: 50%; pointer-events: none; z-index: 10; transition: background 0.3s; }
+        body.p-mode .snowflake, body.n-mode .snowflake { background: var(--m); opacity: 0.5; }
 
         /* ЗАГОЛОВКИ */
+        .header-box { width: 100%; padding: 20px 10px; z-index: 100; }
         .casino-title { 
-            font-family: 'Rubik Mono One', sans-serif; font-size: 1.8rem; text-align: center; 
-            margin: 20px 0; color: var(--m); text-shadow: 0 0 15px var(--glow); 
-            cursor: pointer; user-select: none; z-index: 100; position: relative;
+            font-family: 'Rubik Mono One', sans-serif; font-size: 1.4rem; text-align: center; 
+            color: var(--m); text-shadow: 0 0 10px var(--glow); 
+            user-select: none; line-height: 1.2;
         }
-        .frozen { color: #87cefa !important; filter: drop-shadow(0 0 10px #87cefa); animation: freeze-shake 0.1s infinite; }
-        .bloody { color: #8b0000 !important; text-shadow: 0 0 20px #f00; }
-        @keyframes freeze-shake { 0% { transform: translate(1px,0); } 50% { transform: translate(-1px,1px); } }
+        .frozen { color: #87cefa !important; animation: frz 0.1s infinite; }
+        @keyframes frz { 0% { transform: translate(1px, 0); } 50% { transform: translate(-1px, 1px); } }
 
-        /* ИНТЕРФЕЙС */
+        /* ЭКРАНЫ ДЛЯ ТЕЛЕФОНА */
         .screen { 
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.94); 
-            z-index: 1000; flex-direction: column; align-items: center; justify-content: center; padding: 15px;
+            display: none; position: absolute; inset: 0; 
+            background: rgba(0,0,0,0.95); z-index: 1000; 
+            flex-direction: column; align-items: center; justify-content: center; padding: 15px;
         }
         .screen-active { display: flex; }
-        .p-mode .screen, .n-mode .screen { background: rgba(255,255,255,0.96); }
+        body.p-mode .screen, body.n-mode .screen { background: rgba(255,255,255,0.98); }
 
         .content-panel { 
-            width: 100%; max-width: 600px; height: 55vh; overflow-y: auto; 
-            border: 4px solid var(--m); padding: 25px; background: rgba(0,0,0,0.95);
-            border-radius: var(--rd); box-shadow: 0 0 30px #000; margin-bottom: 15px;
+            width: 95%; height: 60vh; overflow-y: auto; 
+            border: 3px solid var(--m); padding: 15px; background: rgba(0,0,0,0.9);
+            border-radius: var(--rd); margin-bottom: 20px;
+            -webkit-overflow-scrolling: touch;
         }
-        .p-mode .content-panel, .n-mode .content-panel { background: #fff; color: var(--m); box-shadow: 0 10px 40px var(--glow); }
+        body.p-mode .content-panel, body.n-mode .content-panel { background: #fff; color: #333; }
+        .content-panel h2 { color: var(--m); margin-bottom: 10px; font-size: 1.1rem; text-transform: uppercase; border-bottom: 1px solid var(--m); }
+        .content-panel p { font-size: 0.85rem; margin-bottom: 12px; line-height: 1.4; font-weight: bold; }
 
+        /* КНОПКИ (ПОД ПАЛЕЦ) */
         .btn-action { 
-            width: 100%; max-width: 350px; padding: 18px; margin: 8px 0; 
-            background: transparent; color: var(--t); border: 3px solid var(--m); 
-            font-size: 1rem; cursor: pointer; text-transform: uppercase; 
-            font-weight: 900; border-radius: var(--rd); transition: 0.3s;
+            width: 90%; max-width: 320px; min-height: 60px; margin: 6px 0; 
+            background: transparent; color: var(--m); border: 2px solid var(--m); 
+            font-size: 0.9rem; cursor: pointer; text-transform: uppercase; 
+            font-weight: 900; border-radius: var(--rd);
         }
-        .btn-action:hover { background: var(--m); color: #000; }
+        .btn-action:active { background: var(--m); color: #000; transform: scale(0.98); }
 
         /* НАСТРОЙКИ */
         #settings-panel {
-            position: fixed; top: 15px; right: 15px; z-index: 5000;
-            background: rgba(0,0,0,0.9); border: 2px solid var(--m); padding: 20px;
-            border-radius: 10px; display: none; width: 250px; color: #fff;
+            position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+            background: rgba(0,0,0,0.98); z-index: 5000; padding: 40px 20px;
+            display: none; flex-direction: column;
         }
-        .set-row { margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        .set-row label { display: block; color: var(--m); font-size: 12px; margin-bottom: 5px; }
+        .set-row { margin-bottom: 25px; }
+        .set-row label { display: block; color: var(--m); font-size: 14px; margin-bottom: 10px; text-transform: uppercase; }
+        input[type="range"] { width: 100%; height: 15px; accent-color: var(--m); }
 
         /* МИНИ-ИГРА */
         #game-layer { position: fixed; inset: 0; z-index: 4000; display: none; background: #000; flex-direction: column; align-items: center; justify-content: center; }
-        .game-target { font-size: 6rem; color: #0f0; font-family: 'Rubik Mono One'; margin: 20px; }
-        .noise-char { position: absolute; font-size: 1.5rem; color: #444; cursor: pointer; font-weight: bold; }
-        #error-overlay { position: fixed; inset: 0; z-index: 9999; display: none; background: rgba(0,0,0,0.8); color: red; font-family: 'Rubik Mono One'; font-size: 3rem; align-items: center; justify-content: center; }
+        .game-target { font-size: 5rem; color: #0f0; font-family: 'Rubik Mono One'; margin: 10px; }
+        .noise-char { position: absolute; font-size: 1.3rem; color: #333; font-weight: bold; padding: 10px; }
+        #error-overlay { position: fixed; inset: 0; z-index: 9999; display: none; background: rgba(139,0,0,0.9); color: #fff; font-family: 'Rubik Mono One'; font-size: 1.5rem; align-items: center; justify-content: center; text-align: center; }
 
-        /* УБИЙЦА */
-        .hunter { position: fixed; z-index: 200; color: #ff0; text-shadow: 0 0 15px #ff0; font-weight: 900; pointer-events: none; }
-        .unit { position: fixed; z-index: 150; font-weight: 900; color: var(--m); padding: 5px; cursor: pointer; }
+        /* ЮНИТЫ */
+        .hunter { position: fixed; z-index: 200; color: #ff0; text-shadow: 0 0 10px #ff0; font-weight: 900; pointer-events: none; font-size: 0.7rem; }
+        
+        /* НАВИГАЦИЯ ТЕМ */
+        .theme-nav { position: fixed; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 2000; }
+        .t-dot { width: 45px; height: 45px; border: 2px solid #555; border-radius: 12px; }
 
-        #logo-dvd { position: fixed; white-space: pre; font-size: 6px; color: var(--m); z-index: 10; pointer-events: none; }
+        #logo-dvd { position: fixed; font-size: 8px; color: var(--m); z-index: 5; opacity: 0.5; pointer-events: none; }
     </style>
 </head>
 <body class="r-mode">
@@ -91,86 +101,72 @@
 <div id="error-overlay">PAGE NOT FOUND</div>
 
 <div id="settings-panel">
-    <h3 style="color:var(--m); margin-bottom:10px;">НАСТРОЙКИ CT1C2</h3>
+    <h2 style="color:var(--m); text-align:center; margin-bottom:30px;">ПАРАМЕТРЫ СИСТЕМЫ</h2>
     <div class="set-row">
-        <label>Скорость падения (Снег/Символы): <span id="speed-val">5</span></label>
-        <input type="range" id="speed-range" min="1" max="30" value="5" style="width:100%">
+        <label>Скорость частиц: <span id="speed-val">5</span></label>
+        <input type="range" id="speed-range" min="1" max="25" value="5">
     </div>
     <div class="set-row">
-        <label>Снежный режим: <input type="checkbox" id="snow-toggle" checked></label>
+        <label>Снег и эффекты: <input type="checkbox" id="snow-toggle" checked style="width:20px; height:20px; float:right;"></label>
     </div>
     <div class="set-row">
-        <label>Нападение убийцы: <input type="checkbox" id="hunter-toggle" checked></label>
+        <label>Охота Убийцы: <input type="checkbox" id="hunter-toggle" checked style="width:20px; height:20px; float:right;"></label>
     </div>
-    <button class="btn-action" onclick="View.toggleSettings()" style="padding:10px; font-size:12px;">ЗАКРЫТЬ</button>
+    <button class="btn-action" onclick="View.toggleSettings()" style="margin-top:auto; align-self:center;">ПРИМЕНИТЬ</button>
 </div>
 
-<button style="position:fixed; top:10px; left:10px; z-index:6000; background:none; border:1px solid #444; color:#444; padding:5px;" onclick="View.toggleSettings()">⚙</button>
+<button style="position:fixed; top:15px; left:15px; z-index:6000; background:rgba(0,0,0,0.5); border:1px solid var(--m); color:var(--m); width:40px; height:40px; border-radius:10px;" onclick="View.toggleSettings()">⚙</button>
 
 <div id="game-layer">
-    <div id="hearts" style="font-size:2.5rem; color:red; margin-bottom:15px;">❤️❤️❤️</div>
-    <div style="color:#666; letter-spacing:2px;">ЦЕЛЬ:</div>
+    <div id="hearts" style="font-size:2rem; margin-bottom:10px;">❤️❤️❤️</div>
+    <div style="color:#444; font-size:0.7rem;">БЫСТРО НАЖМИ НА:</div>
     <div class="game-target" id="target-char">?</div>
-    <div id="noise-container"></div>
+    <div id="noise-container" style="width:100%; height:100%; position:absolute;"></div>
 </div>
 
-<div id="logo-dvd">SATANACLUB PROJ</div>
+<div id="logo-dvd">SATANACLUB</div>
 
 <div id="scr-menu" class="screen screen-active">
-    <div class="casino-title" id="main-title" onclick="Game.click()">Hooligan AER</div>
-    <div id="btn-container" style="display:flex; flex-direction:column; align-items:center;">
+    <div class="header-box">
+        <div class="casino-title" id="main-title" onclick="Game.click()">Hooligan AER</div>
+    </div>
+    <div id="btn-container" style="width:100%; display:flex; flex-direction:column; align-items:center;">
         <button class="btn-action" onclick="View.to('scr-rules')">ПРАВИЛА AER</button>
-        <button class="btn-action" onclick="View.to('scr-ankety')">АНКЕТЫ</button>
-        <button class="btn-action" onclick="View.to('scr-help')">ПОМОЩЬ</button>
-        <button class="btn-action" onclick="Kernel.handleShame()">ДОСКА ПОЗОРА</button>
+        <button class="btn-action" onclick="View.to('scr-ankety')">АНКЕТА АДМИНА</button>
+        <button class="btn-action" onclick="Kernel.handleChaos()">ДОСКА ПОЗОРА</button>
     </div>
 </div>
 
 <div id="scr-rules" class="screen">
     <div class="content-panel">
-        <h2>ПРАВИЛА AER (ПОЛНЫЕ)</h2>
-        <p><b>1. Дискриминация:</b> Запрещены ксенофобия, расизм, гомофобия. Наказание: БАН.</p>
-        <p><b>1.1 Провокации:</b> Попытки байта на конфликт. Наказание: Мут 120м.</p>
-        <p><b>1.2 Неадекватность:</b> Оскорбление родных, угрозы. Наказание: БАН НАВСЕГДА.</p>
-        <p><b>3. Спам:</b> Реклама сторонних ресурсов. Наказание: БАН.</p>
-        <p><b>4. Флуд:</b> 4+ сообщения подряд. Наказание: Мут 180м.</p>
-        <p><b>5. Политика:</b> Обсуждение войн и стран. Наказание: БАН.</p>
+        <h2>ПРАВИЛА AER</h2>
+        <p>1. ДИСКРИМИНАЦИЯ: Расизм, ксенофобия — БАН.</p>
+        <p>1.1 ПРОВОКАЦИИ: Байт на конфликт — МУТ 120м.</p>
+        <p>1.2 НЕАДЕКВАТНОСТЬ: Оскорбление родных — БАН.</p>
+        <p>3. СПАМ: Реклама ресурсов — БАН.</p>
+        <p>4. ФЛУД: 4+ сообщения — МУТ 180м.</p>
+        <p>5. ПОЛИТИКА: Обсуждение войн — БАН.</p>
     </div>
-    <button class="btn-action" onclick="View.to('scr-menu')">НАЗАД</button>
+    <button class="btn-action" onclick="View.to('scr-menu')">ВЕРНУТЬСЯ</button>
 </div>
 
 <div id="scr-ankety" class="screen">
     <div class="content-panel">
-        <h2 style="color:var(--m)">АНКЕТА НА АДМИНКУ</h2>
-        <p>1. Твой ник, @, айди, возраст и активность в чате за неделю;</p>
-        <p>2. Твой часовой пояс, сколько ты готов потратить часов работы в чате;</p>
-        <p>3. Что ты будешь делать, если в чате нарушают, а ты не можешь выдать бан или мут?;</p>
-        <p>4. В каких чатах ты был админом? (500+ человек в чате);</p>
-        <p>5. Краткий пересказ AER [Правило - наказание].</p>
-        <hr style="margin:20px 0; border:1px dashed var(--m);">
-        <h2 style="color:var(--m)">АНКЕТА НА ВИЦЕ</h2>
-        <p>1. 30.000+ трофеев;</p>
-        <p>2. Время онлайна;</p>
-        <p>3. Скрин аккаунта;</p>
-        <p>4. 2 рекламы в других клубах.</p>
+        <h2>АНКЕТА НА АДМИНА</h2>
+        <p>1. Ник, @, айди, возраст, актив за неделю.</p>
+        <p>2. Часовой пояс, сколько готов работать.</p>
+        <p>3. Действия при нарушениях без прав бана?</p>
+        <p>4. Опыт админства в чатах 500+ чел.</p>
+        <p>5. Краткий пересказ AER [Правило-Наказание].</p>
     </div>
-    <button class="btn-action" onclick="View.to('scr-menu')">НАЗАД</button>
-</div>
-
-<div id="scr-help" class="screen">
-    <div class="content-panel">
-        <h2>ПОМОЩЬ</h2>
-        <p>Сайт модуля CT1C2 (проект SatanaCIub). Для управления темами используй точки внизу.</p>
-        <p>Для активации секретного режима нажми на заголовок 10 раз.</p>
-    </div>
-    <button class="btn-action" onclick="View.to('scr-menu')">НАЗАД</button>
+    <button class="btn-action" onclick="View.to('scr-menu')">ВЕРНУТЬСЯ</button>
 </div>
 
 <div class="theme-nav">
     <div class="t-dot" style="background:red" onclick="Kernel.setMode('r')"></div>
     <div class="t-dot" style="background:#ffb7d5" onclick="Kernel.setMode('p')"></div>
     <div class="t-dot" style="background:green" onclick="Kernel.setMode('g')"></div>
-    <div class="t-dot" style="background:#87cefa" onclick="Kernel.setMode('n')"></div>
+    <div class="t-dot" style="background:#00bfff" onclick="Kernel.setMode('n')"></div>
 </div>
 
 <script>
@@ -183,7 +179,7 @@
 
     let Config = { speed: 5, snow: true, hunter: true };
     let GameData = { clicks: 0, active: false, hearts: 3, score: 0, target: '', timer: null, chaos: false };
-    let Units = []; let ChaosBtns = [];
+    let ChaosBtns = []; let Units = [];
 
     const View = {
         to(id) {
@@ -192,12 +188,12 @@
         },
         toggleSettings() {
             const p = document.getElementById('settings-panel');
-            p.style.display = (p.style.display === 'block') ? 'none' : 'block';
+            p.style.display = (p.style.display === 'flex') ? 'none' : 'flex';
         },
         showError() {
-            const err = document.getElementById('error-overlay');
-            err.style.display = 'flex';
-            setTimeout(() => err.style.display = 'none', 800);
+            const e = document.getElementById('error-overlay');
+            e.style.display = 'flex';
+            setTimeout(() => e.style.display = 'none', 700);
         }
     };
 
@@ -206,8 +202,8 @@
             if(GameData.chaos) return;
             GameData.clicks++;
             const t = document.getElementById('main-title');
-            if(GameData.clicks === 3) t.classList.add('bloody');
-            if(GameData.clicks === 5) t.style.animation = "freeze-shake 0.05s infinite";
+            if(GameData.clicks === 3) t.style.color = '#8b0000';
+            if(GameData.clicks === 5) t.style.animation = 'frz 0.05s infinite';
             if(GameData.clicks === 10) this.start();
         },
         start() {
@@ -221,19 +217,21 @@
             GameData.target = chars[Math.floor(Math.random()*chars.length)];
             document.getElementById('target-char').innerText = GameData.target;
             
-            const container = document.getElementById('noise-container');
-            container.innerHTML = '';
-            for(let i=0; i<45; i++) {
+            const cont = document.getElementById('noise-container');
+            cont.innerHTML = '';
+            for(let i=0; i<35; i++) {
                 const s = document.createElement('div');
                 s.className = 'noise-char';
-                s.innerText = (Math.random() > 0.85) ? GameData.target : chars[Math.floor(Math.random()*chars.length)];
-                s.style.left = Math.random()*90 + 'vw'; s.style.top = Math.random()*90 + 'vh';
-                s.onclick = () => {
+                s.innerText = (Math.random() > 0.8) ? GameData.target : chars[Math.floor(Math.random()*chars.length)];
+                s.style.left = Math.random()*80 + 'vw';
+                s.style.top = Math.random()*80 + 'vh';
+                s.onclick = (e) => {
+                    e.stopPropagation();
                     if(s.innerText === GameData.target) {
                         clearTimeout(GameData.timer); GameData.score++; this.next();
                     } else this.fail();
                 };
-                container.appendChild(s);
+                cont.appendChild(s);
             }
             clearTimeout(GameData.timer);
             GameData.timer = setTimeout(() => this.fail(), 3000);
@@ -247,17 +245,17 @@
         win() {
             GameData.active = false;
             document.getElementById('game-layer').style.display = 'none';
-            document.getElementById('main-title').style.display = 'none';
-            document.getElementById('btn-container').innerHTML = '<div style="color:red; font-size:1.8rem; animation:blink 0.3s infinite; font-family:\'Rubik Mono One\'">Error when creating</div>';
+            document.getElementById('main-title').innerText = "ERROR WHEN CREATING";
+            document.getElementById('main-title').style.color = "red";
+            document.getElementById('main-title').style.animation = "frz 0.2s infinite";
         },
         lose() {
             GameData.active = false; GameData.chaos = true;
             document.getElementById('game-layer').style.display = 'none';
-            const btns = document.querySelectorAll('.btn-action');
-            btns.forEach(b => {
+            document.querySelectorAll('.btn-action').forEach(b => {
                 b.style.position = 'fixed';
-                b.onclick = (e) => { e.preventDefault(); View.showError(); };
-                ChaosBtns.push({ el: b, x: Math.random()*80, y: Math.random()*80, dx: (Math.random()-0.5)*12, dy: (Math.random()-0.5)*12 });
+                b.onclick = () => View.showError();
+                ChaosBtns.push({ el: b, x: Math.random()*50, y: Math.random()*50, dx: (Math.random()-0.5)*15, dy: (Math.random()-0.5)*15 });
             });
         }
     };
@@ -276,32 +274,28 @@
             document.getElementById('hunter-toggle').onchange = (e) => Config.hunter = e.target.checked;
         },
         spawn() {
-            const vips = ['@satanacIub', '@hooligan_hooligan', '@ebu_Dokki'];
-            vips.forEach(name => {
-                let d = document.createElement('div');
-                d.className = (name === '@ebu_Dokki') ? 'hunter' : 'unit';
-                d.innerText = name;
-                document.body.appendChild(d);
-                Units.push({ el: d, name, x: Math.random()*80, y: Math.random()*80, dx: 1, dy: 1 });
-            });
+            const h = document.createElement('div');
+            h.className = 'hunter'; h.innerText = '@ebu_Dokki';
+            document.body.appendChild(h);
+            Units.push({ el: h, x: 50, y: 50, dx: 1.5, dy: 1.5 });
         },
-        setMode(m) { document.body.className = m + '-mode'; GlobalMode = m; },
+        setMode(m) { document.body.className = m + '-mode'; },
         drop() {
             if(!Config.snow) return;
             const e = document.createElement('div');
-            const isSnow = Math.random() > 0.3;
+            const isSnow = Math.random() > 0.4;
             if(isSnow) {
                 e.className = 'snowflake';
                 const big = Math.random() > 0.8;
-                e.style.width = (big ? 8 : 3) + 'px'; e.style.height = e.style.width;
-                e.style.left = Math.random()*100+'vw'; e.style.top = '-10px';
+                e.style.width = (big ? 10 : 4) + 'px'; e.style.height = e.style.width;
+                e.style.left = Math.random()*100+'vw'; e.style.top = '-20px';
                 document.body.appendChild(e);
-                let t = -10;
+                let t = -20;
                 const f = setInterval(() => {
-                    t += Config.speed / 2; e.style.top = t + 'px';
-                    const rect = document.getElementById('main-title').getBoundingClientRect();
-                    const sRect = e.getBoundingClientRect();
-                    if(big && sRect.left < rect.right && sRect.right > rect.left && sRect.top < rect.bottom && sRect.bottom > rect.top) {
+                    t += Config.speed / 2.5; e.style.top = t + 'px';
+                    const r = document.getElementById('main-title').getBoundingClientRect();
+                    const s = e.getBoundingClientRect();
+                    if(big && s.left < r.right && s.right > r.left && s.top < r.bottom && s.bottom > r.top) {
                         document.getElementById('main-title').classList.add('frozen');
                         setTimeout(() => document.getElementById('main-title').classList.remove('frozen'), 1500);
                         e.remove(); clearInterval(f);
@@ -309,34 +303,34 @@
                     if(t > window.innerHeight) { e.remove(); clearInterval(f); }
                 }, 30);
             } else {
-                const sym = document.createElement('div');
-                sym.className = 'emoji-drop';
-                const mode = document.body.className.split('-')[0];
-                sym.innerText = Icons[mode][Math.floor(Math.random()*Icons[mode].length)];
-                sym.style.left = Math.random()*100+'vw';
-                sym.style.animationDuration = (40 / Config.speed) + 's';
-                document.body.appendChild(sym);
-                setTimeout(() => sym.remove(), 5000);
+                const s = document.createElement('div');
+                s.className = 'emoji-drop';
+                const m = document.body.className.split('-')[0] || 'r';
+                s.innerText = Icons[m][Math.floor(Math.random()*Icons[m].length)];
+                s.style.left = Math.random()*90+'vw';
+                s.style.color = 'var(--m)';
+                s.style.animationDuration = (35 / Config.speed) + 's';
+                document.body.appendChild(s);
+                setTimeout(() => s.remove(), 4000);
             }
         },
         loop() {
             if(GameData.chaos) {
-                const chars = "†#$&%@";
+                const c = "†#$&%@";
                 ChaosBtns.forEach(b => {
                     b.x += b.dx; b.y += b.dy;
-                    if(b.x < 0 || b.x > window.innerWidth - 200) b.dx *= -1;
+                    if(b.x < 0 || b.x > window.innerWidth - 150) b.dx *= -1;
                     if(b.y < 0 || b.y > window.innerHeight - 50) b.dy *= -1;
                     b.el.style.left = b.x + 'px'; b.el.style.top = b.y + 'px';
-                    b.el.innerText = Array(8).fill(0).map(()=>chars[Math.floor(Math.random()*6)]).join('');
+                    b.el.innerText = Array(6).fill(0).map(()=>c[Math.floor(Math.random()*6)]).join('');
                 });
             }
-            // Убийца
-            const h = Units.find(u => u.name === '@ebu_Dokki');
-            if(h && Config.hunter && !GameData.chaos) {
-                h.x += h.dx; h.y += h.dy;
-                if(h.x < 0 || h.x > 90) h.dx *= -1;
-                if(h.y < 0 || h.y > 90) h.dy *= -1;
-                h.el.style.left = h.x + 'vw'; h.el.style.top = h.y + 'vh';
+            if(Config.hunter && !GameData.chaos) {
+                Units.forEach(u => {
+                    u.x += u.dx; u.y += u.dy;
+                    if(u.x < 0 || u.x > 90) u.dx *= -1; if(u.y < 0 || u.y > 90) u.dy *= -1;
+                    u.el.style.left = u.x + 'vw'; u.el.style.top = u.y + 'vh';
+                });
             }
             requestAnimationFrame(() => this.loop());
         }
