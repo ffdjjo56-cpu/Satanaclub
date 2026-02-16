@@ -3,199 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SatanaCIub Project | Official</title>
+    <title>SatanaCIub Project | Locked</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Fira+Code:wght@400;500&display=swap');
         
-        :root { 
-            --main: #ff3333; --bg: #050505; --card: rgba(15, 15, 15, 0.95); 
-            --font: 'Comfortaa', cursive; --radius: 20px;
-        }
-
+        :root { --main: #ff3333; --bg: #050505; --card: rgba(10, 10, 10, 0.98); --font: 'Comfortaa', cursive; --radius: 20px; }
         body.theme-green { --main: #00ff66; --bg: #000a05; --font: 'Fira Code', monospace; }
-        body.theme-pink { --main: #ff85c1; --bg: #fff5f8; --card: rgba(255, 255, 255, 0.95); }
-        body.theme-blue { --main: #0088ff; --bg: #ffffff; --card: rgba(230, 245, 255, 0.95); }
+        body.theme-pink { --main: #ff85c1; --bg: #fff5f8; --card: rgba(255, 255, 255, 0.98); }
+        body.theme-blue { --main: #0088ff; --bg: #ffffff; --card: rgba(230, 245, 255, 0.98); }
 
-        body { 
-            background: var(--bg); color: var(--main); font-family: var(--font); 
-            margin: 0; overflow: hidden; height: 100dvh; transition: 0.5s; touch-action: none;
+        body { background: var(--bg); color: var(--main); font-family: var(--font); margin: 0; overflow: hidden; height: 100dvh; transition: 0.5s; touch-action: none; }
+        
+        /* ЭКРАН ВХОДА */
+        #lock-screen {
+            position: fixed; inset: 0; background: #000; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 0.8s cubic-bezier(0.7, 0, 0.3, 1);
         }
-
-        /* СЛОЙ ВИЗУАЛА */
-        #bg-layer { position: fixed; inset: 0; z-index: 1; transition: filter 0.6s, transform 0.6s; }
-        .blurred #bg-layer { filter: blur(20px) grayscale(0.5) brightness(0.4); transform: scale(1.1); }
-
-        .jelly-title { 
-            display: inline-block; font-size: 24px; font-weight: 900; 
-            cursor: grab; margin: 10px 0; will-change: transform;
-            text-shadow: 0 0 15px var(--main); position: relative; z-index: 10;
+        #lock-screen.unlocked { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+        .lock-input { 
+            background: transparent; border: 2px solid var(--main); color: var(--main);
+            padding: 15px; font-size: 24px; text-align: center; border-radius: 15px;
+            width: 150px; outline: none; font-family: 'Fira Code', monospace;
         }
+        .shake { animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
 
-        #killer { 
-            position: fixed; padding: 10px 18px; background: rgba(0,0,0,0.6); 
-            backdrop-filter: blur(8px); border: 1px solid var(--main); color: var(--main);
-            border-radius: 25px; z-index: 5; pointer-events: none; font-size: 11px; font-weight: bold;
+        /* ОСНОВНОЙ КОНТЕНТ */
+        #bg-layer { position: fixed; inset: 0; z-index: 1; transition: 0.6s; }
+        .blurred #bg-layer { filter: blur(25px) brightness(0.4); }
+        .jelly-title { display: inline-block; font-size: 22px; font-weight: 900; cursor: grab; margin: 10px 0; text-shadow: 0 0 15px var(--main); position: relative; z-index: 10; }
+        
+        /* ЗЕЛЕНАЯ КОНСОЛЬ */
+        #green-console {
+            display: none; position: fixed; bottom: 20px; left: 20px; width: 280px; height: 120px;
+            background: rgba(0, 15, 0, 0.9); border: 1px solid #00ff66; color: #00ff66;
+            font-family: 'Fira Code', monospace; font-size: 9px; padding: 10px; overflow: hidden; z-index: 2000;
         }
+        .theme-green #green-console { display: block; }
 
-        .user-particle { 
-            position: fixed; font-size: 12px; white-space: nowrap; pointer-events: none; 
-            will-change: transform, opacity; font-weight: bold; z-index: 2;
-        }
-
-        /* ИНТЕРФЕЙС */
-        .page { 
-            display: none; position: absolute; inset: 0; 
-            flex-direction: column; align-items: center; justify-content: center; 
-            z-index: 1000; pointer-events: none;
-        }
-        .active-page { display: flex; pointer-events: auto; }
-
-        .card { 
-            width: 88%; max-width: 500px; background: var(--card); 
-            border: 1px solid var(--main); padding: 25px; border-radius: var(--radius); 
-            transform: translateY(30px); opacity: 0; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8); overflow-y: auto; max-height: 75vh;
-        }
-        .active-page .card { transform: translateY(0); opacity: 1; }
-
-        .btn { 
-            width: 300px; padding: 15px; margin: 6px; background: transparent; 
-            border: 1px solid var(--main); color: var(--main); 
-            font-family: var(--font); border-radius: var(--radius); cursor: pointer;
-            transition: 0.3s; font-weight: bold; font-size: 13px;
-        }
-        .btn:hover { background: var(--main); color: var(--bg); box-shadow: 0 0 20px var(--main); }
-
-        /* СКРОЛЛ */
-        .card::-webkit-scrollbar { width: 4px; }
-        .card::-webkit-scrollbar-thumb { background: var(--main); border-radius: 10px; }
-
-        /* ТЕКСТ */
-        .shame-item { margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-        .shame-name { color: #ff4444; font-weight: 900; font-size: 14px; display: block; margin-bottom: 5px; }
-        .shame-desc { font-size: 11px; color: #ccc; line-height: 1.4; }
-        .shame-result { font-size: 11px; color: var(--main); font-weight: bold; margin-top: 5px; display: block; }
+        .user-particle { position: fixed; font-size: 12px; white-space: nowrap; pointer-events: none; font-weight: bold; z-index: 2; }
+        .page { display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+        .active-page { display: flex; }
+        .card { width: 90%; max-width: 550px; background: var(--card); border: 1px solid var(--main); padding: 25px; border-radius: var(--radius); overflow-y: auto; max-height: 80vh; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .btn { width: 300px; padding: 15px; margin: 6px; background: transparent; border: 1px solid var(--main); color: var(--main); font-weight: bold; cursor: pointer; border-radius: var(--radius); }
+        #blue-settings { display: none; margin-top: 10px; }
+        #killer { position: fixed; padding: 10px 18px; border: 1px solid var(--main); color: var(--main); border-radius: 25px; font-size: 11px; font-weight: bold; z-index: 5; pointer-events: none; background: rgba(0,0,0,0.5); }
     </style>
 </head>
 <body class="theme-red">
 
-    <div id="bg-layer">
-        <div id="rain-container"></div>
-        <div id="killer">@ebu_Dokki <span id="kill-status">в поиске...</span></div>
+    <div id="lock-screen">
+        <div style="margin-bottom: 20px; letter-spacing: 5px;">ENTER CODE</div>
+        <input type="password" id="pass-input" class="lock-input" maxlength="4" placeholder="****" oninput="checkPass(this.value)">
+        <div id="lock-hint" style="font-size: 10px; margin-top: 20px; color: #444;">угадай или проваливай</div>
     </div>
 
+    <div id="bg-layer">
+        <div id="rain-container"></div>
+        <div id="killer">@ebu_Dokki <span id="kill-status">готов...</span></div>
+    </div>
+
+    <div id="green-console"></div>
+
     <div id="p-menu" class="page active-page">
-        <div class="jelly-title" id="t-main">SatanaCIub WWW</div>
+        <div class="jelly-title dynamic-name-main">SatanaCIub WWW</div>
         <button class="btn" onclick="nav('p-rules')">📜 ПРАВИЛА AER</button>
         <button class="btn" onclick="nav('p-forms')">📝 АНКЕТА НА АДМИНКУ</button>
-        <button class="btn" onclick="nav('p-shame')" style="border-color: #555; color: #777;">💀 ДОСКА ПОЗОРА</button>
-        
-        <div style="display:flex; gap:10px; margin-top:15px;">
-            <button class="btn" style="width:70px; font-size:10px" onclick="setTheme('green')">GRN</button>
-            <button class="btn" style="width:70px; font-size:10px" onclick="setTheme('pink')">PNK</button>
-            <button class="btn" style="width:70px; font-size:10px" onclick="setTheme('blue')">BLU</button>
-            <button class="btn" style="width:70px; font-size:10px" onclick="setTheme('red')">RED</button>
+        <button class="btn" onclick="nav('p-shame')" style="color:#555">💀 ДОСКА ПОЗОРА</button>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button class="btn" style="width:70px" onclick="setTheme('green')">GRN</button>
+            <button class="btn" style="width:70px" onclick="setTheme('pink')">PNK</button>
+            <button class="btn" style="width:70px" onclick="setTheme('blue')">BLU</button>
+        </div>
+        <div id="blue-settings">
+            <input type="text" class="btn" style="width:120px; font-size:10px" placeholder="Rename Title" oninput="document.querySelector('.dynamic-name-main').innerText = this.value">
         </div>
     </div>
 
     <div id="p-rules" class="page">
         <div class="card">
             <h2 class="jelly-title">Hooligan AER</h2>
-            <div style="text-align: left; font-size: 12px;">
-                <p><b>[ ПРАВИЛО — НАКАЗАНИЕ ]</b></p>
-                <p>• Реклама/Спам — <span style="color:red">BAN</span></p>
-                <p>• Оскорбление родных — <span style="color:red">BAN</span></p>
-                <p>• Деструктив/Токс — <span style="color:orange">MUTE 24h</span></p>
-                <p>• Попрошайничество — <span style="color:yellow">MUTE 1h</span></p>
-                <p>• Розжиг конфликтов — <span style="color:orange">MUTE 12h</span></p>
-            </div>
-            <button class="btn" onclick="nav('p-menu')">ВЕРНУТЬСЯ</button>
+            <p style="text-align:left; font-size:12px;">• <b>Реклама</b> — BAN<br>• <b>Оск. род</b> — BAN<br>• <b>Деструктив</b> — MUTE 24h<br>• <b>Докс</b> — BAN + Позор</p>
+            <button class="btn" onclick="nav('p-menu')">BACK</button>
         </div>
     </div>
 
     <div id="p-forms" class="page">
         <div class="card">
-            <h2 class="jelly-title">АНКЕТА НА АДМИНКУ</h2>
-            <div style="text-align: left; font-size: 11px; line-height: 1.7;">
-                <p>1. Твой ник, @, айди, возраст и активность в чате за неделю;</p>
-                <p>2. Твой часовой пояс, сколько ты готов потратить часов работы в чате;</p>
-                <p>3. Что ты будешь делать, если в чате нарушают, а ты не можешь выдать бан или мут?;</p>
-                <p>4. В каких чатах ты был админом? (500+ человек в чате);</p>
-                <p>5. Краткий пересказ AER [Правило - наказание].</p>
-            </div>
-            <button class="btn" onclick="nav('p-menu')">ВЕРНУТЬСЯ</button>
+            <h2 class="jelly-title">АНКЕТА</h2>
+            <p style="text-align:left; font-size:11px;">1. Ник, @, возраст, активность;<br>2. Пояс, часы работы;<br>3. Действия без прав;<br>4. Опыт (500+ чел);<br>5. Пересказ AER.</p>
+            <button class="btn" onclick="nav('p-menu')">BACK</button>
         </div>
     </div>
 
     <div id="p-shame" class="page">
-        <div class="card" style="border-color: #444; background: rgba(5,5,5,0.98);">
-            <h2 style="color: #666; text-shadow: none; margin-bottom: 20px;">ТОП 5 ФРИКОВ ЧАТА</h2>
-            
-            <div class="shame-item">
-                <span class="shame-name">1. Vinal (Рейдер-шантажер)</span>
-                <span class="shame-desc">Просил союз, после отказа угрожал рейдами. Оскорблял Украину в ГС, превозносил Россию, планировал атаки на наши клубы.</span>
-                <span class="shame-result">ИТОГ: В бане. Снесено 5 его клубов. Забанен у Григея.</span>
+        <div class="card" style="background:#000; border-color:#333;">
+            <h2 style="color:#555">ТОП 5 ФРИКОВ</h2>
+            <div style="text-align:left; font-size:10px; color:#666;">
+                <p>1. <b>Vinal</b> — Шантажер. Снесли ему 5 клубов.</p>
+                <p>2. <b>Григей</b> — Русофоб. Общается с детьми 7-9 лет.</p>
+                <p>3. <b>Релтин</b> — Худший админ. Обиделся на мут.</p>
+                <p>4. <b>Дед</b> — Доксер. Успокоился после слива его матери.</p>
+                <p>5. <b>Психокид</b> — Агрессивный фрик. В бане.</p>
             </div>
-
-            <div class="shame-item">
-                <span class="shame-name">2. Григей (18-летний русофоб)</span>
-                <span class="shame-desc">Ныл в конфликтах, звал "свиную стаю". Боится общаться с ровесниками (15+ лет), предпочитает детей 7-9 лет.</span>
-                <span class="shame-result">ИТОГ: Чат-пустышка (3 онлайна, 80 ботов).</span>
-            </div>
-
-            <div class="shame-item">
-                <span class="shame-name">3. Релтин (Худший админ)</span>
-                <span class="shame-desc">Оскорблял участников на админке 5 уровня. Обиделся на мут на 1 час и ливнул навсегда. Нулс-задрот 24/7.</span>
-                <span class="shame-result">ИТОГ: В чате нищих оппов (у Григея).</span>
-            </div>
-
-            <div class="shame-item">
-                <span class="shame-name">4. Дед (Крутой доксер)</span>
-                <span class="shame-desc">Сливал инфу про участников. Успокоился только когда нашли его фото и ВК его мамы.</span>
-                <span class="shame-result">ИТОГ: Вроде стал нормальным, пока в чате.</span>
-            </div>
-
-            <div class="shame-item">
-                <span class="shame-name">5. Психокид (Тихий фрик)</span>
-                <span class="shame-desc">Агрессивно оскорблял всех подряд. Его жалели и разбанивали несколько раз.</span>
-                <span class="shame-result">ИТОГ: Забанен, гниет в чате оппов.</span>
-            </div>
-
-            <button class="btn" onclick="nav('p-menu')">ПОКИНУТЬ ЧИСТИЛИЩЕ</button>
+            <button class="btn" onclick="nav('p-menu')">ВЫЙТИ</button>
         </div>
     </div>
 
     <script>
         let curTheme = 'red';
-        const VIP = ["@SatanaCIub", "@hooligan_hooligan"];
-        const USERS = ["@Blood_Househ", "@VetalGeor", "@geniusmozer", "@Psychokid", "@TrashPlayer", "@ebu_Dokki"];
+        const USERS = ["@Blood_Househ", "@VetalGeor", "@geniusmozer", "@Psychokid", "@TrashPlayer", "@Vinal", "@Grigey", "@ebu_Dokki"];
         let particles = [], killer = { x: 0, y: 0, target: null };
 
+        // КОНСОЛЬ
+        function log(msg) {
+            if(curTheme !== 'green') return;
+            const con = document.getElementById('green-console');
+            const d = new Date();
+            con.innerHTML += `<div>[${d.getSeconds()}.${d.getMilliseconds()}] ${msg}</div>`;
+            con.scrollTop = con.scrollHeight;
+            if(con.childNodes.length > 15) con.removeChild(con.firstChild);
+        }
+
+        // ПРОВЕРКА ПАРОЛЯ
+        function checkPass(val) {
+            if(val.length === 4) {
+                if(val === "2727") {
+                    document.getElementById('lock-screen').classList.add('unlocked');
+                    log("ACCESS GRANTED: Root session started");
+                } else {
+                    const input = document.getElementById('pass-input');
+                    input.classList.add('shake');
+                    setTimeout(() => { input.classList.remove('shake'); input.value = ''; }, 400);
+                    log("CRITICAL ERROR: Unauthorized access attempt");
+                }
+            }
+        }
+
         function getCannonPos() {
-            const title = document.querySelector('.active-page .jelly-title') || document.getElementById('t-main');
+            const title = document.querySelector('.active-page .jelly-title') || document.querySelector('.jelly-title');
             const rect = title.getBoundingClientRect();
             return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
         }
 
         function createParticle(name) {
             const origin = getCannonPos();
-            return {
-                name, x: origin.x, y: origin.y,
-                vx: (Math.random() - 0.5) * 16,
-                vy: -Math.random() * 10 - 7,
-                gravity: 0.25, opacity: 1, el: null
-            };
+            return { name, x: origin.x, y: origin.y, vx: (Math.random()-0.5)*18, vy: -Math.random()*12-8, gravity: 0.28, opacity: 1, el: null };
         }
 
         function nav(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.getElementById(id).classList.add('active-page');
             id === 'p-menu' ? document.body.classList.remove('blurred') : document.body.classList.add('blurred');
+            log(`NAVIGATING TO: ${id}`);
         }
 
-        function setTheme(t) { curTheme = t; document.body.className = 'theme-' + t; }
+        function setTheme(t) { 
+            curTheme = t; document.body.className = 'theme-' + t; 
+            document.getElementById('blue-settings').style.display = (t === 'blue' ? 'block' : 'none');
+            log(`THEME_CHANGED: ${t.toUpperCase()}`);
+        }
 
-        // ЖЕЛЕЙНАЯ ФИЗИКА
+        // ЖЕЛЕ
         document.querySelectorAll('.jelly-title').forEach(el => {
             let p = {x:0,y:0}, t = {x:0,y:0}, drag = false;
             el.onpointerdown = (e) => { drag = true; el.setPointerCapture(e.pointerId); };
@@ -203,7 +173,7 @@
             el.onpointerup = () => { drag = false; t = {x:0,y:0}; };
             function up() {
                 p.x += (t.x - p.x) * 0.12; p.y += (t.y - p.y) * 0.12;
-                el.style.transform = `translate(${p.x}px, ${p.y}px) skewX(${-p.x/5}deg) scale(${1+Math.abs(p.y/1000)})`;
+                el.style.transform = `translate(${p.x}px, ${p.y}px) skewX(${-p.x/5}deg)`;
                 requestAnimationFrame(up);
             }
             up();
@@ -211,22 +181,24 @@
 
         function render() {
             particles.forEach(p => {
-                p.x += p.vx; p.y += p.vy; p.vy += p.gravity; p.opacity -= 0.004;
-                if (p.opacity <= 0 || p.y > window.innerHeight + 50) Object.assign(p, createParticle(p.name));
+                p.x += p.vx; p.y += p.vy; p.vy += p.gravity; p.opacity -= 0.005;
+                if (p.opacity <= 0 || p.y > window.innerHeight + 50) {
+                    Object.assign(p, createParticle(p.name));
+                    if(Math.random() > 0.95) log(`PARTICLE_REGEN: ${p.name}`);
+                }
                 p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
                 p.el.style.opacity = p.opacity;
-                p.el.style.color = (curTheme === 'pink' ? '#ff85c1' : 'var(--main)');
             });
-
             const kEl = document.getElementById('killer');
             const status = document.getElementById('kill-status');
             if (!killer.target || killer.target.opacity < 0.2) {
                 killer.target = particles[Math.floor(Math.random()*particles.length)];
             } else {
-                killer.x += (killer.target.x - killer.x) * 0.08;
-                killer.y += (killer.target.y - killer.y) * 0.08;
+                killer.x += (killer.target.x - killer.x) * 0.1;
+                killer.y += (killer.target.y - killer.y) * 0.1;
                 status.innerText = (curTheme === 'pink' ? `дарит розу ${killer.target.name} 🌹` : `убил ${killer.target.name}`);
                 if (curTheme !== 'pink' && Math.sqrt((killer.target.x-killer.x)**2 + (killer.target.y-killer.y)**2) < 25) {
+                    log(`KILL_EVENT: ${killer.target.name} deleted`);
                     killer.target.opacity = 0; killer.target = null;
                 }
             }
@@ -236,12 +208,10 @@
 
         window.onload = () => {
             const container = document.getElementById('rain-container');
-            [...VIP, ...USERS].forEach(name => {
+            USERS.forEach(name => {
                 const p = createParticle(name);
-                const el = document.createElement('div');
-                el.className = 'user-particle'; el.innerText = name;
-                container.appendChild(el);
-                p.el = el; particles.push(p);
+                const el = document.createElement('div'); el.className = 'user-particle'; el.innerText = name;
+                container.appendChild(el); p.el = el; particles.push(p);
             });
             render();
         };
