@@ -3,220 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SatanaCIub Project | CT1C2 Engine</title>
+    <title>SatanaCIub Project | CT1C2 Elite</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap');
-        :root { --main: #f00; --bg: #000; --card-txt: #eee; --panel: rgba(5, 5, 5, 0.98); --font-h: 'Press Start 2P', cursive; }
-        body { background: var(--bg); color: var(--main); font-family: 'Share Tech Mono', monospace; margin: 0; overflow: hidden; height: 100dvh; user-select: none; transition: 0.5s; }
-        body.pink-mode { --main: #ff1493; --bg: #fff0f5; --card-txt: #4b0082; --panel: rgba(255, 192, 203, 0.95); background-image: radial-gradient(#ff69b4 1px, transparent 1px); background-size: 20px 20px; }
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         
-        /* HEADER */
-        .header-container { height: 40px; margin: 25px 0; display: flex; align-items: center; justify-content: center; }
-        .header { font-family: var(--font-h); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px var(--main); }
-        
-        /* KILL FEED (BOTTOM LEFT) */
-        #kill-feed-container { position: fixed; bottom: 20px; left: 20px; width: 340px; display: flex; flex-direction: column-reverse; gap: 6px; z-index: 2000; pointer-events: none; }
-        .kill-item { background: rgba(255, 0, 0, 0.1); border-left: 4px solid var(--main); padding: 10px; font-family: var(--font-h); font-size: 7px; color: var(--main); animation: sIn 0.3s ease-out forwards; text-shadow: 0 0 5px var(--main); }
-        @keyframes sIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fOut { to { opacity: 0; transform: translateY(-10px) scale(0.9); } }
+        :root { --main: #f00; --bg: #000; --card: rgba(5, 5, 5, 0.98); --font: 'Press Start 2P', cursive; }
+        body { background: var(--bg); color: var(--main); font-family: var(--font); margin: 0; overflow: hidden; height: 100dvh; user-select: none; }
+        body.pink-mode { --main: #ff1493; --bg: #fff0f5; --card: rgba(255, 192, 203, 0.95); }
 
-        /* PAGES */
-        .page { display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 10; padding: 20px; backdrop-filter: blur(10px); }
+        /* KILL FEED - НИЗ ЛЕВО */
+        #kill-feed { position: fixed; bottom: 30px; left: 20px; width: 420px; display: flex; flex-direction: column-reverse; gap: 10px; z-index: 2000; }
+        .kill-item { background: rgba(15, 0, 0, 0.9); border-left: 5px solid var(--main); padding: 12px; font-size: 8px; animation: sIn 0.3s forwards; line-height: 1.2; }
+        
+        /* ЭЛИТНЫЕ ЮЗЕРЫ (ТЫ И ХУЛИГАН) */
+        .elite { animation: glowElite 0.8s infinite alternate !important; border-left: 5px solid #fff !important; }
+        @keyframes glowElite { 
+            0% { color: #f00; text-shadow: 0 0 15px #f00; } 
+            100% { color: #fff; text-shadow: 0 0 25px #fff; } 
+        }
+        body.pink-mode .elite { animation: glowPink 0.8s infinite alternate !important; }
+        @keyframes glowPink { 
+            0% { color: #ff1493; text-shadow: 0 0 15px #ff1493; } 
+            100% { color: #fff; text-shadow: 0 0 25px #ff69b4; } 
+        }
+
+        /* БЕЛЫЕ ЮЗЕРЫ */
+        .white-tag { color: #fff !important; border-left: 5px solid #fff !important; text-shadow: 0 0 5px #fff; }
+
+        /* UI И СТРАНИЦЫ */
+        .header-box { height: 60px; display: flex; align-items: center; justify-content: center; margin-top: 10px; }
+        .header { font-size: 10px; text-transform: uppercase; text-align: center; letter-spacing: 2px; }
+        .page { display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 10; backdrop-filter: blur(12px); padding: 20px; }
         .active-page { display: flex; }
-        .card { width: 100%; max-width: 650px; background: var(--panel); border: 2px solid var(--main); padding: 25px; overflow-y: auto; max-height: 55vh; color: var(--card-txt); line-height: 1.5; box-shadow: 0 0 40px rgba(0,0,0,0.9); }
-        .btn { width: 310px; padding: 15px; margin: 5px; background: none; border: 2px solid var(--main); color: var(--main); font-family: var(--font-h); font-size: 8px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .card { width: 95%; max-width: 650px; background: var(--card); border: 2px solid var(--main); padding: 25px; overflow-y: auto; max-height: 50vh; font-size: 8px; line-height: 1.8; box-shadow: 0 0 50px #000; }
+        .btn { width: 300px; padding: 18px; margin: 8px; background: none; border: 2px solid var(--main); color: var(--main); font-family: var(--font); font-size: 8px; cursor: pointer; transition: 0.3s; }
         .btn:hover { background: var(--main); color: #000; box-shadow: 0 0 20px var(--main); }
 
-        /* 3D RENDER */
-        .render-box { margin: 15px 0; perspective: 1200px; }
-        #ascii { white-space: pre; font-family: monospace; font-size: 7px; line-height: 7px; text-shadow: 0 0 12px var(--main); cursor: pointer; }
-
-        /* BOTTOM ROW */
-        .bottom-row { display: flex; align-items: center; gap: 10px; margin: 10px auto; }
-        .swipe-container { position: relative; width: 250px; height: 50px; overflow: hidden; border: 2px solid var(--main); }
-        .secret-layer { position: absolute; inset: 0; background: var(--main); color: #000; display: flex; align-items: center; justify-content: center; font-family: var(--font-h); font-size: 7px; z-index: 2; transition: 0.5s; cursor: grab; }
-        .under-layer { position: absolute; inset: 0; background: #000; color: var(--main); display: flex; align-items: center; justify-content: center; font-family: var(--font-h); font-size: 7px; z-index: 1; }
-
-        #flash-screen { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 9999; }
-        .flash-anim { animation: flashEffect 0.3s ease-out; }
-        @keyframes flashEffect { 0% { opacity: 0.5; } 100% { opacity: 0; } }
-        #rain { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.35; }
+        #ascii { white-space: pre; font-family: monospace; font-size: 7px; line-height: 7px; text-shadow: 0 0 8px var(--main); margin: 20px 0; }
         
-        /* GLITCH TEXT */
-        .glitch-text { transition: 0.1s; }
-        .glitched { background: var(--main); color: var(--main) !important; cursor: help; }
-        .accent { color: var(--main); font-weight: bold; }
+        /* СКРЫТАЯ ДОСКА ПОЗОРА */
+        .swipe-zone { width: 260px; height: 55px; border: 2px solid var(--main); position: relative; overflow: hidden; margin-top: 10px; }
+        .swipe-btn { position: absolute; inset: 0; background: var(--main); color: #000; display: flex; align-items: center; justify-content: center; z-index: 2; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; font-size: 9px; }
+
+        #rain { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+        .falling-name { position: absolute; font-size: 10px; white-space: nowrap; font-weight: bold; transition: opacity 0.3s; }
+        
+        @keyframes sIn { from { transform: translateX(-110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .glitched { color: #444 !important; text-shadow: none !important; }
     </style>
 </head>
 <body>
-    <div id="flash-screen"></div>
-    <div id="kill-feed-container"></div>
     <div id="rain"></div>
+    <div id="kill-feed"></div>
 
     <div id="p-login" class="page active-page">
-        <h1 class="header">ACCESS_REQUIRED</h1>
-        <input type="password" id="pass" placeholder="CODE" style="background:none; border:2px solid var(--main); color:var(--main); padding:12px; text-align:center; font-family:var(--font-h); width:200px; margin-bottom:15px; outline:none;">
-        <button class="btn" onclick="checkPass()">[ AUTHENTICATE ]</button>
+        <h1 class="header">SYSTEM_AUTH_REQUIRED</h1>
+        <input type="password" id="pass" placeholder="PASSWORD" style="background:none; border:2px solid var(--main); color:var(--main); font-family:var(--font); padding:15px; text-align:center; outline:none; width: 220px; margin-bottom: 20px;">
+        <button class="btn" onclick="checkAuth()">[ ИНИЦИАЦИЯ ]</button>
     </div>
 
     <div id="p-menu" class="page">
-        <div class="header-container"><h1 class="header" id="main-title">SatanaCIub WWW</h1></div>
-        <div class="render-box"><div id="ascii" onclick="boostRot()"></div></div>
-        <button class="btn" onclick="nav('p-rules')">📜 AER PROTOCOLS</button>
-        <button class="btn" onclick="nav('p-forms')">📝 APPLICATIONS</button>
-        <button class="btn" onclick="nav('p-duty')">🛡️ DUTY LIST</button>
-        <div class="bottom-row">
-            <div class="swipe-container">
-                <div class="under-layer" onclick="nav('p-shame')">👺 WALL OF SHAME</div>
-                <div id="swipe-btn" class="secret-layer">[ SWIPE TO UNLOCK ]</div>
-            </div>
-            <button class="btn" style="width:50px;" onclick="toggleSettings()">⚙️</button>
+        <div class="header-box"><h1 class="header" id="m-title">SatanaCIub WWW</h1></div>
+        <div id="ascii" onclick="boost()"></div>
+        <button class="btn" onclick="nav('p-rules')">ПРАВИЛА AER</button>
+        <button class="btn" onclick="nav('p-forms')">АНКЕТЫ</button>
+        <div class="swipe-zone">
+            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:7px;" onclick="nav('p-shame')">WALL_OF_SHAME</div>
+            <div id="sw-btn" class="swipe-btn">SYSTEM_INTERNAL</div>
         </div>
-        <button class="btn" onclick="toggleMode()" style="font-size:7px; border-style:dotted;">🎀 PINK REALITY</button>
+        <button class="btn" onclick="tglMode()" style="font-size:6px; border-style:dotted; opacity: 0.7;">ИЗМЕНИТЬ РЕАЛЬНОСТЬ</button>
     </div>
 
-    <div id="p-rules" class="page"><h1 class="header">AER RULES</h1><div class="card">
-        <p><span class="accent">1.</span> <span class="glitch-text">ОСКОРБЛЕНИЕ РОДНЫХ</span> — БАН НАВСЕГДА.</p>
-        <p><span class="accent">2.</span> <span class="glitch-text">ДИСКРИМИНАЦИЯ / НАЦИЗМ</span> — БАН МГНОВЕННО.</p>
-        <p><span class="accent">3.</span> <span class="glitch-text">ПОЛИТИКА / СПАМ</span> — ПОЖИЗНЕННЫЙ ЧС.</p>
-        <p><span class="accent">4.</span> <span class="glitch-text">РЕКЛАМА / ПИАР</span> — БАН.</p>
-        <p><span class="accent">5.</span> <span class="glitch-text">ДЕАНОН / УГРОЗЫ</span> — ЧС ПРОЕКТА.</p>
-    </div><button class="btn" onclick="nav('p-menu')">RETURN</button></div>
+    <div id="p-rules" class="page"><h1 class="header">ПРАВИЛА ПРОЕКТА</h1><div class="card" id="rules-box">
+        <p>1. ОСКОРБЛЕНИЕ РОДНЫХ — <span style="color:var(--main)">БАН НАВСЕГДА.</span></p>
+        <p>2. ДИСКРИМИНАЦИЯ / НАЦИЗМ — <span style="color:var(--main)">МГНОВЕННЫЙ БАН.</span></p>
+        <p>3. ПОЛИТИКА / СПАМ — <span style="color:var(--main)">ПОЖИЗНЕННЫЙ ЧС.</span></p>
+        <p>4. РЕКЛАМА БЕЗ РАЗРЕШЕНИЯ — <span style="color:var(--main)">УДАЛЕНИЕ + БАН.</span></p>
+        <p>5. ДЕАНОН И УГРОЗЫ — <span style="color:var(--main)">ПОЛНАЯ ИЗОЛЯЦИЯ.</span></p>
+        <p>6. ПОРНО / GORE — <span style="color:var(--main)">БАН + REPORT.</span></p>
+    </div><button class="btn" onclick="nav('p-menu')">ВЕРНУТЬСЯ</button></div>
 
-    <div id="p-forms" class="page"><h1 class="header">ANKETA BLOCK</h1><div class="card">
-        <p class="accent">АНКЕТА НА АДМИНКУ:</p>
-        <p class="glitch-text">1. Твой ник, @, айди, возраст и активность в чате за неделю;</p>
-        <p class="glitch-text">2. Твой часовой пояс, сколько ты готов потратить часов работы в чате;</p>
-        <p class="glitch-text">3. Что ты будешь делать, если в чате нарушают, а ты не можешь выдать бан или мут?;</p>
-        <p class="glitch-text">4. В каких чатах ты был админом? (500+ человек в чате);</p>
-        <p class="glitch-text">5. Краткий пересказ AER [Правило - наказание].</p>
-        <hr style="border:1px dashed var(--main); margin: 15px 0;">
-        <p class="accent">ВИЦЕ-ПРЕЗИДЕНТ:</p>
-        <p class="glitch-text">1. Твои идеи по улучшению дисциплины и состава.</p>
-    </div><button class="btn" onclick="nav('p-menu')">RETURN</button></div>
+    <div id="p-forms" class="page"><h1 class="header">АНКЕТА НА АДМИНКУ</h1><div class="card">
+        <p style="text-decoration: underline; margin-bottom: 10px;">БЛОК: АНКЕТА НА АДМИНКУ</p>
+        <p>1. Твой ник, @, айди, возраст и активность в чате за неделю;</p>
+        <p>2. Твой часовой пояс, сколько ты готов потратить часов работы в чате;</p>
+        <p>3. Что ты будешь делать, если в чате нарушают, а ты не можешь выдать бан или мут?;</p>
+        <p>4. В каких чатах ты был админом? (500+ человек в чате);</p>
+        <p>5. Краткий пересказ AER [Правило - наказание].</p>
+        <br>
+        <p style="text-decoration: underline; margin-bottom: 10px;">БЛОК: ВИЦЕ-ПРЕЗИДЕНТ</p>
+        <p>1. Идеи по дисциплине и управлению составом.</p>
+        <p>2. Готов ли ты нести полную ответственность за своих подчиненных?</p>
+    </div><button class="btn" onclick="nav('p-menu')">ВЕРНУТЬСЯ</button></div>
 
-    <div id="p-shame" class="page"><h1 class="header">SHAME LIST</h1><div class="card">
-        <p><span class="accent">Vinal</span> — Снесен за попытку рейда.</p>
-        <p><span class="accent">Григей</span> — Русофоб, лидер ботов.</p>
-        <p><span class="accent">Релтин</span> — Слабый админ, нытик.</p>
-        <p><span class="accent">Lucker</span> — Крыса.</p>
-    </div><button class="btn" onclick="nav('p-menu')">RETURN</button></div>
-
-    <div id="settings-box" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--panel); border:2px solid var(--main); padding:25px; z-index:1000; width:280px;">
-        <p class="header" style="font-size:10px;">ENGINE SETTINGS</p>
-        <div style="display:flex; justify-content:space-between; margin:15px 0;"><span>FLASH FX</span><input type="checkbox" id="flash-toggle" checked></div>
-        <div style="display:flex; justify-content:space-between; margin:15px 0;"><span>SPEED</span><input type="range" id="speed-slider" min="1" max="15" value="6"></div>
-        <button class="btn" style="width:100%;" onclick="toggleSettings()">[ APPLY ]</button>
-    </div>
+    <div id="p-shame" class="page"><h1 class="header">ДОСКА ПОЗОРА</h1><div class="card">
+        <p>1. <span style="color:#fff">Vinal</span> — Попытка рейда, шантаж. Снесен.</p>
+        <p>2. <span style="color:#fff">Григей</span> — Русофоб, лидер 80 ботов. Клоун.</p>
+        <p>3. <span style="color:#fff">Релтин</span> — Слабый админ, нытик. Слит.</p>
+        <p>4. <span style="color:#fff">Lucker</span> — Крыса, слив инфы. ЧС.</p>
+        <p>5. <span style="color:#fff">Psychokid</span> — Фейк деаноны.</p>
+    </div><button class="btn" onclick="nav('p-menu')">ВЕРНУТЬСЯ</button></div>
 
     <script>
-        let aX = 0, aY = 0, rotS = 0.05, isP = false, tIdx = 0;
-        const titles = ["SatanaCIub WWW", "Hooligan AER"], names = ["@Vinal", "@Grigey", "@Reltin", "@Ded", "@Psychokid", "@Lucker"];
-        let rainItems = [], hunter = { x: 0, y: 0, target: null, el: null };
+        let aX=0, aY=0, rotS=0.05, isPink=false, tIdx=0;
+        const titles = ["SatanaCIub WWW", "Hooligan AER"];
+        const VIP = ["@satanacIub", "@hooligan_hooligan"];
+        const WHITE = ["@Blood_Househ", "@Aaaaaaaaaafkrjfjfjso", "@VetalGeor", "@geniusmozer", "@aungakw_"];
+        const TARGETS = ["@Vinal", "@Grigey", "@Lucker", "@Reltin", "@Psychokid", "@TrashPlayer"];
+        let rain = [];
 
-        // --- TITLES ROTATION (3.7s) ---
-        function rotTitle() {
-            const el = document.getElementById('main-title'); if(!el) return;
-            let i = 0, target = titles[tIdx];
+        // --- ЗАГОЛОВКИ (3.7 сек) ---
+        function rotateTitle() {
+            const el = document.getElementById('m-title'); if(!el) return;
+            let i=0; const target = titles[tIdx];
             const iv = setInterval(() => {
-                el.innerText = target.split("").map((l, idx) => (idx < i) ? target[idx] : "X#$%&"[Math.floor(Math.random()*5)]).join("");
-                if(i >= target.length) { clearInterval(iv); tIdx = (tIdx + 1) % titles.length; }
-                i += 0.5;
+                el.innerText = target.split("").map((l,idx) => (idx < i)?target[idx]:"X#$%&"[Math.floor(Math.random()*5)]).join("");
+                if(i >= target.length){ clearInterval(iv); tIdx=(tIdx+1)%titles.length; } i+=0.5;
             }, 50);
         }
-        setInterval(rotTitle, 3700);
+        setInterval(rotateTitle, 3700);
 
-        // --- KILL FEED (3.7s) ---
-        function addKill(v) {
-            const c = document.getElementById('kill-feed-container'), k = document.createElement('div');
-            k.className = 'kill-item'; k.innerText = `УБИЙЦА @ebu_Dokki УБИЛ ${v}`;
-            c.appendChild(k);
-            setTimeout(() => { k.style.animation = 'fOut 0.5s forwards'; setTimeout(() => k.remove(), 500); }, 3700);
+        // --- СИСТЕМА УБИЙСТВ (3 в ряд, VIP бессмертны) ---
+        function addKill(name) {
+            const feed = document.getElementById('kill-feed');
+            const item = document.createElement('div');
+            item.className = 'kill-item';
+            
+            if(VIP.includes(name)) {
+                item.classList.add('elite');
+                item.innerText = `[БОГ] ${name} ДОМИНИРУЕТ НАД СИСТЕМОЙ`;
+            } else if(WHITE.includes(name)) {
+                item.classList.add('white-tag');
+                item.innerText = `УБИЙЦА @ebu_Dokki УНИЧТОЖИЛ ${name}`;
+            } else {
+                item.innerText = `УБИЙЦА @ebu_Dokki УНИЧТОЖИЛ ${name}`;
+            }
+            
+            feed.appendChild(item);
+
+            // Лимит 3 (кроме VIP)
+            const active = feed.querySelectorAll('.kill-item:not(.elite)');
+            if(active.length > 3) active[0].remove();
+
+            // Удаление через 3.7 сек (кроме VIP)
+            if(!VIP.includes(name)) {
+                setTimeout(() => { 
+                    item.style.opacity='0'; 
+                    setTimeout(() => item.remove(), 500); 
+                }, 3700);
+            }
         }
 
-        // --- GLITCH EFFECT (#######) ---
+        // --- ГЛИТЧ ПРАВИЛ ---
         setInterval(() => {
-            const items = document.querySelectorAll('.glitch-text');
-            const target = items[Math.floor(Math.random()*items.length)];
-            if(!target.dataset.orig) target.dataset.orig = target.innerText;
-            
-            if(Math.random() > 0.7) {
-                target.innerText = "#".repeat(target.innerText.length);
-                target.classList.add('glitched');
-                setTimeout(() => {
-                    target.innerText = target.dataset.orig;
-                    target.classList.remove('glitched');
-                }, 1500);
-            }
-        }, 3000);
+            const ps = document.querySelectorAll('#rules-box p');
+            const p = ps[Math.floor(Math.random()*ps.length)];
+            if(!p.dataset.orig) p.dataset.orig = p.innerHTML;
+            p.innerText = "#".repeat(p.innerText.length);
+            p.classList.add('glitched');
+            setTimeout(() => { p.innerHTML = p.dataset.orig; p.classList.remove('glitched'); }, 1200);
+        }, 3500);
 
-        // --- 3D RENDER ENGINE ---
+        // --- 3D ENGINE ---
         function render() {
-            let res = ""; aX += rotS; aY += rotS * 0.6; if(rotS > 0.05) rotS -= 0.001;
+            let res = ""; aX += rotS; aY += rotS*0.7; if(rotS>0.05) rotS-=0.001;
             for(let y = -11; y <= 11; y += 1.4) {
-                for(let x = -24; x <= 24; x++) {
-                    let z0 = 0, x1 = x*Math.cos(aX)-z0*Math.sin(aX), z1 = x*Math.sin(aX)+z0*Math.cos(aX);
-                    let y2 = y*Math.cos(aY)-z1*Math.sin(aY);
-                    if(!isP) {
+                for(let x = -22; x <= 22; x++) {
+                    let z0=0, x1=x*Math.cos(aX)-z0*Math.sin(aX), z1=x*Math.sin(aX)+z0*Math.cos(aX);
+                    let y2=y*Math.cos(aY)-z1*Math.sin(aY);
+                    if(!isPink) {
                         const r = Math.sqrt(x1*x1 + y2*y2*4)/6, a = Math.atan2(y2*2, x1);
                         res += (r < (1.4 + 0.6 * Math.sin(a * 5))) ? "†" : " ";
                     } else {
-                        const hX = x1/10, hY = -y2/10;
+                        const hX = x1/8.5, hY = -y2/8.5;
                         res += (Math.pow(hX*hX+hY*hY-1,3)-hX*hX*Math.pow(hY,3)<0) ? "❤" : " ";
                     }
                 }
                 res += "\n";
             }
             document.getElementById('ascii').innerText = res;
-
-            if(hunter.el) {
-                if(!hunter.target || hunter.target.dead) hunter.target = rainItems.find(i => !i.dead);
-                else {
-                    let dx = hunter.target.x-hunter.x, dy = hunter.target.y-hunter.y;
-                    if(Math.sqrt(dx*dx+dy*dy)<30) {
-                        addKill(hunter.target.name); hunter.target.dead = true; hunter.target.el.style.display = 'none';
-                        if(document.getElementById('flash-toggle').checked) {
-                            const f = document.getElementById('flash-screen'); f.classList.add('flash-anim');
-                            setTimeout(()=>f.classList.remove('flash-anim'),300);
-                        }
-                        hunter.target = null;
-                    } else { hunter.x += dx*0.07; hunter.y += dy*0.07; }
+            
+            // Движение имен (Падение вниз)
+            rain.forEach(item => {
+                item.y += item.speed; 
+                if(item.y > window.innerHeight) { 
+                    item.y = -30; 
+                    item.x = Math.random()*(window.innerWidth-100); 
                 }
-                hunter.el.style.transform = `translate(${hunter.x}px, ${hunter.y}px)`;
-            }
-            rainItems.forEach(item => {
-                if(item.dead) return;
-                item.y += item.speed * (parseFloat(document.getElementById('speed-slider').value)/5);
-                if(item.y > window.innerHeight) { item.y = -50; item.x = Math.random()*window.innerWidth; }
                 item.el.style.transform = `translate(${item.x}px, ${item.y}px)`;
+
+                // Проверка на "убийство" центром (только не VIP)
+                const dX = item.x - window.innerWidth/2;
+                const dY = item.y - window.innerHeight/2;
+                if(Math.sqrt(dX*dX + dY*dY) < 60 && !item.dead && !VIP.includes(item.name)) {
+                   item.dead = true; 
+                   item.el.style.opacity = '0';
+                   addKill(item.name);
+                   setTimeout(() => { item.dead=false; item.el.style.opacity='1'; }, 5000);
+                }
             });
             requestAnimationFrame(render);
         }
 
-        function boostRot() { rotS = 0.4; }
-        function initRain() {
-            const c = document.getElementById('rain'); c.innerHTML = ''; rainItems = [];
-            const h = document.createElement('div'); h.innerText = '@ebu_Dokki'; h.style.position='absolute'; h.style.color='#ff0'; h.style.fontWeight='bold'; c.appendChild(h);
-            hunter.el = h; hunter.x = window.innerWidth/2; hunter.y = window.innerHeight/2;
-            for(let i=0; i<15; i++) {
-                const el = document.createElement('div'); el.innerText = names[i%names.length]; el.style.position='absolute'; el.style.fontSize='10px';
-                let x = Math.random()*window.innerWidth, y = Math.random()*window.innerHeight;
-                c.appendChild(el); rainItems.push({ el, x, y, name: el.innerText, speed: 1+Math.random(), dead: false });
+        // --- УПРАВЛЕНИЕ ---
+        function boost() { rotS = 0.4; }
+        function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active-page')); document.getElementById(id).classList.add('active-page'); if(id==='p-menu') document.getElementById('sw-btn').style.transform='translateX(0)'; }
+        function checkAuth() { if(document.getElementById('pass').value==='2727') nav('p-menu'); else alert('ACCESS DENIED'); }
+        function tglMode() { isPink=!isPink; document.body.classList.toggle('pink-mode'); }
+        
+        const sw = document.getElementById('sw-btn'); let sX=0;
+        sw.addEventListener('mousedown', e => sX=e.clientX);
+        sw.addEventListener('mouseup', e => { if(e.clientX - sX > 90) sw.style.transform='translateX(100%)'; });
+        sw.addEventListener('touchstart', e => sX=e.touches[0].clientX);
+        sw.addEventListener('touchend', e => { if(e.changedTouches[0].clientX - sX > 90) sw.style.transform='translateX(100%)'; });
+
+        window.onload = () => {
+            const all = [...VIP, ...WHITE, ...TARGETS];
+            const c = document.getElementById('rain');
+            for(let i=0; i<20; i++) {
+                const name = all[i % all.length];
+                const el = document.createElement('div'); el.innerText = name;
+                el.className = 'falling-name';
+                if(VIP.includes(name)) el.style.color = '#0ff'; // Вип в дожде голубые для отличия
+                else if(WHITE.includes(name)) el.style.color = '#fff';
+                else el.style.color = 'var(--main)';
+                c.appendChild(el);
+                rain.push({ el, x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, name, speed: 1.5 + Math.random()*2, dead: false });
             }
-        }
-
-        const swBtn = document.getElementById('swipe-btn'); let sX = 0;
-        swBtn.addEventListener('mousedown', e => sX = e.clientX);
-        swBtn.addEventListener('mouseup', e => { if(Math.abs(e.clientX - sX) > 70) swBtn.style.transform = `translateX(${e.clientX-sX > 0 ? 120 : -120}%)`; });
-        swBtn.addEventListener('touchstart', e => sX = e.touches[0].clientX);
-        swBtn.addEventListener('touchend', e => { if(Math.abs(e.changedTouches[0].clientX - sX) > 70) swBtn.style.transform = `translateX(${e.changedTouches[0].clientX-sX > 0 ? 120 : -120}%)`; });
-
-        function toggleSettings() { const s = document.getElementById('settings-box'); s.style.display = s.style.display === 'none' ? 'block' : 'none'; }
-        function nav(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page')); document.getElementById(id).classList.add('active-page'); if(id==='p-menu') swBtn.style.transform='translateX(0)'; }
-        function checkPass() { if(document.getElementById('pass').value === '2727') nav('p-menu'); else alert("ACCESS DENIED"); }
-        function toggleMode() { isP = !isP; document.body.classList.toggle('pink-mode'); }
-
-        window.onload = () => { initRain(); render(); rotTitle(); };
+            render(); rotateTitle();
+        };
     </script>
 </body>
 </html>
