@@ -3,116 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SatanaCIub Project | CT1C2 FULL SYSTEM</title>
+    <title>SatanaCIub Project | CT1C2 REBORN</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&family=Rubik+Mono+One&display=swap');
 
-        /* [БАЗОВЫЕ НАСТРОЙКИ] */
         :root { 
             --m: #ff0000; --bg: #000; --t: #fff; --glow: rgba(255, 0, 0, 0.9);
             --font-sq: 'JetBrains Mono', monospace; --rd: 0px;
         }
         
-        /* ТЕМА: R (RED/HACKER) */
-        body.r-mode { --m: #ff0000; --bg: #000; --t: #fff; --glow: rgba(255, 0, 0, 0.8); --rd: 0px; }
-        
-        /* ТЕМА: P (PICKME/PINK) - БЕЛЫЙ ФОН */
-        body.p-mode { --m: #ffb7d5; --bg: #ffffff; --t: #ffb7d5; --glow: rgba(255, 183, 213, 0.4); --rd: 50px; }
-        body.p-mode .screen { background: rgba(255, 255, 255, 0.98); }
-        body.p-mode .content-panel { background: #fff; color: #ffb7d5; border-width: 6px; box-shadow: 0 10px 30px rgba(255, 183, 213, 0.3); }
-        body.p-mode .btn-action { color: #ffb7d5; border-width: 4px; }
-        body.p-mode .unit { color: #ffb7d5; }
-        body.p-mode .casino-title { -webkit-text-stroke: 1px #ffb7d5; }
+        body.r-mode { --m: #ff0000; --bg: #000; --t: #fff; --glow: rgba(255,0,0,0.8); --rd: 0px; }
+        body.p-mode { --m: #ffb7d5; --bg: #fff; --t: #ffb7d5; --glow: rgba(255,183,213,0.5); --rd: 50px; }
+        body.g-mode { --m: #00ff00; --bg: #000; --t: #00ff00; --glow: rgba(0,255,0,0.8); --rd: 0px; }
+        body.n-mode { --m: #87cefa; --bg: #fff; --t: #00bfff; --glow: rgba(135,206,250,0.5); --rd: 15px; }
 
-        /* ТЕМА: G (GREEN/CONSOLE) */
-        body.g-mode { --m: #00ff00; --bg: #000; --t: #00ff00; --glow: rgba(0, 255, 0, 0.8); --rd: 0px; }
-
-        /* ТЕМА: N (BLUE/NORMAL) - БЕЛЫЙ ФОН */
-        body.n-mode { --m: #87cefa; --bg: #ffffff; --t: #00bfff; --glow: rgba(135, 206, 250, 0.4); --rd: 15px; }
-        body.n-mode .screen { background: rgba(255, 255, 255, 0.98); }
-        body.n-mode .content-panel { background: #fff; color: #00bfff; border-color: #87cefa; }
-        body.n-mode .btn-action { color: #00bfff; border-color: #87cefa; }
-        body.n-mode .unit { color: #00bfff; }
-
-        /* ГЛОБАЛЬНЫЕ СТИЛИ */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            background: var(--bg); color: var(--t); font-family: var(--font-sq);
-            height: 100vh; width: 100vw; overflow: hidden; transition: 0.4s; position: fixed;
+        body { background: var(--bg); color: var(--t); font-family: var(--font-sq); height: 100vh; width: 100vw; overflow: hidden; position: fixed; transition: background 0.5s; }
+
+        /* ЭМОДЗИ ДОЖДЬ */
+        .emoji-drop { position: fixed; top: -50px; pointer-events: none; z-index: 5; font-size: 1.5rem; animation: fall linear forwards; opacity: 0.7; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        /* РАЗРУШЕНИЕ СЛОВ */
+        .word-span { display: inline-block; cursor: pointer; transition: 0.2s; }
+        .word-shake { animation: w-shake 0.3s infinite; color: var(--m) !important; }
+        @keyframes w-shake { 0% { transform: translate(1px,1px); } 50% { transform: translate(-1px,-1px); } }
+        .word-broken { opacity: 0; transform: scale(0.5) rotate(20deg); pointer-events: none; }
+
+        /* ЗАГОЛОВКИ */
+        .casino-title { 
+            font-family: 'Rubik Mono One', sans-serif; font-size: 1.8rem; text-align: center; 
+            margin: 20px 0; position: relative; z-index: 100;
+            color: var(--m); text-shadow: 0 0 15px var(--glow);
+            animation: title-glow 2s infinite alternate;
         }
+        @keyframes title-glow { from { filter: hue-rotate(0deg) blur(0px); } to { filter: hue-rotate(20deg) blur(1px); } }
 
-        /* ЭФФЕКТЫ */
-        #fx-layer { position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0; background: #fff; }
-        .flash-active { animation: flash-anim 0.25s forwards; }
-        @keyframes flash-anim { 0% { opacity: 0.8; } 100% { opacity: 0; } }
-
-        #bg-chaos { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.25; }
-        .bg-text { position: absolute; font-size: 11px; color: var(--m); font-weight: bold; }
-
+        /* DVD */
         #logo-dvd {
             position: fixed; white-space: pre; font-size: 7px; line-height: 1;
             color: var(--m); z-index: 10; pointer-events: none; font-weight: bold;
-            filter: drop-shadow(0 0 5px var(--glow)); transition: color 0.3s;
-        }
-
-        .casino-title { 
-            font-family: 'Rubik Mono One', sans-serif; font-size: 1.7rem; text-align: center; 
-            margin: 25px 0; color: transparent; -webkit-text-stroke: 1.2px var(--m);
-            text-shadow: 0 0 15px var(--glow); z-index: 100; position: relative;
+            filter: drop-shadow(0 0 8px var(--glow));
         }
 
         /* ЭКРАНЫ */
         .screen { 
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.94); 
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); 
             z-index: 1000; flex-direction: column; align-items: center; justify-content: center; padding: 15px;
+            animation: screen-in 0.4s ease-out;
         }
+        @keyframes screen-in { from { clip-path: inset(50% 0 50% 0); } to { clip-path: inset(0 0 0 0); } }
         .screen-active { display: flex; }
         
         .content-panel { 
-            width: 100%; max-width: 650px; height: 60vh; overflow-y: auto; 
-            border: 4px solid var(--m); padding: 25px; background: rgba(0,0,0,0.96);
-            border-radius: var(--rd); box-shadow: 0 0 25px #000; transition: 0.3s;
+            width: 100%; max-width: 600px; height: 55vh; overflow-y: auto; 
+            border: 4px solid var(--m); padding: 25px; background: rgba(0,0,0,0.95);
+            border-radius: var(--rd); box-shadow: 0 0 30px #000;
         }
-        .content-panel h2 { color: var(--m); border-bottom: 2px solid var(--m); padding-bottom: 10px; margin-bottom: 15px; font-size: 1.2rem; }
-        .content-panel h3 { margin: 15px 0 10px; font-size: 1rem; color: var(--m); }
-        .content-panel p { margin-bottom: 12px; font-size: 0.9rem; line-height: 1.4; font-weight: bold; }
+        .p-mode .content-panel, .n-mode .content-panel { background: #fff; }
 
         /* КНОПКИ */
         .btn-action { 
-            width: 100%; max-width: 360px; padding: 18px; margin: 8px 0; 
+            width: 100%; max-width: 350px; padding: 18px; margin: 8px 0; 
             background: transparent; color: var(--t); border: 3px solid var(--m); 
-            font-size: 0.95rem; cursor: pointer; text-transform: uppercase; 
-            font-weight: 900; border-radius: var(--rd); transition: 0.2s;
-            letter-spacing: 1px;
+            font-size: 1rem; cursor: pointer; text-transform: uppercase; 
+            font-weight: 900; border-radius: var(--rd); transition: 0.3s;
         }
-        .btn-action:active { background: var(--m); color: #000; }
+        .btn-action:hover { background: var(--m); color: #000; transform: scale(1.02); }
 
-        /* ЮНИТЫ (НИКИ) */
-        .unit { 
-            position: fixed; z-index: 50; cursor: pointer; white-space: nowrap; 
-            font-weight: 900; font-size: 0.85rem; padding: 5px; color: var(--m);
-            transition: opacity 0.3s;
+        /* УБИЙЦА */
+        .hunter { 
+            position: fixed; z-index: 200; color: #ffff00 !important; font-weight: 900;
+            text-shadow: 0 0 20px #ff0; padding: 10px; pointer-events: none;
+            background: rgba(255,255,0,0.1); border-radius: 50%;
+            animation: hunter-pulse 0.5s infinite alternate;
         }
-        .hunter { color: #ffff00 !important; text-shadow: 0 0 10px #ff0; z-index: 60; }
-        .is-vip { text-shadow: 0 0 8px var(--glow); border-bottom: 1px solid var(--m); }
-        
-        /* ТЕМЫ - ПАНЕЛЬ */
+        @keyframes hunter-pulse { from { transform: scale(1); box-shadow: 0 0 10px #ff0; } to { transform: scale(1.2); box-shadow: 0 0 30px #ff0; } }
+
+        .unit { position: fixed; z-index: 150; cursor: pointer; font-weight: 900; color: var(--m); padding: 5px; }
+
         .theme-nav { position: fixed; bottom: 20px; width: 100%; display: flex; justify-content: center; gap: 15px; z-index: 2000; }
-        .t-dot { width: 45px; height: 45px; border: 3px solid #666; cursor: pointer; border-radius: 10px; transition: 0.2s; }
-        .t-dot:hover { transform: scale(1.1); border-color: #fff; }
-
-        #term-input { 
-            width: 100%; max-width: 360px; background: #000; border: 2px solid var(--m); 
-            color: var(--m); padding: 12px; margin-top: 10px; display: none; font-weight: bold;
-        }
-        .g-mode #term-input { display: block; }
+        .t-dot { width: 45px; height: 45px; border: 3px solid #666; cursor: pointer; border-radius: 12px; }
     </style>
 </head>
 <body class="r-mode">
 
 <div id="fx-layer"></div>
-<div id="bg-chaos"></div>
-
 <div id="logo-dvd">
  ██████  █████  ████████  █████  ███    ██  █████  
 ██      ██   ██    ██    ██   ██ ████   ██ ██   ██ 
@@ -122,95 +98,30 @@
 </div>
 
 <div id="scr-login" class="screen screen-active">
-    <div class="casino-title">SATANA-CLUB PROJECT</div>
-    <div style="margin-bottom: 20px;">
-        <input type="checkbox" id="accept-check"> <label for="accept-check">[ACCEPT AER PROTOCOL]</label>
-    </div>
+    <div class="casino-title" id="main-title">HOOLIGAN AER</div>
     <input type="password" id="pass-field" placeholder="PASS" maxlength="4" style="background:none; border:3px solid var(--m); color:var(--m); padding:15px; width:140px; text-align:center; font-size:1.8rem; border-radius: var(--rd);">
-    <button class="btn-action" onclick="Kernel.auth()" style="margin-top: 20px;">INITIALIZE</button>
+    <button class="btn-action" onclick="Kernel.auth()">INITIALIZE</button>
 </div>
 
 <div id="scr-menu" class="screen">
-    <div class="casino-title glitch-node">HOOLIGAN AER</div>
+    <div class="casino-title">SATANACIUB WWW</div>
     <button class="btn-action" onclick="View.to('scr-rules')">ПРАВИЛА AER</button>
-    <button class="btn-action" onclick="View.to('scr-ankety')">АНКЕТЫ</button>
-    <button class="btn-action" onclick="Kernel.handleSoon()">СКОРО...</button>
-    <input type="text" id="term-input" placeholder="root@ct1c2:~#">
+    <button class="btn-action" onclick="View.to('scr-anketa')">АНКЕТА НА АДМИНА</button>
+    <button class="btn-action" onclick="Kernel.handleSoon()">ДОСКА ПОЗОРА</button>
 </div>
 
 <div id="scr-rules" class="screen">
-    <div class="content-panel">
-        <h2>ПРАВИЛА AER (ПОЛНАЯ ВЕРСИЯ)</h2>
-        <p>Данный AER является основным сводом правил чата. Незнание правил не освобождает от ответственности. Копирование структуры или содержания без разрешения автора @SatanaCIub запрещено.</p>
-        
-        <h3>1. Дискриминация и деструктив</h3>
-        <p>Запрещены любые формы ксенофобии, расизма, гомофобии, сексизма, а также травля по религиозному или социальному признаку. Запрещена прямая или завуавированная агрессия в адрес участников.</p>
-        <p><b>Наказание:</b> Мут от 20 до 45 минут. При повторе — Бан.</p>
-
-        <h3>1.1 Провокации и токсичность</h3>
-        <p>Любые попытки вывести участников на конфликт, байт на нарушение правил или создание токсичной атмосферы.</p>
-        <p><b>Наказание:</b> Мут 60–120 минут.</p>
-
-        <h3>1.2 Неадекватное поведение</h3>
-        <p>Оскорбление родных, деанонимизация участников, угрозы физической расправой в реальной жизни.</p>
-        <p><b>Наказание:</b> БАН НАВСЕГДА.</p>
-
-        <h3>3. Спам и рассылки</h3>
-        <p>Запрещена реклама сторонних ресурсов, чатов, каналов без согласования, а также массовая рассылка однотипных сообщений/стикеров.</p>
-        <p><b>Наказание:</b> Мут 120 минут или Бан.</p>
-
-        <h3>4. Флуд и "Лестница"</h3>
-        <p>Флуд: Отправка более 4-х бессмысленных сообщений подряд. Лестница: Дробление одного предложения на 5 и более сообщений.</p>
-        <p><b>Наказание:</b> Мут от 30 минут до 3 часов.</p>
-
-        <h3>5. Политика</h3>
-        <p>Запрещено обсуждение любых политических событий, государственных деятелей, войн и конфликтов. Чат вне политики.</p>
-        <p><b>Наказание:</b> За провокацию — 220 минут мута. За обсуждение — БАН.</p>
-
-        <p><i>• Администрация оставляет за собой право наказывать за действия, вредящие клубу, даже если они не описаны выше.</i></p>
+    <div class="content-panel" id="rules-text">
+        <h2>ПРАВИЛА AER</h2>
+        <p>1. Дискриминация: Расизм, гомофобия — БАН. 1.1 Провокации: Мут 120м. 1.2 Неадекватность: Оскорбление родных — БАН. 3. Спам: Реклама — БАН. 4. Флуд: 4+ сообщения — Мут 180м. 5. Политика: Обсуждение войн — БАН.</p>
     </div>
-    <button class="btn-action" onclick="View.to('scr-menu')">ВЕРНУТЬСЯ</button>
+    <button class="btn-action" onclick="View.to('scr-menu')">BACK</button>
 </div>
 
-<div id="scr-ankety" class="screen">
-    <div class="btn-container" style="width:100%; display:flex; flex-direction:column; align-items:center;">
-        <button class="btn-action" onclick="View.to('scr-ank-admin')">Анкета на админку</button>
-        <button class="btn-action" onclick="View.to('scr-ank-vice')">Анкета на вице</button>
-        <button class="btn-action" onclick="View.to('scr-menu')">НАЗАД</button>
-    </div>
-</div>
-
-<div id="scr-ank-admin" class="screen">
-    <div class="content-panel">
+<div id="scr-anketa" class="screen">
+    <div class="content-panel" id="anketa-text">
         <h2>АНКЕТА НА АДМИНКУ</h2>
-        <p>1. Твой ник, @, айди, возраст и активность в чате за неделю;</p>
-        <p>2. Твой часовой пояс, сколько ты готов потратить часов работы в чате;</p>
-        <p>3. Что ты будешь делать, если в чате нарушают, а ты не можешь выдать бан или мут?;</p>
-        <p>4. В каких чатах ты был админом? (500+ человек в чате);</p>
-        <p>5. Краткий пересказ AER [Правило - наказание].</p>
-    </div>
-    <button class="btn-action" onclick="View.to('scr-ankety')">BACK</button>
-</div>
-
-<div id="scr-ank-vice" class="screen">
-    <div class="content-panel">
-        <h2>АНКЕТА НА ВИЦЕ</h2>
-        <p>1. Количество трофеев от 30.000 (30k);</p>
-        <p>2. Сколько времени в день готов уделять управлению клубом?</p>
-        <p>3. Скриншот профиля аккаунта;</p>
-        <p>4. Выполнить 2 рекламных поста нашего ТГ в сторонних клубах.</p>
-    </div>
-    <button class="btn-action" onclick="View.to('scr-ankety')">BACK</button>
-</div>
-
-<div id="scr-shame" class="screen">
-    <div class="content-panel">
-        <h2>DOSKA POZORA (FREAK LIST)</h2>
-        <p><b>1. Vinal</b> — Пытался шантажировать рейдом при отказе в союзе. Итог: Удален.</p>
-        <p><b>2. Григей</b> — 18-летний русофоб, замечен в странном общении с малолетними. Итог: Изолирован.</p>
-        <p><b>3. Релтин</b> — Слабейший админ в истории. Ливнул из-за мута на час. Итог: В чс.</p>
-        <p><b>4. Дед</b> — Занимался крысятничеством и сливом инфы. Итог: Под наблюдением.</p>
-        <p><b>5. Психокид</b> — Токсичный элемент, многократные оскорбления. Итог: БАН НАВСЕГДА.</p>
+        <p>1. Твой ник, @, айди, возраст и активность в чате за неделю; 2. Твой часовой пояс, сколько ты готов потратить часов работы в чате; 3. Что ты будешь делать, если в чате нарушают, а ты не можешь выдать бан или мут?; 4. В каких чатах ты был админом? (500+ человек в чате); 5. Краткий пересказ AER [Правило - наказание].</p>
     </div>
     <button class="btn-action" onclick="View.to('scr-menu')">BACK</button>
 </div>
@@ -223,108 +134,92 @@
 </div>
 
 <script>
+    const Icons = {
+        r: ['†', '🃜', '🃚', '🃖', '🃁', '🂭', '🂺', '⛥', '⭑', '⛤'],
+        p: ['‹𝟹', '༝', '༚', 'ꨄ︎', '୨ৎ', '𐚁', '>⩊<', '♪', '𐙚', '𖣠'],
+        n: ['➢', '❯❯❯❯', '↓', '➤', '⟢', '»', '➜'],
+        g: ['▓▓', '██', '⬚', '❖', '⌗', '𖣯', '⮞', '𓊌', '░', '「', '」', '⛶']
+    };
+
     const Static = {
         VIPS: ['@satanacIub', '@hooligan_hooligan'],
         TARGETS: ['@Blood_Househ', '@VetalGeor', '@geniusmozer', '@aungakw'],
-        HUNTER: '@ebu_Dokki',
-        SYMBOLS: ['#', '&', '₽', '%', '$', '†', '§', '¶'],
-        TITLES: ["HOOLIGAN AER", "SATANACIUB WWW"]
+        HUNTER: '@ebu_Dokki'
     };
 
     let Global = { 
-        mode: 'r', units: [], lastTick: 0, soon: 0,
-        dvd: { x: 50, y: 50, dx: 2, dy: 2, w: 220, h: 50 }
+        mode: 'r', units: [], 
+        dvd: { x: 50, y: 50, dx: 2, dy: 2, w: 200, h: 45 }
     };
 
     const Kernel = {
         init() {
-            this.createChaos();
             this.spawn();
             this.heartbeat();
-            this.runTitles();
+            this.breakText(document.getElementById('rules-text'));
+            this.breakText(document.getElementById('anketa-text'));
+            setInterval(() => this.dropEmoji(), 300);
         },
-        auth() {
-            const pass = document.getElementById('pass-field').value;
-            const check = document.getElementById('accept-check').checked;
-            if(pass === '2727' && check) View.to('scr-menu');
-            else { this.fx(); alert("ACCESS DENIED"); }
+        breakText(el) {
+            const paragraphs = el.querySelectorAll('p');
+            paragraphs.forEach(p => {
+                const words = p.innerText.split(' ');
+                p.innerHTML = words.map(w => `<span class="word-span">${w}</span>`).join(' ');
+            });
+            el.addEventListener('click', (e) => {
+                if(e.target.classList.contains('word-span')) {
+                    const w = e.target;
+                    w.classList.add('word-shake');
+                    setTimeout(() => {
+                        w.innerText = "†§#%";
+                        setTimeout(() => w.classList.add('word-broken'), 200);
+                    }, 400);
+                }
+            });
         },
-        createChaos() {
-            const bg = document.getElementById('bg-chaos');
-            for(let i=0; i<35; i++) {
-                let d = document.createElement('div'); d.className = 'bg-text';
-                d.innerText = Static.SYMBOLS[Math.floor(Math.random()*Static.SYMBOLS.length)];
-                d.style.left = Math.random()*100+'%'; d.style.top = Math.random()*100+'%';
-                bg.appendChild(d);
-            }
+        dropEmoji() {
+            const e = document.createElement('div');
+            e.className = 'emoji-drop';
+            const list = Icons[Global.mode];
+            e.innerText = list[Math.floor(Math.random()*list.length)];
+            e.style.left = Math.random()*100+'vw';
+            e.style.animationDuration = (Math.random()*2 + 3)+'s';
+            document.body.appendChild(e);
+            setTimeout(() => e.remove(), 5000);
         },
         spawn() {
             [...Static.VIPS, ...Static.TARGETS, Static.HUNTER].forEach(name => {
                 let d = document.createElement('div');
-                d.className = 'unit';
-                if(Static.VIPS.includes(name)) d.classList.add('is-vip');
-                if(name === Static.HUNTER) d.classList.add('hunter');
+                d.className = 'unit' + (name === Static.HUNTER ? ' hunter' : '');
                 d.innerText = name;
-                d.onclick = () => { this.fx(); d.style.opacity = '0'; setTimeout(()=>d.remove(), 300); };
                 document.body.appendChild(d);
-                Global.units.push({ name, el: d, x: Math.random()*85, y: Math.random()*85, dx: (Math.random()-0.5)*0.7, dy: (Math.random()-0.5)*0.7 });
+                Global.units.push({ name, el: d, x: Math.random()*80, y: Math.random()*80, dx: 1, dy: 1 });
             });
         },
-        fx() {
-            const l = document.getElementById('fx-layer');
-            l.classList.add('flash-active');
-            setTimeout(() => l.classList.remove('flash-active'), 250);
-        },
-        setMode(m) { 
-            Global.mode = m; 
-            document.body.className = m + '-mode'; 
-            this.fx(); 
-        },
-        handleSoon() { 
-            Global.soon++; 
-            if(Global.soon >= 3) { View.to('scr-shame'); Global.soon = 0; } 
-        },
-        runTitles() {
-            let i = 0;
-            setInterval(() => {
-                const nodes = document.querySelectorAll('.glitch-node');
-                nodes.forEach(n => n.innerText = Static.TITLES[i]);
-                i = (i + 1) % Static.TITLES.length;
-            }, 5000);
-        },
+        setMode(m) { Global.mode = m; document.body.className = m + '-mode'; },
+        auth() { if(document.getElementById('pass-field').value === '2727') View.to('scr-menu'); },
         heartbeat() {
-            const now = Date.now();
-            let canMove = (Global.mode === 'g') ? (now - Global.lastTick > 1000) : true;
-
-            // DVD Physics
+            // DVD
             Global.dvd.x += Global.dvd.dx; Global.dvd.y += Global.dvd.dy;
             if(Global.dvd.x < 0 || Global.dvd.x > window.innerWidth - Global.dvd.w) Global.dvd.dx *= -1;
             if(Global.dvd.y < 0 || Global.dvd.y > window.innerHeight - Global.dvd.h) Global.dvd.dy *= -1;
             document.getElementById('logo-dvd').style.transform = `translate(${Global.dvd.x}px, ${Global.dvd.y}px)`;
 
-            if(canMove) {
-                Global.lastTick = now;
-                const hunterUnit = Global.units.find(u => u.name === Static.HUNTER);
-                const targetUnit = Global.units.find(u => !Static.VIPS.includes(u.name) && u.name !== Static.HUNTER && u.el.parentNode);
+            // Hunter & Units
+            const h = Global.units.find(u => u.name === Static.HUNTER);
+            const t = Global.units.find(u => !Static.VIPS.includes(u.name) && u.name !== Static.HUNTER && u.el.style.opacity !== '0');
 
-                Global.units.forEach(u => {
-                    if(!u.el.parentNode) return;
-                    
-                    if(u.name === Static.HUNTER && targetUnit && Global.mode !== 'p') {
-                        // Охотник преследует цель
-                        u.x += (targetUnit.x - u.x) * 0.03;
-                        u.y += (targetUnit.y - u.y) * 0.03;
-                    } else {
-                        // Обычное движение
-                        u.x += u.dx * (Global.mode === 'g' ? 20 : 1.3);
-                        u.y += u.dy * (Global.mode === 'g' ? 20 : 1.3);
-                    }
-
-                    if(u.x < 0 || u.x > 92) u.dx *= -1;
-                    if(u.y < 0 || u.y > 92) u.dy *= -1;
-                    u.el.style.left = u.x + 'vw'; u.el.style.top = u.y + 'vh';
-                });
-            }
+            Global.units.forEach(u => {
+                if(u.name === Static.HUNTER && t && Global.mode !== 'p') {
+                    u.x += (t.x - u.x) * 0.04; u.y += (t.y - u.y) * 0.04;
+                    if(Math.abs(u.x-t.x) < 2 && Math.abs(u.y-t.y) < 2) t.el.style.opacity = '0';
+                } else {
+                    u.x += u.dx * (Global.mode === 'g' ? 0.2 : 0.8);
+                    u.y += u.dy * (Global.mode === 'g' ? 0.2 : 0.8);
+                    if(u.x < 0 || u.x > 90) u.dx *= -1; if(u.y < 0 || u.y > 90) u.dy *= -1;
+                }
+                u.el.style.left = u.x + 'vw'; u.el.style.top = u.y + 'vh';
+            });
             requestAnimationFrame(() => this.heartbeat());
         }
     };
@@ -332,10 +227,10 @@
     const View = { to(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('screen-active'));
         document.getElementById(id).classList.add('screen-active');
-        Kernel.fx();
     }};
 
     window.onload = () => Kernel.init();
 </script>
 </body>
 </html>
+
