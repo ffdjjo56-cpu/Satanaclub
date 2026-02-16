@@ -1,77 +1,111 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SatanaCIub Project | CT1C2 DVD EDITION</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SatanaCIub Project | CT1C2 FULL SYSTEM</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&family=Rubik+Mono+One&family=Comfortaa:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&family=Rubik+Mono+One&display=swap');
 
+        /* [БАЗОВЫЕ НАСТРОЙКИ] */
         :root { 
             --m: #ff0000; --bg: #000; --t: #fff; --glow: rgba(255, 0, 0, 0.9);
-            --font-sq: 'JetBrains Mono', monospace;
-            --font-logo: 'Rubik Mono One', sans-serif;
-            --rd: 0px;
+            --font-sq: 'JetBrains Mono', monospace; --rd: 0px;
         }
         
-        body.r-mode { --m: #ff0000; --bg: #000; --t: #fff; --glow: rgba(255, 0, 0, 0.9); --rd: 0px; }
-        body.p-mode { --m: #ffb7d5; --bg: #fff; --t: #ff69b4; --glow: rgba(255, 183, 213, 0.9); font-family: 'Comfortaa', cursive !important; --rd: 50px; }
-        body.g-mode { --m: #00ff00; --bg: #000; --t: #00ff00; --glow: rgba(0, 255, 0, 0.9); --rd: 0px; }
-        body.n-mode { --m: #0080ff; --bg: #050505; --t: #fff; --glow: rgba(0, 128, 255, 0.9); --rd: 15px; }
+        /* ТЕМА: R (RED/HACKER) */
+        body.r-mode { --m: #ff0000; --bg: #000; --t: #fff; --glow: rgba(255, 0, 0, 0.8); --rd: 0px; }
+        
+        /* ТЕМА: P (PICKME/PINK) - БЕЛЫЙ ФОН */
+        body.p-mode { --m: #ffb7d5; --bg: #ffffff; --t: #ffb7d5; --glow: rgba(255, 183, 213, 0.4); --rd: 50px; }
+        body.p-mode .screen { background: rgba(255, 255, 255, 0.98); }
+        body.p-mode .content-panel { background: #fff; color: #ffb7d5; border-width: 6px; box-shadow: 0 10px 30px rgba(255, 183, 213, 0.3); }
+        body.p-mode .btn-action { color: #ffb7d5; border-width: 4px; }
+        body.p-mode .unit { color: #ffb7d5; }
+        body.p-mode .casino-title { -webkit-text-stroke: 1px #ffb7d5; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; font-family: var(--font-sq); }
-        body { background: var(--bg); color: var(--t); height: 100vh; width: 100vw; overflow: hidden; transition: 0.4s; }
+        /* ТЕМА: G (GREEN/CONSOLE) */
+        body.g-mode { --m: #00ff00; --bg: #000; --t: #00ff00; --glow: rgba(0, 255, 0, 0.8); --rd: 0px; }
 
-        #bg-chaos { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.3; }
-        .bg-text { position: absolute; font-size: 0.7rem; color: var(--m); font-weight: bold; }
+        /* ТЕМА: N (BLUE/NORMAL) - БЕЛЫЙ ФОН */
+        body.n-mode { --m: #87cefa; --bg: #ffffff; --t: #00bfff; --glow: rgba(135, 206, 250, 0.4); --rd: 15px; }
+        body.n-mode .screen { background: rgba(255, 255, 255, 0.98); }
+        body.n-mode .content-panel { background: #fff; color: #00bfff; border-color: #87cefa; }
+        body.n-mode .btn-action { color: #00bfff; border-color: #87cefa; }
+        body.n-mode .unit { color: #00bfff; }
 
-        #fx-layer { position: fixed; inset: 0; z-index: 10000; pointer-events: none; opacity: 0; background: #fff; }
-        .flash { animation: fsh 0.25s forwards; }
-        @keyframes fsh { 0% { opacity: 1; } 100% { opacity: 0; } }
+        /* ГЛОБАЛЬНЫЕ СТИЛИ */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            background: var(--bg); color: var(--t); font-family: var(--font-sq);
+            height: 100vh; width: 100vw; overflow: hidden; transition: 0.4s; position: fixed;
+        }
 
-        /* DVD LOGO STYLE */
+        /* ЭФФЕКТЫ */
+        #fx-layer { position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0; background: #fff; }
+        .flash-active { animation: flash-anim 0.25s forwards; }
+        @keyframes flash-anim { 0% { opacity: 0.8; } 100% { opacity: 0; } }
+
+        #bg-chaos { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.25; }
+        .bg-text { position: absolute; font-size: 11px; color: var(--m); font-weight: bold; }
+
         #logo-dvd {
-            position: fixed; white-space: pre; font-size: 10px; line-height: 1;
-            color: var(--m); z-index: 50; pointer-events: none; font-weight: bold;
-            filter: drop-shadow(0 0 8px var(--m));
+            position: fixed; white-space: pre; font-size: 7px; line-height: 1;
+            color: var(--m); z-index: 10; pointer-events: none; font-weight: bold;
+            filter: drop-shadow(0 0 5px var(--glow)); transition: color 0.3s;
         }
 
         .casino-title { 
-            font-family: var(--font-logo); font-size: 3.2rem; text-align: center; margin-top: 40px; 
-            color: transparent; -webkit-text-stroke: 1.5px var(--m);
-            text-shadow: 0 0 20px var(--glow); position: relative; z-index: 10;
+            font-family: 'Rubik Mono One', sans-serif; font-size: 1.7rem; text-align: center; 
+            margin: 25px 0; color: transparent; -webkit-text-stroke: 1.2px var(--m);
+            text-shadow: 0 0 15px var(--glow); z-index: 100; position: relative;
         }
 
-        .screen { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
+        /* ЭКРАНЫ */
+        .screen { 
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.94); 
+            z-index: 1000; flex-direction: column; align-items: center; justify-content: center; padding: 15px;
+        }
         .screen-active { display: flex; }
         
         .content-panel { 
-            width: 90%; max-width: 900px; height: 60vh; overflow-y: auto; 
-            border: 4px solid var(--m); padding: 30px; background: rgba(0,0,0,0.98);
-            box-shadow: 0 0 40px rgba(0,0,0,1); border-radius: var(--rd);
+            width: 100%; max-width: 650px; height: 60vh; overflow-y: auto; 
+            border: 4px solid var(--m); padding: 25px; background: rgba(0,0,0,0.96);
+            border-radius: var(--rd); box-shadow: 0 0 25px #000; transition: 0.3s;
         }
+        .content-panel h2 { color: var(--m); border-bottom: 2px solid var(--m); padding-bottom: 10px; margin-bottom: 15px; font-size: 1.2rem; }
+        .content-panel h3 { margin: 15px 0 10px; font-size: 1rem; color: var(--m); }
+        .content-panel p { margin-bottom: 12px; font-size: 0.9rem; line-height: 1.4; font-weight: bold; }
 
+        /* КНОПКИ */
         .btn-action { 
-            width: 420px; padding: 20px; margin: 8px; background: transparent; color: var(--t); 
-            border: 3px solid var(--m); font-size: 1.1rem; cursor: pointer;
-            text-transform: uppercase; font-weight: 800; border-radius: var(--rd);
+            width: 100%; max-width: 360px; padding: 18px; margin: 8px 0; 
+            background: transparent; color: var(--t); border: 3px solid var(--m); 
+            font-size: 0.95rem; cursor: pointer; text-transform: uppercase; 
+            font-weight: 900; border-radius: var(--rd); transition: 0.2s;
+            letter-spacing: 1px;
         }
-        .btn-action:hover { background: var(--m); color: #000; box-shadow: 0 0 20px var(--glow); }
+        .btn-action:active { background: var(--m); color: #000; }
+
+        /* ЮНИТЫ (НИКИ) */
+        .unit { 
+            position: fixed; z-index: 50; cursor: pointer; white-space: nowrap; 
+            font-weight: 900; font-size: 0.85rem; padding: 5px; color: var(--m);
+            transition: opacity 0.3s;
+        }
+        .hunter { color: #ffff00 !important; text-shadow: 0 0 10px #ff0; z-index: 60; }
+        .is-vip { text-shadow: 0 0 8px var(--glow); border-bottom: 1px solid var(--m); }
+        
+        /* ТЕМЫ - ПАНЕЛЬ */
+        .theme-nav { position: fixed; bottom: 20px; width: 100%; display: flex; justify-content: center; gap: 15px; z-index: 2000; }
+        .t-dot { width: 45px; height: 45px; border: 3px solid #666; cursor: pointer; border-radius: 10px; transition: 0.2s; }
+        .t-dot:hover { transform: scale(1.1); border-color: #fff; }
 
         #term-input { 
-            width: 420px; background: #000; border: 2px solid var(--m); color: var(--m); 
-            padding: 10px; margin-top: 15px; display: none;
+            width: 100%; max-width: 360px; background: #000; border: 2px solid var(--m); 
+            color: var(--m); padding: 12px; margin-top: 10px; display: none; font-weight: bold;
         }
         .g-mode #term-input { display: block; }
-
-        .unit { position: fixed; z-index: 100; cursor: crosshair; white-space: nowrap; font-weight: 900; }
-        .is-vip { text-shadow: 0 0 10px var(--m); animation: blink 0.6s infinite; }
-        @keyframes blink { 50% { opacity: 0.2; } }
-        .muted { opacity: 0.1 !important; filter: blur(2px); }
-
-        .theme-nav { position: fixed; bottom: 20px; left: 20px; display: flex; gap: 15px; z-index: 2000; }
-        .t-dot { width: 35px; height: 35px; border: 3px solid #fff; cursor: pointer; }
     </style>
 </head>
 <body class="r-mode">
@@ -87,158 +121,207 @@
 ███████ ██   ██    ██    ██   ██ ██   ████ ██   ██
 </div>
 
-<div id="scr-login" class="screen screen-active" style="background:#000;">
-    <div class="casino-title">HOOLIGAN AER</div>
-    <div style="margin: 20px 0;"><input type="checkbox" id="accept-check"> [ACCEPT PROTOCOL]</div>
-    <input type="password" id="pass-field" placeholder="####" maxlength="4" style="background:none; border:3px solid var(--m); color:var(--m); padding:15px; width:180px; text-align:center; font-size:2rem;">
-    <button class="btn-action" onclick="Kernel.auth()" style="margin-top:20px;">CONNECT</button>
+<div id="scr-login" class="screen screen-active">
+    <div class="casino-title">SATANA-CLUB PROJECT</div>
+    <div style="margin-bottom: 20px;">
+        <input type="checkbox" id="accept-check"> <label for="accept-check">[ACCEPT AER PROTOCOL]</label>
+    </div>
+    <input type="password" id="pass-field" placeholder="PASS" maxlength="4" style="background:none; border:3px solid var(--m); color:var(--m); padding:15px; width:140px; text-align:center; font-size:1.8rem; border-radius: var(--rd);">
+    <button class="btn-action" onclick="Kernel.auth()" style="margin-top: 20px;">INITIALIZE</button>
 </div>
 
 <div id="scr-menu" class="screen">
     <div class="casino-title glitch-node">HOOLIGAN AER</div>
     <button class="btn-action" onclick="View.to('scr-rules')">ПРАВИЛА AER</button>
-    <button class="btn-action" onclick="View.to('scr-anketa-main')">АНКЕТЫ</button>
-    <button class="btn-action" id="btn-soon" onclick="Kernel.handleSoon()">СКОРО...</button>
-    <input type="text" id="term-input" placeholder="root@ct1c2:~# @ban / @mute">
+    <button class="btn-action" onclick="View.to('scr-ankety')">АНКЕТЫ</button>
+    <button class="btn-action" onclick="Kernel.handleSoon()">СКОРО...</button>
+    <input type="text" id="term-input" placeholder="root@ct1c2:~#">
 </div>
 
 <div id="scr-rules" class="screen">
     <div class="content-panel">
-        <h2 style="color:var(--m);">ПРАВИЛА AER</h2>
-        <p>Данный AER является основном сводом правил чата. Незнание правил не освобождает от ответственности. Копирование структуры или содержания без разрешения автора @SatanaCIub запрещено</p>
+        <h2>ПРАВИЛА AER (ПОЛНАЯ ВЕРСИЯ)</h2>
+        <p>Данный AER является основным сводом правил чата. Незнание правил не освобождает от ответственности. Копирование структуры или содержания без разрешения автора @SatanaCIub запрещено.</p>
+        
         <h3>1. Дискриминация и деструктив</h3>
-        <p>Запрещены любые формы ксенофобии, расизма, гомофобии, сексизма, а также травля. Наказание: Мут 20-45 минут.</p>
+        <p>Запрещены любые формы ксенофобии, расизма, гомофобии, сексизма, а также травля по религиозному или социальному признаку. Запрещена прямая или завуавированная агрессия в адрес участников.</p>
+        <p><b>Наказание:</b> Мут от 20 до 45 минут. При повторе — Бан.</p>
+
+        <h3>1.1 Провокации и токсичность</h3>
+        <p>Любые попытки вывести участников на конфликт, байт на нарушение правил или создание токсичной атмосферы.</p>
+        <p><b>Наказание:</b> Мут 60–120 минут.</p>
+
+        <h3>1.2 Неадекватное поведение</h3>
+        <p>Оскорбление родных, деанонимизация участников, угрозы физической расправой в реальной жизни.</p>
+        <p><b>Наказание:</b> БАН НАВСЕГДА.</p>
+
         <h3>3. Спам и рассылки</h3>
-        <p>Наказание: Мут 120 минут. При рецидиве — Бан.</p>
-        <h3>4. Флуд и Лестница</h3>
-        <p>Флуд: 4+ сообщения. Лестница: 5+ сообщений. Наказание: Мут 30м - 3ч.</p>
+        <p>Запрещена реклама сторонних ресурсов, чатов, каналов без согласования, а также массовая рассылка однотипных сообщений/стикеров.</p>
+        <p><b>Наказание:</b> Мут 120 минут или Бан.</p>
+
+        <h3>4. Флуд и "Лестница"</h3>
+        <p>Флуд: Отправка более 4-х бессмысленных сообщений подряд. Лестница: Дробление одного предложения на 5 и более сообщений.</p>
+        <p><b>Наказание:</b> Мут от 30 минут до 3 часов.</p>
+
         <h3>5. Политика</h3>
-        <p>Запрещено обсуждение политики и войн. Наказание: Провокация — 220м. Политика — БАН.</p>
+        <p>Запрещено обсуждение любых политических событий, государственных деятелей, войн и конфликтов. Чат вне политики.</p>
+        <p><b>Наказание:</b> За провокацию — 220 минут мута. За обсуждение — БАН.</p>
+
+        <p><i>• Администрация оставляет за собой право наказывать за действия, вредящие клубу, даже если они не описаны выше.</i></p>
     </div>
-    <button class="btn-action" onclick="View.to('scr-menu')">BACK</button>
+    <button class="btn-action" onclick="View.to('scr-menu')">ВЕРНУТЬСЯ</button>
 </div>
 
-<div id="scr-anketa-main" class="screen">
-    <button class="btn-action" onclick="View.to('scr-ank-admin')">Админка</button>
-    <button class="btn-action" onclick="View.to('scr-ank-vice')">Вице</button>
-    <button class="btn-action" onclick="View.to('scr-menu')">НАЗАД</button>
+<div id="scr-ankety" class="screen">
+    <div class="btn-container" style="width:100%; display:flex; flex-direction:column; align-items:center;">
+        <button class="btn-action" onclick="View.to('scr-ank-admin')">Анкета на админку</button>
+        <button class="btn-action" onclick="View.to('scr-ank-vice')">Анкета на вице</button>
+        <button class="btn-action" onclick="View.to('scr-menu')">НАЗАД</button>
+    </div>
 </div>
 
 <div id="scr-ank-admin" class="screen">
     <div class="content-panel">
-        <h2 style="color:var(--m);">АНКЕТА НА АДМИНКУ</h2>
-        <p>1. Твой ник, @, айди, возраст и активность в чате за неделю;<br>2. Твой часовой пояс, сколько ты готов потратить часов работы в чате;<br>3. Что ты будешь делать, если в чате нарушают, а ты не можешь выдать бан или мут?;<br>4. В каких чатах ты был админом? (500+ человек в чате);<br>5. Краткий пересказ AER [Правило - наказание].</p>
+        <h2>АНКЕТА НА АДМИНКУ</h2>
+        <p>1. Твой ник, @, айди, возраст и активность в чате за неделю;</p>
+        <p>2. Твой часовой пояс, сколько ты готов потратить часов работы в чате;</p>
+        <p>3. Что ты будешь делать, если в чате нарушают, а ты не можешь выдать бан или мут?;</p>
+        <p>4. В каких чатах ты был админом? (500+ человек в чате);</p>
+        <p>5. Краткий пересказ AER [Правило - наказание].</p>
     </div>
-    <button class="btn-action" onclick="View.to('scr-anketa-main')">BACK</button>
+    <button class="btn-action" onclick="View.to('scr-ankety')">BACK</button>
+</div>
+
+<div id="scr-ank-vice" class="screen">
+    <div class="content-panel">
+        <h2>АНКЕТА НА ВИЦЕ</h2>
+        <p>1. Количество трофеев от 30.000 (30k);</p>
+        <p>2. Сколько времени в день готов уделять управлению клубом?</p>
+        <p>3. Скриншот профиля аккаунта;</p>
+        <p>4. Выполнить 2 рекламных поста нашего ТГ в сторонних клубах.</p>
+    </div>
+    <button class="btn-action" onclick="View.to('scr-ankety')">BACK</button>
 </div>
 
 <div id="scr-shame" class="screen">
     <div class="content-panel">
-        <h2 style="color:var(--m);">ТОП 5 ФРИКОВ</h2>
-        <p>1. Vinal – Угрожал рейдом. 2. Григей – Русофоб. 3. Релтин – Обиделся на мут. 4. Дед – Сливал инфу. 5. Психокид – Бан навсегда.</p>
+        <h2>DOSKA POZORA (FREAK LIST)</h2>
+        <p><b>1. Vinal</b> — Пытался шантажировать рейдом при отказе в союзе. Итог: Удален.</p>
+        <p><b>2. Григей</b> — 18-летний русофоб, замечен в странном общении с малолетними. Итог: Изолирован.</p>
+        <p><b>3. Релтин</b> — Слабейший админ в истории. Ливнул из-за мута на час. Итог: В чс.</p>
+        <p><b>4. Дед</b> — Занимался крысятничеством и сливом инфы. Итог: Под наблюдением.</p>
+        <p><b>5. Психокид</b> — Токсичный элемент, многократные оскорбления. Итог: БАН НАВСЕГДА.</p>
     </div>
     <button class="btn-action" onclick="View.to('scr-menu')">BACK</button>
 </div>
 
 <div class="theme-nav">
     <div class="t-dot" style="background:red" onclick="Kernel.setMode('r')"></div>
-    <div class="t-dot" style="background:pink" onclick="Kernel.setMode('p')"></div>
+    <div class="t-dot" style="background:#ffb7d5" onclick="Kernel.setMode('p')"></div>
     <div class="t-dot" style="background:green" onclick="Kernel.setMode('g')"></div>
-    <div class="t-dot" style="background:blue" onclick="Kernel.setMode('n')"></div>
+    <div class="t-dot" style="background:#87cefa" onclick="Kernel.setMode('n')"></div>
 </div>
 
 <script>
     const Static = {
         VIPS: ['@satanacIub', '@hooligan_hooligan'],
-        TARGETS: ['@Blood_Househ', '@VetalGeor', '@geniusmozer', '@aungakw', '@ebu_Dokki'],
-        SYMBOLS: ['#', '&', '₽', '%', '$', '†', '0', '1'],
+        TARGETS: ['@Blood_Househ', '@VetalGeor', '@geniusmozer', '@aungakw'],
+        HUNTER: '@ebu_Dokki',
+        SYMBOLS: ['#', '&', '₽', '%', '$', '†', '§', '¶'],
         TITLES: ["HOOLIGAN AER", "SATANACIUB WWW"]
     };
 
     let Global = { 
-        mode: 'r', units: [], banned: [], muted: [], lastTick: 0, soonClicks: 0,
-        dvd: { x: 50, y: 50, dx: 3, dy: 3, w: 320, h: 60 }
+        mode: 'r', units: [], lastTick: 0, soon: 0,
+        dvd: { x: 50, y: 50, dx: 2, dy: 2, w: 220, h: 50 }
     };
 
     const Kernel = {
         init() {
             this.createChaos();
-            this.spawnUnits();
-            this.runCasinoEngine();
+            this.spawn();
             this.heartbeat();
-            this.initConsole();
+            this.runTitles();
+        },
+        auth() {
+            const pass = document.getElementById('pass-field').value;
+            const check = document.getElementById('accept-check').checked;
+            if(pass === '2727' && check) View.to('scr-menu');
+            else { this.fx(); alert("ACCESS DENIED"); }
         },
         createChaos() {
             const bg = document.getElementById('bg-chaos');
-            for(let i=0; i<40; i++) {
+            for(let i=0; i<35; i++) {
                 let d = document.createElement('div'); d.className = 'bg-text';
                 d.innerText = Static.SYMBOLS[Math.floor(Math.random()*Static.SYMBOLS.length)];
-                d.style.left = Math.random()*100+'vw'; d.style.top = Math.random()*100+'vh';
+                d.style.left = Math.random()*100+'%'; d.style.top = Math.random()*100+'%';
                 bg.appendChild(d);
             }
         },
-        auth() {
-            if(document.getElementById('pass-field').value === '2727') View.to('scr-menu');
-            else { this.fx(); }
-        },
-        setMode(m) { Global.mode = m; document.body.className = m + '-mode'; this.fx(); },
-        fx() { const l = document.getElementById('fx-layer'); l.classList.add('flash'); setTimeout(() => l.classList.remove('flash'), 250); },
-        spawnUnits() {
-            [...Static.VIPS, ...Static.TARGETS].forEach(name => {
-                if(Global.banned.includes(name)) return;
+        spawn() {
+            [...Static.VIPS, ...Static.TARGETS, Static.HUNTER].forEach(name => {
                 let d = document.createElement('div');
-                d.className = 'unit' + (Static.VIPS.includes(name) ? ' is-vip' : '');
-                if(Global.muted.includes(name)) d.classList.add('muted');
+                d.className = 'unit';
+                if(Static.VIPS.includes(name)) d.classList.add('is-vip');
+                if(name === Static.HUNTER) d.classList.add('hunter');
                 d.innerText = name;
+                d.onclick = () => { this.fx(); d.style.opacity = '0'; setTimeout(()=>d.remove(), 300); };
                 document.body.appendChild(d);
-                Global.units.push({ name, el: d, x: Math.random()*90, y: Math.random()*90, dx: (Math.random()-0.5)*0.6, dy: (Math.random()-0.5)*0.6 });
+                Global.units.push({ name, el: d, x: Math.random()*85, y: Math.random()*85, dx: (Math.random()-0.5)*0.7, dy: (Math.random()-0.5)*0.7 });
             });
         },
-        initConsole() {
-            document.getElementById('term-input').addEventListener('keypress', (e) => {
-                if(e.key === 'Enter') {
-                    const val = e.target.value.split(' ');
-                    if(val[0] === '@ban') Global.banned.push(val[1]);
-                    if(val[0] === '@mute') Global.muted.push(val[1]);
-                    this.refresh(); e.target.value = '';
-                }
-            });
+        fx() {
+            const l = document.getElementById('fx-layer');
+            l.classList.add('flash-active');
+            setTimeout(() => l.classList.remove('flash-active'), 250);
         },
-        refresh() { Global.units.forEach(u => u.el.remove()); Global.units = []; this.spawnUnits(); },
-        runCasinoEngine() {
+        setMode(m) { 
+            Global.mode = m; 
+            document.body.className = m + '-mode'; 
+            this.fx(); 
+        },
+        handleSoon() { 
+            Global.soon++; 
+            if(Global.soon >= 3) { View.to('scr-shame'); Global.soon = 0; } 
+        },
+        runTitles() {
             let i = 0;
             setInterval(() => {
                 const nodes = document.querySelectorAll('.glitch-node');
-                const target = Static.TITLES[i];
-                nodes.forEach(n => {
-                    let p = 0;
-                    const f = setInterval(() => {
-                        n.innerHTML = target.split("").map((c, idx) => (idx < p) ? c : Static.SYMBOLS[Math.floor(Math.random()*Static.SYMBOLS.length)]).join("");
-                        p += 0.5; if(p > target.length) clearInterval(f);
-                    }, 50);
-                });
+                nodes.forEach(n => n.innerText = Static.TITLES[i]);
                 i = (i + 1) % Static.TITLES.length;
             }, 5000);
         },
-        handleSoon() { Global.soonClicks++; if(Global.soonClicks >= 3) View.to('scr-shame'); },
         heartbeat() {
             const now = Date.now();
-            let step = (Global.mode === 'g') ? (now - Global.lastTick > 1000) : true;
+            let canMove = (Global.mode === 'g') ? (now - Global.lastTick > 1000) : true;
 
-            // DVD PHYSICS
-            const dvdEl = document.getElementById('logo-dvd');
+            // DVD Physics
             Global.dvd.x += Global.dvd.dx; Global.dvd.y += Global.dvd.dy;
             if(Global.dvd.x < 0 || Global.dvd.x > window.innerWidth - Global.dvd.w) Global.dvd.dx *= -1;
             if(Global.dvd.y < 0 || Global.dvd.y > window.innerHeight - Global.dvd.h) Global.dvd.dy *= -1;
-            dvdEl.style.left = Global.dvd.x + 'px'; dvdEl.style.top = Global.dvd.y + 'px';
+            document.getElementById('logo-dvd').style.transform = `translate(${Global.dvd.x}px, ${Global.dvd.y}px)`;
 
-            if(step) {
+            if(canMove) {
                 Global.lastTick = now;
+                const hunterUnit = Global.units.find(u => u.name === Static.HUNTER);
+                const targetUnit = Global.units.find(u => !Static.VIPS.includes(u.name) && u.name !== Static.HUNTER && u.el.parentNode);
+
                 Global.units.forEach(u => {
-                    u.x += u.dx * (Global.mode === 'g' ? 15 : 1.2);
-                    u.y += u.dy * (Global.mode === 'g' ? 15 : 1.2);
-                    if(u.x < 0 || u.x > 90) u.dx *= -1;
-                    if(u.y < 0 || u.y > 90) u.dy *= -1;
+                    if(!u.el.parentNode) return;
+                    
+                    if(u.name === Static.HUNTER && targetUnit && Global.mode !== 'p') {
+                        // Охотник преследует цель
+                        u.x += (targetUnit.x - u.x) * 0.03;
+                        u.y += (targetUnit.y - u.y) * 0.03;
+                    } else {
+                        // Обычное движение
+                        u.x += u.dx * (Global.mode === 'g' ? 20 : 1.3);
+                        u.y += u.dy * (Global.mode === 'g' ? 20 : 1.3);
+                    }
+
+                    if(u.x < 0 || u.x > 92) u.dx *= -1;
+                    if(u.y < 0 || u.y > 92) u.dy *= -1;
                     u.el.style.left = u.x + 'vw'; u.el.style.top = u.y + 'vh';
                 });
             }
