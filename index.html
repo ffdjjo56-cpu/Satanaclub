@@ -3,234 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SatanaCIub Project | CT1C2 Elite</title>
+    <title>SatanaCIub Project | Multiverse</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Comfortaa:wght@400;700&family=Fira+Code:wght@400;700&display=swap');
         
-        :root { --main: #f00; --bg: #000; --card: rgba(5, 5, 5, 0.98); --font: 'Press Start 2P', cursive; }
-        body { background: var(--bg); color: var(--main); font-family: var(--font); margin: 0; overflow: hidden; height: 100dvh; user-select: none; }
-        body.pink-mode { --main: #ff1493; --bg: #fff0f5; --card: rgba(255, 192, 203, 0.95); }
+        :root { 
+            --main: #f00; --bg: #000; --card: rgba(5,5,5,0.95); --font: 'Press Start 2P', cursive; 
+            --radius: 0px; --blur: 12px; --speed-mod: 1; --shake: block;
+        }
 
-        /* KILL FEED - НИЗ ЛЕВО */
+        /* ТЕМЫ */
+        body.theme-pink { 
+            --main: #ff69b4; --bg: #fff0f5; --card: rgba(255,255,255,0.9); --font: 'Comfortaa', cursive; 
+            --radius: 25px; --blur: 15px; 
+        }
+        body.theme-blue { 
+            --main: #00d9ff; --bg: #000a1a; --card: rgba(0,20,40,0.9); --font: 'Arial', sans-serif; 
+            --radius: 10px; --blur: 10px; --shake: none;
+        }
+        body.theme-green { 
+            --main: #0f0; --bg: #000; --card: rgba(0,20,0,1); --font: 'Fira Code', monospace; 
+            --radius: 0px; --blur: 0px; 
+        }
+
+        body { background: var(--bg); color: var(--main); font-family: var(--font); margin: 0; overflow: hidden; height: 100dvh; user-select: none; transition: 0.3s; }
+        
+        /* KILL FEED */
         #kill-feed { position: fixed; bottom: 30px; left: 20px; width: 420px; display: flex; flex-direction: column-reverse; gap: 10px; z-index: 2000; }
-        .kill-item { background: rgba(15, 0, 0, 0.9); border-left: 5px solid var(--main); padding: 12px; font-size: 8px; animation: sIn 0.3s forwards; line-height: 1.2; }
-        
-        /* ЭЛИТНЫЕ ЮЗЕРЫ (ТЫ И ХУЛИГАН) */
+        .kill-item { background: rgba(0,0,0,0.7); border-left: 5px solid var(--main); padding: 12px; font-size: 8px; border-radius: var(--radius); animation: sIn 0.3s forwards; }
+        .theme-pink .kill-item { color: #000; border-left: 5px solid #ff69b4; }
+
         .elite { animation: glowElite 0.8s infinite alternate !important; border-left: 5px solid #fff !important; }
-        @keyframes glowElite { 
-            0% { color: #f00; text-shadow: 0 0 15px #f00; } 
-            100% { color: #fff; text-shadow: 0 0 25px #fff; } 
-        }
-        body.pink-mode .elite { animation: glowPink 0.8s infinite alternate !important; }
-        @keyframes glowPink { 
-            0% { color: #ff1493; text-shadow: 0 0 15px #ff1493; } 
-            100% { color: #fff; text-shadow: 0 0 25px #ff69b4; } 
-        }
+        @keyframes glowElite { 0% { color: var(--main); text-shadow: 0 0 10px var(--main); } 100% { color: #fff; text-shadow: 0 0 20px #fff; } }
 
-        /* БЕЛЫЕ ЮЗЕРЫ */
-        .white-tag { color: #fff !important; border-left: 5px solid #fff !important; text-shadow: 0 0 5px #fff; }
-
-        /* UI И СТРАНИЦЫ */
-        .header-box { height: 60px; display: flex; align-items: center; justify-content: center; margin-top: 10px; }
-        .header { font-size: 10px; text-transform: uppercase; text-align: center; letter-spacing: 2px; }
-        .page { display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 10; backdrop-filter: blur(12px); padding: 20px; }
+        /* UI */
+        .page { display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 10; backdrop-filter: blur(var(--blur)); padding: 20px; }
         .active-page { display: flex; }
-        .card { width: 95%; max-width: 650px; background: var(--card); border: 2px solid var(--main); padding: 25px; overflow-y: auto; max-height: 50vh; font-size: 8px; line-height: 1.8; box-shadow: 0 0 50px #000; }
-        .btn { width: 300px; padding: 18px; margin: 8px; background: none; border: 2px solid var(--main); color: var(--main); font-family: var(--font); font-size: 8px; cursor: pointer; transition: 0.3s; }
-        .btn:hover { background: var(--main); color: #000; box-shadow: 0 0 20px var(--main); }
+        .card { width: 95%; max-width: 650px; background: var(--card); border: 2px solid var(--main); padding: 25px; overflow-y: auto; max-height: 55vh; font-size: 9px; line-height: 1.6; border-radius: var(--radius); }
+        .btn { width: 300px; padding: 15px; margin: 5px; background: none; border: 2px solid var(--main); color: var(--main); font-family: var(--font); font-size: 8px; cursor: pointer; border-radius: var(--radius); }
+        .btn:hover { background: var(--main); color: #000; }
 
-        #ascii { white-space: pre; font-family: monospace; font-size: 7px; line-height: 7px; text-shadow: 0 0 8px var(--main); margin: 20px 0; }
-        
-        /* СКРЫТАЯ ДОСКА ПОЗОРА */
-        .swipe-zone { width: 260px; height: 55px; border: 2px solid var(--main); position: relative; overflow: hidden; margin-top: 10px; }
-        .swipe-btn { position: absolute; inset: 0; background: var(--main); color: #000; display: flex; align-items: center; justify-content: center; z-index: 2; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; font-size: 9px; }
+        /* MULTIVERSE BUTTONS */
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 10px; }
+        .theme-btn { width: 145px; padding: 10px; font-size: 6px; }
 
+        /* RAIN */
         #rain { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
-        .falling-name { position: absolute; font-size: 10px; white-space: nowrap; font-weight: bold; transition: opacity 0.3s; }
-        
-        @keyframes sIn { from { transform: translateX(-110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .glitched { color: #444 !important; text-shadow: none !important; }
+        .falling-name { position: absolute; font-size: 11px; white-space: nowrap; font-weight: bold; }
+
+        .swipe-zone { width: 260px; height: 40px; border: 2px solid var(--main); position: relative; overflow: hidden; margin: 10px; border-radius: var(--radius); }
+        .swipe-btn { position: absolute; inset: 0; background: var(--main); z-index: 2; transition: 0.5s; cursor: pointer; }
+
+        @keyframes sIn { from { transform: translateX(-110%); } to { transform: translateX(0); } }
     </style>
 </head>
-<body>
+<body class="theme-red">
     <div id="rain"></div>
     <div id="kill-feed"></div>
 
     <div id="p-login" class="page active-page">
-        <h1 class="header">SYSTEM_AUTH_REQUIRED</h1>
-        <input type="password" id="pass" placeholder="PASSWORD" style="background:none; border:2px solid var(--main); color:var(--main); font-family:var(--font); padding:15px; text-align:center; outline:none; width: 220px; margin-bottom: 20px;">
-        <button class="btn" onclick="checkAuth()">[ ИНИЦИАЦИЯ ]</button>
+        <input type="password" id="pass" placeholder="PASSWORD" style="background:none; border:2px solid var(--main); color:var(--main); font-family:var(--font); padding:15px; text-align:center; outline:none; border-radius:var(--radius);">
+        <button class="btn" onclick="checkAuth()">ИНИЦИАЦИЯ</button>
     </div>
 
     <div id="p-menu" class="page">
-        <div class="header-box"><h1 class="header" id="m-title">SatanaCIub WWW</h1></div>
-        <div id="ascii" onclick="boost()"></div>
-        <button class="btn" onclick="nav('p-rules')">ПРАВИЛА AER</button>
+        <h1 id="m-title" style="font-size: 12px;">SatanaCIub WWW</h1>
+        <div style="height: 150px;"></div> <button class="btn" onclick="nav('p-rules')">ПРАВИЛА AER</button>
         <button class="btn" onclick="nav('p-forms')">АНКЕТЫ</button>
         <div class="swipe-zone">
-            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:7px;" onclick="nav('p-shame')">WALL_OF_SHAME</div>
-            <div id="sw-btn" class="swipe-btn">SYSTEM_INTERNAL</div>
+            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:7px;" onclick="nav('p-shame')">SECRET_DATA</div>
+            <div id="sw-btn" class="swipe-btn"></div>
         </div>
-        <button class="btn" onclick="tglMode()" style="font-size:6px; border-style:dotted; opacity: 0.7;">ИЗМЕНИТЬ РЕАЛЬНОСТЬ</button>
+        
+        <div class="theme-grid">
+            <button class="btn theme-btn" onclick="setTheme('pink')">ПИКМИ РЕЖИМ</button>
+            <button class="btn theme-btn" onclick="setTheme('blue')">ГОЛУБОЙ</button>
+            <button class="btn theme-btn" onclick="setTheme('green')">ЗЕЛЕНАЯ</button>
+            <button class="btn theme-btn" onclick="setTheme('red')">АД</button>
+        </div>
     </div>
 
-    <div id="p-rules" class="page"><h1 class="header">ПРАВИЛА ПРОЕКТА</h1><div class="card" id="rules-box">
-        <p>1. ОСКОРБЛЕНИЕ РОДНЫХ — <span style="color:var(--main)">БАН НАВСЕГДА.</span></p>
-        <p>2. ДИСКРИМИНАЦИЯ / НАЦИЗМ — <span style="color:var(--main)">МГНОВЕННЫЙ БАН.</span></p>
-        <p>3. ПОЛИТИКА / СПАМ — <span style="color:var(--main)">ПОЖИЗНЕННЫЙ ЧС.</span></p>
-        <p>4. РЕКЛАМА БЕЗ РАЗРЕШЕНИЯ — <span style="color:var(--main)">УДАЛЕНИЕ + БАН.</span></p>
-        <p>5. ДЕАНОН И УГРОЗЫ — <span style="color:var(--main)">ПОЛНАЯ ИЗОЛЯЦИЯ.</span></p>
-        <p>6. ПОРНО / GORE — <span style="color:var(--main)">БАН + REPORT.</span></p>
-    </div><button class="btn" onclick="nav('p-menu')">ВЕРНУТЬСЯ</button></div>
+    <div id="p-rules" class="page"><h1 class="header">AER PROTOCOLS</h1><div class="card">
+        <p>1. ОСКОРБЛЕНИЕ РОДНЫХ — БАН НАВСЕГДА.</p>
+        <p>2. ДИСКРИМИНАЦИЯ / НАЦИЗМ — МГНОВЕННЫЙ БАН.</p>
+        <p>3. ПОЛИТИКА / СПАМ — ПОЖИЗНЕННЫЙ ЧС.</p>
+        <p>4. РЕКЛАМА БЕЗ РАЗРЕШЕНИЯ — УДАЛЕНИЕ + БАН.</p>
+        <p>5. ДЕАНОН И УГРОЗЫ — ПОЛНАЯ ИЗОЛЯЦИЯ.</p>
+        <p>6. ПОРНО / GORE — БАН + РЕПОРТ.</p>
+        <p>7. ПРЕДАЕЛЬСТВО ПРОЕКТА — ЧЕРНЫЙ СПИСОК.</p>
+        <p>8. ПОПЫТКА ОБМАНА АДМИНИСТРАЦИИ — БАН 30 ДНЕЙ.</p>
+    </div><button class="btn" onclick="nav('p-menu')">НАЗАД</button></div>
 
-    <div id="p-forms" class="page"><h1 class="header">АНКЕТА НА АДМИНКУ</h1><div class="card">
-        <p style="text-decoration: underline; margin-bottom: 10px;">БЛОК: АНКЕТА НА АДМИНКУ</p>
-        <p>1. Твой ник, @, айди, возраст и активность в чате за неделю;</p>
-        <p>2. Твой часовой пояс, сколько ты готов потратить часов работы в чате;</p>
-        <p>3. Что ты будешь делать, если в чате нарушают, а ты не можешь выдать бан или мут?;</p>
-        <p>4. В каких чатах ты был админом? (500+ человек в чате);</p>
-        <p>5. Краткий пересказ AER [Правило - наказание].</p>
-        <br>
-        <p style="text-decoration: underline; margin-bottom: 10px;">БЛОК: ВИЦЕ-ПРЕЗИДЕНТ</p>
-        <p>1. Идеи по дисциплине и управлению составом.</p>
-        <p>2. Готов ли ты нести полную ответственность за своих подчиненных?</p>
-    </div><button class="btn" onclick="nav('p-menu')">ВЕРНУТЬСЯ</button></div>
+    <div id="p-forms" class="page"><h1>АНКЕТЫ</h1><div class="card">
+        <b>АНКЕТА НА АДМИНКУ:</b><br>
+        1. Твой ник, @, айди, возраст и активность в чате за неделю;<br>
+        2. Твой часовой пояс, сколько ты готов потратить часов работы в чате;<br>
+        3. Что ты будешь делать, если в чате нарушают, а ты не можешь выдать бан или мут?;<br>
+        4. В каких чатах ты был админом? (500+ человек в чате);<br>
+        5. Краткий пересказ AER [Правило - наказание].<br><br>
+        <b>ВИЦЕ-ПРЕЗИДЕНТ:</b><br>
+        1. Идеи по дисциплине и управлению.<br>
+        2. Готовность нести ответственность за модераторов.
+    </div><button class="btn" onclick="nav('p-menu')">НАЗАД</button></div>
 
-    <div id="p-shame" class="page"><h1 class="header">ДОСКА ПОЗОРА</h1><div class="card">
-        <p>1. <span style="color:#fff">Vinal</span> — Попытка рейда, шантаж. Снесен.</p>
-        <p>2. <span style="color:#fff">Григей</span> — Русофоб, лидер 80 ботов. Клоун.</p>
-        <p>3. <span style="color:#fff">Релтин</span> — Слабый админ, нытик. Слит.</p>
-        <p>4. <span style="color:#fff">Lucker</span> — Крыса, слив инфы. ЧС.</p>
-        <p>5. <span style="color:#fff">Psychokid</span> — Фейк деаноны.</p>
-    </div><button class="btn" onclick="nav('p-menu')">ВЕРНУТЬСЯ</button></div>
+    <div id="p-shame" class="page"><h1>WALL OF SHAME</h1><div class="card">
+        <p>1. Vinal — Попытка рейда.</p>
+        <p>2. Григей — Русофоб.</p>
+        <p>3. Релтин — Фрик.</p>
+        <p>4. Lucker — Крыса.</p>
+    </div><button class="btn" onclick="nav('p-menu')">НАЗАД</button></div>
 
     <script>
-        let aX=0, aY=0, rotS=0.05, isPink=false, tIdx=0;
-        const titles = ["SatanaCIub WWW", "Hooligan AER"];
+        let currentTheme = 'red';
         const VIP = ["@satanacIub", "@hooligan_hooligan"];
         const WHITE = ["@Blood_Househ", "@Aaaaaaaaaafkrjfjfjso", "@VetalGeor", "@geniusmozer", "@aungakw_"];
-        const TARGETS = ["@Vinal", "@Grigey", "@Lucker", "@Reltin", "@Psychokid", "@TrashPlayer"];
+        const TARGETS = ["@Psychokid", "@TrashPlayer", "@RandomGuy", "@Looter", "@Faker"];
         let rain = [];
 
-        // --- ЗАГОЛОВКИ (3.7 сек) ---
-        function rotateTitle() {
-            const el = document.getElementById('m-title'); if(!el) return;
-            let i=0; const target = titles[tIdx];
-            const iv = setInterval(() => {
-                el.innerText = target.split("").map((l,idx) => (idx < i)?target[idx]:"X#$%&"[Math.floor(Math.random()*5)]).join("");
-                if(i >= target.length){ clearInterval(iv); tIdx=(tIdx+1)%titles.length; } i+=0.5;
-            }, 50);
+        function setTheme(t) {
+            document.body.className = 'theme-' + t;
+            currentTheme = t;
+            // Пересоздаем юзов для пикми (черные)
+            rain.forEach(i => i.el.style.color = (t === 'pink') ? '#000' : (VIP.includes(i.name) ? (t==='green'?'#0f0':'#fff') : 'var(--main)'));
         }
-        setInterval(rotateTitle, 3700);
 
-        // --- СИСТЕМА УБИЙСТВ (3 в ряд, VIP бессмертны) ---
         function addKill(name) {
+            if(currentTheme === 'pink') return;
             const feed = document.getElementById('kill-feed');
             const item = document.createElement('div');
-            item.className = 'kill-item';
-            
-            if(VIP.includes(name)) {
-                item.classList.add('elite');
-                item.innerText = `[БОГ] ${name} ДОМИНИРУЕТ НАД СИСТЕМОЙ`;
-            } else if(WHITE.includes(name)) {
-                item.classList.add('white-tag');
-                item.innerText = `УБИЙЦА @ebu_Dokki УНИЧТОЖИЛ ${name}`;
-            } else {
-                item.innerText = `УБИЙЦА @ebu_Dokki УНИЧТОЖИЛ ${name}`;
-            }
-            
+            item.className = 'kill-item' + (VIP.includes(name) ? ' elite' : '');
+            item.innerText = VIP.includes(name) ? `[GOD] ${name} IMMORTAL` : `УБИЙЦА @ebu_Dokki УНИЧТОЖИЛ ${name}`;
             feed.appendChild(item);
-
-            // Лимит 3 (кроме VIP)
             const active = feed.querySelectorAll('.kill-item:not(.elite)');
             if(active.length > 3) active[0].remove();
-
-            // Удаление через 3.7 сек (кроме VIP)
-            if(!VIP.includes(name)) {
-                setTimeout(() => { 
-                    item.style.opacity='0'; 
-                    setTimeout(() => item.remove(), 500); 
-                }, 3700);
-            }
+            if(!VIP.includes(name)) setTimeout(() => { item.style.opacity='0'; setTimeout(()=>item.remove(), 500); }, 3700);
         }
 
-        // --- ГЛИТЧ ПРАВИЛ ---
-        setInterval(() => {
-            const ps = document.querySelectorAll('#rules-box p');
-            const p = ps[Math.floor(Math.random()*ps.length)];
-            if(!p.dataset.orig) p.dataset.orig = p.innerHTML;
-            p.innerText = "#".repeat(p.innerText.length);
-            p.classList.add('glitched');
-            setTimeout(() => { p.innerHTML = p.dataset.orig; p.classList.remove('glitched'); }, 1200);
-        }, 3500);
-
-        // --- 3D ENGINE ---
         function render() {
-            let res = ""; aX += rotS; aY += rotS*0.7; if(rotS>0.05) rotS-=0.001;
-            for(let y = -11; y <= 11; y += 1.4) {
-                for(let x = -22; x <= 22; x++) {
-                    let z0=0, x1=x*Math.cos(aX)-z0*Math.sin(aX), z1=x*Math.sin(aX)+z0*Math.cos(aX);
-                    let y2=y*Math.cos(aY)-z1*Math.sin(aY);
-                    if(!isPink) {
-                        const r = Math.sqrt(x1*x1 + y2*y2*4)/6, a = Math.atan2(y2*2, x1);
-                        res += (r < (1.4 + 0.6 * Math.sin(a * 5))) ? "†" : " ";
-                    } else {
-                        const hX = x1/8.5, hY = -y2/8.5;
-                        res += (Math.pow(hX*hX+hY*hY-1,3)-hX*hX*Math.pow(hY,3)<0) ? "❤" : " ";
-                    }
-                }
-                res += "\n";
-            }
-            document.getElementById('ascii').innerText = res;
-            
-            // Движение имен (Падение вниз)
+            let speedMult = (currentTheme === 'blue') ? 0.5 : 1;
+            let step = (currentTheme === 'green') ? 500 : 0; // Для дискретного движения
+
             rain.forEach(item => {
-                item.y += item.speed; 
-                if(item.y > window.innerHeight) { 
-                    item.y = -30; 
-                    item.x = Math.random()*(window.innerWidth-100); 
+                if(currentTheme === 'green') {
+                    if(!item.lastMove || Date.now() - item.lastMove > 500) {
+                        item.y += 20; item.lastMove = Date.now();
+                    }
+                } else {
+                    item.y += item.speed * speedMult;
                 }
+
+                if(item.y > window.innerHeight) { item.y = -30; item.x = Math.random()*window.innerWidth; }
                 item.el.style.transform = `translate(${item.x}px, ${item.y}px)`;
 
-                // Проверка на "убийство" центром (только не VIP)
+                // Убийство (центр экрана)
                 const dX = item.x - window.innerWidth/2;
                 const dY = item.y - window.innerHeight/2;
-                if(Math.sqrt(dX*dX + dY*dY) < 60 && !item.dead && !VIP.includes(item.name)) {
-                   item.dead = true; 
-                   item.el.style.opacity = '0';
+                if(Math.sqrt(dX*dX + dY*dY) < 70 && !item.dead && !VIP.includes(item.name) && currentTheme !== 'pink') {
+                   item.dead = true; item.el.style.opacity = '0';
                    addKill(item.name);
-                   setTimeout(() => { item.dead=false; item.el.style.opacity='1'; }, 5000);
+                   setTimeout(() => { item.dead=false; item.el.style.opacity='1'; }, 4000);
                 }
             });
             requestAnimationFrame(render);
         }
 
-        // --- УПРАВЛЕНИЕ ---
-        function boost() { rotS = 0.4; }
         function nav(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active-page')); document.getElementById(id).classList.add('active-page'); if(id==='p-menu') document.getElementById('sw-btn').style.transform='translateX(0)'; }
-        function checkAuth() { if(document.getElementById('pass').value==='2727') nav('p-menu'); else alert('ACCESS DENIED'); }
-        function tglMode() { isPink=!isPink; document.body.classList.toggle('pink-mode'); }
-        
+        function checkAuth() { if(document.getElementById('pass').value==='2727') nav('p-menu'); else alert('DENIED'); }
+
         const sw = document.getElementById('sw-btn'); let sX=0;
         sw.addEventListener('mousedown', e => sX=e.clientX);
-        sw.addEventListener('mouseup', e => { if(e.clientX - sX > 90) sw.style.transform='translateX(100%)'; });
+        sw.addEventListener('mouseup', e => { if(e.clientX - sX > 80) sw.style.transform='translateX(100%)'; });
         sw.addEventListener('touchstart', e => sX=e.touches[0].clientX);
-        sw.addEventListener('touchend', e => { if(e.changedTouches[0].clientX - sX > 90) sw.style.transform='translateX(100%)'; });
+        sw.addEventListener('touchend', e => { if(e.changedTouches[0].clientX - sX > 80) sw.style.transform='translateX(100%)'; });
 
         window.onload = () => {
             const all = [...VIP, ...WHITE, ...TARGETS];
             const c = document.getElementById('rain');
-            for(let i=0; i<20; i++) {
+            for(let i=0; i<15; i++) {
                 const name = all[i % all.length];
                 const el = document.createElement('div'); el.innerText = name;
                 el.className = 'falling-name';
-                if(VIP.includes(name)) el.style.color = '#0ff'; // Вип в дожде голубые для отличия
-                else if(WHITE.includes(name)) el.style.color = '#fff';
-                else el.style.color = 'var(--main)';
                 c.appendChild(el);
-                rain.push({ el, x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, name, speed: 1.5 + Math.random()*2, dead: false });
+                rain.push({ el, x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, name, speed: 2 + Math.random()*2, dead: false });
             }
-            render(); rotateTitle();
+            setTheme('red'); render();
         };
     </script>
 </body>
