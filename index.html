@@ -3,216 +3,343 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SatanaCIub Project | Locked</title>
+    <title>SatanaCIub Project | Infected System</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Fira+Code:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Comfortaa:wght@700&family=Fira+Code:wght@400;700&display=swap');
         
-        :root { --main: #ff3333; --bg: #050505; --card: rgba(10, 10, 10, 0.98); --font: 'Comfortaa', cursive; --radius: 20px; }
-        body.theme-green { --main: #00ff66; --bg: #000a05; --font: 'Fira Code', monospace; }
-        body.theme-pink { --main: #ff85c1; --bg: #fff5f8; --card: rgba(255, 255, 255, 0.98); }
-        body.theme-blue { --main: #0088ff; --bg: #ffffff; --card: rgba(230, 245, 255, 0.98); }
+        :root { 
+            --main: #f00; --bg: #000; --card: #0a0a0a; --font: 'Press Start 2P', cursive; 
+            --radius: 0px; --border: 2px; --speed-m: 1; --text-color: #fff;
+        }
 
-        body { background: var(--bg); color: var(--main); font-family: var(--font); margin: 0; overflow: hidden; height: 100dvh; transition: 0.5s; touch-action: none; }
+        body.theme-pink { 
+            --main: #ff69b4; --bg: #fff0f5; --card: #ffffff; --font: 'Comfortaa', cursive; 
+            --radius: 30px; --border: 5px; --speed-m: 0.3; --text-color: #000;
+        }
+        body.theme-blue { 
+            --main: #00d9ff; --bg: #ffffff; --card: #f0f8ff; --font: 'Arial', sans-serif; 
+            --radius: 15px; --border: 2px; --speed-m: 0.5; --text-color: #333;
+        }
+        body.theme-green { 
+            --main: #0f0; --bg: #000; --card: #001000; --font: 'Fira Code', monospace; 
+            --radius: 0px; --border: 2px; --speed-m: 1; --text-color: #fff;
+        }
+
+        body { background: var(--bg); color: var(--main); font-family: var(--font); margin: 0; overflow: hidden; height: 100dvh; user-select: none; transition: 0.3s; }
         
-        /* ЭКРАН ВХОДА */
-        #lock-screen {
-            position: fixed; inset: 0; background: #000; z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: 0.8s cubic-bezier(0.7, 0, 0.3, 1);
-        }
-        #lock-screen.unlocked { transform: translateY(-100%); opacity: 0; pointer-events: none; }
-        .lock-input { 
-            background: transparent; border: 2px solid var(--main); color: var(--main);
-            padding: 15px; font-size: 24px; text-align: center; border-radius: 15px;
-            width: 150px; outline: none; font-family: 'Fira Code', monospace;
-        }
-        .shake { animation: shake 0.4s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
-
-        /* ОСНОВНОЙ КОНТЕНТ */
-        #bg-layer { position: fixed; inset: 0; z-index: 1; transition: 0.6s; }
-        .blurred #bg-layer { filter: blur(25px) brightness(0.4); }
-        .jelly-title { display: inline-block; font-size: 22px; font-weight: 900; cursor: grab; margin: 10px 0; text-shadow: 0 0 15px var(--main); position: relative; z-index: 10; }
+        /* ЭФФЕКТЫ ГЛОБАЛЬНЫЕ */
+        #flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 9999; }
         
-        /* ЗЕЛЕНАЯ КОНСОЛЬ */
-        #green-console {
-            display: none; position: fixed; bottom: 20px; left: 20px; width: 280px; height: 120px;
-            background: rgba(0, 15, 0, 0.9); border: 1px solid #00ff66; color: #00ff66;
-            font-family: 'Fira Code', monospace; font-size: 9px; padding: 10px; overflow: hidden; z-index: 2000;
+        @keyframes global-shake {
+            0% { transform: translate(2px, 2px); }
+            25% { transform: translate(-2px, -2px); }
+            50% { transform: translate(-4px, 2px); }
+            75% { transform: translate(4px, -2px); }
+            100% { transform: translate(0, 0); }
         }
-        .theme-green #green-console { display: block; }
+        .global-shaking { animation: global-shake 0.15s infinite; }
 
-        .user-particle { position: fixed; font-size: 12px; white-space: nowrap; pointer-events: none; font-weight: bold; z-index: 2; }
-        .page { display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+        /* ИНФЕКЦИЯ СЛОВ */
+        .inf-word { display: inline-block; cursor: pointer; transition: color 0.3s; color: var(--text-color); }
+        .inf-char { display: inline-block; transition: color 0.5s; }
+        
+        .stage-1 { color: #f00 !important; }
+        
+        @keyframes word-shaking {
+            0% { transform: translate(1px, 1px); }
+            50% { transform: translate(-1px, -1px); }
+            100% { transform: translate(1px, -1px); }
+        }
+        .stage-2 { animation: word-shaking 0.1s infinite; color: #f00 !important; }
+        
+        .stage-3-boom { color: #f00 !important; transform: scale(1.5); filter: blur(2px); }
+        .infected { color: #f00 !important; transition: color 2s ease-in; }
+
+        /* UI КОМПОНЕНТЫ */
+        #kill-feed { position: fixed; bottom: 20px; left: 20px; width: 280px; display: flex; flex-direction: column-reverse; gap: 5px; z-index: 5000; transition: 0.3s; }
+        .kill-item { background: rgba(0,0,0,0.9); border: 1px solid var(--main); padding: 8px; font-size: 7px; border-radius: var(--radius); color: #fff; }
+
+        #rain { position: fixed; inset: 0; pointer-events: none; z-index: 4000; }
+        .falling-item { position: absolute; white-space: nowrap; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+
+        .page { display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
         .active-page { display: flex; }
-        .card { width: 90%; max-width: 550px; background: var(--card); border: 1px solid var(--main); padding: 25px; border-radius: var(--radius); overflow-y: auto; max-height: 80vh; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
-        .btn { width: 300px; padding: 15px; margin: 6px; background: transparent; border: 1px solid var(--main); color: var(--main); font-weight: bold; cursor: pointer; border-radius: var(--radius); }
-        #blue-settings { display: none; margin-top: 10px; }
-        #killer { position: fixed; padding: 10px 18px; border: 1px solid var(--main); color: var(--main); border-radius: 25px; font-size: 11px; font-weight: bold; z-index: 5; pointer-events: none; background: rgba(0,0,0,0.5); }
+        
+        .card { width: 95%; max-width: 650px; background: var(--card); border: var(--border) solid var(--main); padding: 20px; overflow-y: auto; max-height: 70vh; font-size: 10px; line-height: 1.8; border-radius: var(--radius); position: relative; }
+        
+        .tabs { display: flex; width: 100%; max-width: 650px; }
+        .tab { padding: 10px 20px; border: var(--border) solid var(--main); border-bottom: none; cursor: pointer; font-size: 8px; background: var(--card); opacity: 0.6; }
+        .tab.active { opacity: 1; background: var(--main); color: var(--bg); }
+
+        .btn { width: 320px; padding: 16px; margin: 6px; background: var(--bg); border: var(--border) solid var(--main); color: var(--main); font-family: var(--font); font-size: 9px; cursor: pointer; border-radius: var(--radius); outline: none; }
+        .btn:active { transform: scale(0.98); }
+        
+        .row { display: flex; width: 332px; justify-content: space-between; }
+        .row .btn { width: 155px; font-size: 7px; }
+
+        .swipe-zone { width: 320px; height: 50px; border: var(--border) solid var(--main); position: relative; overflow: hidden; margin-top: 10px; border-radius: var(--radius); background: var(--bg); }
+        .swipe-btn { position: absolute; inset: 0; background: var(--main); color: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 2; transition: 0.6s; cursor: pointer; font-size: 10px; font-weight: bold; }
     </style>
 </head>
 <body class="theme-red">
+    <div id="flash"></div>
+    <div id="rain"></div>
+    <div id="kill-feed"></div>
 
-    <div id="lock-screen">
-        <div style="margin-bottom: 20px; letter-spacing: 5px;">ENTER CODE</div>
-        <input type="password" id="pass-input" class="lock-input" maxlength="4" placeholder="****" oninput="checkPass(this.value)">
-        <div id="lock-hint" style="font-size: 10px; margin-top: 20px; color: #444;">угадай или проваливай</div>
+    <div id="p-login" class="page active-page">
+        <input type="password" id="pass" placeholder="Введи пароль" style="background:var(--bg); border:var(--border) solid var(--main); color:var(--main); font-family:var(--font); padding:15px; text-align:center; outline:none; border-radius:var(--radius); width:280px;">
+        <button class="btn" style="margin-top:20px;" onclick="checkAuth()">[ ИНИЦИАЦИЯ ]</button>
     </div>
 
-    <div id="bg-layer">
-        <div id="rain-container"></div>
-        <div id="killer">@ebu_Dokki <span id="kill-status">готов...</span></div>
-    </div>
-
-    <div id="green-console"></div>
-
-    <div id="p-menu" class="page active-page">
-        <div class="jelly-title dynamic-name-main">SatanaCIub WWW</div>
-        <button class="btn" onclick="nav('p-rules')">📜 ПРАВИЛА AER</button>
-        <button class="btn" onclick="nav('p-forms')">📝 АНКЕТА НА АДМИНКУ</button>
-        <button class="btn" onclick="nav('p-shame')" style="color:#555">💀 ДОСКА ПОЗОРА</button>
-        <div style="display:flex; gap:10px; margin-top:10px;">
-            <button class="btn" style="width:70px" onclick="setTheme('green')">GRN</button>
-            <button class="btn" style="width:70px" onclick="setTheme('pink')">PNK</button>
-            <button class="btn" style="width:70px" onclick="setTheme('blue')">BLU</button>
+    <div id="p-menu" class="page">
+        <h1 id="m-title" style="font-size: 14px; margin-bottom: 20px; text-align: center;">SatanaCIub WWW</h1>
+        <button class="btn" onclick="nav('p-rules')">ПРАВИЛА AER</button>
+        <div class="row">
+            <button class="btn" onclick="nav('p-forms')">АНКЕТЫ</button>
+            <button class="btn" onclick="nav('p-jobs')">ОБЯЗАННОСТИ</button>
         </div>
-        <div id="blue-settings">
-            <input type="text" class="btn" style="width:120px; font-size:10px" placeholder="Rename Title" oninput="document.querySelector('.dynamic-name-main').innerText = this.value">
+        <div class="row">
+            <button class="btn" style="width:75px" onclick="setTheme('pink')">PINK</button>
+            <button class="btn" style="width:75px" onclick="setTheme('blue')">BLUE</button>
+            <button class="btn" style="width:75px" onclick="setTheme('green')">GRN</button>
+            <button class="btn" style="width:75px" onclick="setTheme('red')">RED</button>
+        </div>
+        <div class="swipe-zone">
+            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--main);">ДОСКА ПОЗОРА</div>
+            <div id="sw-btn" class="swipe-btn">Скоро...</div>
         </div>
     </div>
 
     <div id="p-rules" class="page">
-        <div class="card">
-            <h2 class="jelly-title">Hooligan AER</h2>
-            <p style="text-align:left; font-size:12px;">• <b>Реклама</b> — BAN<br>• <b>Оск. род</b> — BAN<br>• <b>Деструктив</b> — MUTE 24h<br>• <b>Докс</b> — BAN + Позор</p>
-            <button class="btn" onclick="nav('p-menu')">BACK</button>
+        <div class="card infect-me">
+            Данный AER является основном сводом правил чата. Незнание правил не освобождает от ответственности. Копирование структуры или содержания без разрешения автора @SatanaCIub запрещено. 
+            1. Дискриминация и деструктив Запрещены любые формы ксенофобии расизма гомофобии сексизма а также травля по религиозному или социальному признаку. Запрещена прямая или завуалированная агрессия в адрес участников или третьих лиц. Наказание: Мут от 20 до 45 минут.
+            2. Массовая отправка однотипных сообщений стикеров медиафайлов или команд ботов. Наказание: Мут 120 минут. При рецидиве — Бан.
+            4. Флуд и Лестница. Флуд: Отправка более 4-х бессмысленных сообщений подряд. Лестница: Дробление одной мысли на 5 и более сообщений. Наказание: Мут от 30 минут до 3 часов мута.
+            5. Запрещено разжигание конфликтов обсуждение политических событий деятелей и войн. Любая попытка поднять острую социальную тему карается незамедлительно. Наказание: За провокацию — 220 минут мута. За политику — бан навсегда.
+            6. Наказание: Мут 12 часов или Бан (на усмотрение модератора).
         </div>
+        <button class="btn" onclick="nav('p-menu')">НАЗАД</button>
     </div>
 
     <div id="p-forms" class="page">
-        <div class="card">
-            <h2 class="jelly-title">АНКЕТА</h2>
-            <p style="text-align:left; font-size:11px;">1. Ник, @, возраст, активность;<br>2. Пояс, часы работы;<br>3. Действия без прав;<br>4. Опыт (500+ чел);<br>5. Пересказ AER.</p>
-            <button class="btn" onclick="nav('p-menu')">BACK</button>
+        <div class="card infect-me">
+            Анкета на вице и админа:<br>
+            Вице<br>
+            1. Количество трофеев от 30000 тыс. (30к)<br>
+            2. Сколько в день сможешь следить за клубом?<br>
+            3. Скрин аккаунта<br>
+            4. Сделать 2 рекламы нашего тгч в разных других клубах.<br><br>
+            Ветеран<br>
+            Скриншот аккаунта.
         </div>
+        <button class="btn" onclick="nav('p-menu')">НАЗАД</button>
+    </div>
+
+    <div id="p-jobs" class="page">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('tab-skills', this)">Умения</div>
+            <div class="tab" onclick="switchTab('tab-duty', this)">Обязанности</div>
+        </div>
+        <div class="card infect-me" id="tab-skills">
+            1 Ранг – Префикс Банлист ; Причина бана [ Причина @ ] ; Кто назначил ; Удаление сообщений [ -смс (ответом на сообщение) ] ; Списки пользователей ; Привязать к лс [ .Привязать] (Доступно с 0 ранга) ; Каталог<br>
+            2 Ранг: Банлист ; Причина бана [ Причина @ ] ; Кто назначил ; Удаление сообщений [ -смс (ответом на сообщение) ] ; Списки пользователей ; Привязать к лс [ .Привязать] ; Кик [ Кик (ответом на сообщение / Кик @) ]<br>
+            3 ранг: – Доступ к закрытым темам Банлист ; Причина бана [ Причина @ ] ; Кто назначил ; Удаление сообщений [ -смс (ответом на сообщение) ] ; Списки пользователей ; Привязать к лс [ .Привязать] ; Кик [ Кик (ответом на сообщение / Кик @) ] ; Бан ; Закреп сообщений ; Созвать всех молчунов ; Разбан ;<br>
+            4 ранг: Банлист ; Причина бана [ Причина @ ] ; Кто назначил ; Удаление сообщений [ -смс (ответом на сообщение) ] ; Списки пользователей ; Привязать к лс [ .Привязать] ; Кик [ Кик (ответом на сообщение / Кик @) ] ; Бан ; Закреп сообщений ; Созвать всех молчунов ; Разбан ; Вызов ДК ; Массовое удаление сообщений ; Лог назначий админов ; Темы модераторов ; Назначение админов ; Настройки модерации
+        </div>
+        <div class="card infect-me" id="tab-duty" style="display:none">
+            Обязанности:<br>
+            1 РАНГ обязан выполнять свои обязанности что бы повысить свой ранг. Обязательности: – Удаление рекламы от ботов. – Проверка анкет на вице президента.<br>
+            2 ранг по возможности обязан выполнять свои обязанности. Обязанности: – Чистка от оффтопа – Безопасность от рейдеров (Сообщать кто рейдит клуб, скидывать профиль рейда в лс хулигану)<br>
+            3 ранг обязан выполнять свои обязанности. – Проверка анкет на админа – Проверка жалоб – Отвечать на вопросы в теме "Помощь"<br>
+            4 ранг обязан выполнять свои обязанности. Обязаности: – Следить за чатом и выдавать наказания – Отвечать на вопросы в теме "Помощь" – Проверять анкеты на админа – Чистить оффтоп во всех темах кроме общей – Чистить мусор в чате (большие текста, ненужные посты, огромные сообщения от ботов)<br>
+            Нужна какая-то информация об участнике? Или не можете определить принимать на админку или нет пишите мне. Чем смогу помочь: • Вычислить новорег или нет • Проверить историю аккаунта • Проверить в каких чатах состоит (есть ли у наших врагов) Номера, друзья и т.п не выдаю информацию. Сделано в целях распределения админов по их уровню
+        </div>
+        <button class="btn" onclick="nav('p-menu')">НАЗАД</button>
     </div>
 
     <div id="p-shame" class="page">
-        <div class="card" style="background:#000; border-color:#333;">
-            <h2 style="color:#555">ТОП 5 ФРИКОВ</h2>
-            <div style="text-align:left; font-size:10px; color:#666;">
-                <p>1. <b>Vinal</b> — Шантажер. Снесли ему 5 клубов.</p>
-                <p>2. <b>Григей</b> — Русофоб. Общается с детьми 7-9 лет.</p>
-                <p>3. <b>Релтин</b> — Худший админ. Обиделся на мут.</p>
-                <p>4. <b>Дед</b> — Доксер. Успокоился после слива его матери.</p>
-                <p>5. <b>Психокид</b> — Агрессивный фрик. В бане.</p>
-            </div>
-            <button class="btn" onclick="nav('p-menu')">ВЫЙТИ</button>
-        </div>
+        <div class="card">Vinal, Григей, Релтин, Lucker — Изгнаны навсегда.</div>
+        <button class="btn" onclick="nav('p-menu')">НАЗАД</button>
     </div>
 
     <script>
         let curTheme = 'red';
-        const USERS = ["@Blood_Househ", "@VetalGeor", "@geniusmozer", "@Psychokid", "@TrashPlayer", "@Vinal", "@Grigey", "@ebu_Dokki"];
-        let particles = [], killer = { x: 0, y: 0, target: null };
+        const VIP = ["@SatanaCIub", "@hooligan_hooligan"];
+        const USERS = ["@Blood_Househ", "@Aaaaaaaaaafkrjfjfjso", "@VetalGeor", "@geniusmozer", "@aungakw_"];
+        const SYMBOLS = ["@", "#", "§", "†", "‡", "×", "Ø", "∆", "☠"];
+        let rain = [];
 
-        // КОНСОЛЬ
-        function log(msg) {
-            if(curTheme !== 'green') return;
-            const con = document.getElementById('green-console');
-            const d = new Date();
-            con.innerHTML += `<div>[${d.getSeconds()}.${d.getMilliseconds()}] ${msg}</div>`;
-            con.scrollTop = con.scrollHeight;
-            if(con.childNodes.length > 15) con.removeChild(con.firstChild);
+        // ИНИЦИАЛИЗАЦИЯ ТЕКСТА (РАЗБИВКА НА СЛОВА И БУКВЫ)
+        function initInfection() {
+            document.querySelectorAll('.infect-me').forEach(card => {
+                const text = card.innerText;
+                card.innerHTML = '';
+                text.split(/\s+/).forEach((word, wIdx) => {
+                    const wordSpan = document.createElement('span');
+                    wordSpan.className = 'inf-word';
+                    wordSpan.dataset.widx = wIdx;
+                    wordSpan.dataset.clicks = 0;
+
+                    word.split('').forEach((char, cIdx) => {
+                        const charSpan = document.createElement('span');
+                        charSpan.className = 'inf-char';
+                        charSpan.innerText = char;
+                        wordSpan.appendChild(charSpan);
+                    });
+
+                    wordSpan.onclick = (e) => handleInfect(e, wordSpan);
+                    card.appendChild(wordSpan);
+                    card.appendChild(document.createTextNode(' '));
+                });
+            });
         }
 
-        // ПРОВЕРКА ПАРОЛЯ
-        function checkPass(val) {
-            if(val.length === 4) {
-                if(val === "2727") {
-                    document.getElementById('lock-screen').classList.add('unlocked');
-                    log("ACCESS GRANTED: Root session started");
-                } else {
-                    const input = document.getElementById('pass-input');
-                    input.classList.add('shake');
-                    setTimeout(() => { input.classList.remove('shake'); input.value = ''; }, 400);
-                    log("CRITICAL ERROR: Unauthorized access attempt");
-                }
+        // ЛОГИКА ИНФЕКЦИИ
+        function handleInfect(e, el) {
+            if (curTheme !== 'red' && curTheme !== 'green') return;
+            
+            let clicks = parseInt(el.dataset.clicks) + 1;
+            el.dataset.clicks = clicks;
+
+            if (clicks === 1) {
+                el.classList.add('stage-1');
+            } else if (clicks === 2) {
+                el.classList.remove('stage-1');
+                el.classList.add('stage-2');
+            } else if (clicks === 3) {
+                el.classList.remove('stage-2');
+                el.classList.add('stage-3-boom');
+                triggerExplosion(el);
             }
         }
 
-        function getCannonPos() {
-            const title = document.querySelector('.active-page .jelly-title') || document.querySelector('.jelly-title');
-            const rect = title.getBoundingClientRect();
-            return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        function triggerExplosion(origin) {
+            // Встряска экрана
+            document.body.classList.add('global-shaking');
+            setTimeout(() => document.body.classList.remove('global-shaking'), 400);
+
+            const card = origin.parentElement;
+            const words = Array.from(card.querySelectorAll('.inf-word'));
+            const originIdx = words.indexOf(origin);
+            
+            // Параметры поражения: 20 соседних слов (примерный радиус строк и букв)
+            words.forEach((w, idx) => {
+                const dist = Math.abs(idx - originIdx);
+                if (dist < 25) { // Радиус поражения
+                    setTimeout(() => {
+                        w.classList.add('infected');
+                        Array.from(w.children).forEach((char, cIdx) => {
+                            setTimeout(() => {
+                                char.style.color = '#ff0000';
+                            }, cIdx * 50);
+                        });
+                    }, dist * 30);
+                }
+            });
         }
 
-        function createParticle(name) {
-            const origin = getCannonPos();
-            return { name, x: origin.x, y: origin.y, vx: (Math.random()-0.5)*18, vy: -Math.random()*12-8, gravity: 0.28, opacity: 1, el: null };
-        }
-
+        // НАВИГАЦИЯ
         function nav(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            document.getElementById(id).classList.add('active-page');
-            id === 'p-menu' ? document.body.classList.remove('blurred') : document.body.classList.add('blurred');
-            log(`NAVIGATING TO: ${id}`);
+            const target = document.getElementById(id);
+            target.classList.add('active-page');
+            
+            const feed = document.getElementById('kill-feed');
+            feed.style.opacity = (id === 'p-menu') ? "1" : "0";
+            if(id === 'p-menu') document.getElementById('sw-btn').style.transform = 'translateX(0)';
         }
 
-        function setTheme(t) { 
-            curTheme = t; document.body.className = 'theme-' + t; 
-            document.getElementById('blue-settings').style.display = (t === 'blue' ? 'block' : 'none');
-            log(`THEME_CHANGED: ${t.toUpperCase()}`);
+        function switchTab(tabId, el) {
+            document.getElementById('tab-skills').style.display = 'none';
+            document.getElementById('tab-duty').style.display = 'none';
+            document.getElementById(tabId).style.display = 'block';
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
         }
 
-        // ЖЕЛЕ
-        document.querySelectorAll('.jelly-title').forEach(el => {
-            let p = {x:0,y:0}, t = {x:0,y:0}, drag = false;
-            el.onpointerdown = (e) => { drag = true; el.setPointerCapture(e.pointerId); };
-            el.onpointermove = (e) => { if(drag) { t.x += e.movementX; t.y += e.movementY; } };
-            el.onpointerup = () => { drag = false; t = {x:0,y:0}; };
-            function up() {
-                p.x += (t.x - p.x) * 0.12; p.y += (t.y - p.y) * 0.12;
-                el.style.transform = `translate(${p.x}px, ${p.y}px) skewX(${-p.x/5}deg)`;
-                requestAnimationFrame(up);
+        function setTheme(t) {
+            document.body.className = 'theme-' + t;
+            curTheme = t;
+            // Сброс цвета юзеров в дожде
+            rain.forEach(i => {
+                if(t === 'pink') i.el.style.color = '#000';
+                else if(i.isSym) i.el.style.color = (t === 'blue' ? '#ccc' : 'rgba(255,255,255,0.1)');
+                else if(VIP.includes(i.name)) i.el.style.color = (t === 'green' ? '#0f0' : (t === 'blue' ? '#00d9ff' : '#fff'));
+                else i.el.style.color = 'var(--main)';
+            });
+        }
+
+        function addKill(name) {
+            if(curTheme === 'pink') return;
+            if(curTheme === 'red') {
+                const f = document.getElementById('flash');
+                f.style.opacity = '0.5';
+                setTimeout(() => f.style.opacity = '0', 60);
+                document.body.classList.add('global-shaking');
+                setTimeout(() => document.body.classList.remove('global-shaking'), 200);
             }
-            up();
-        });
+            const feed = document.getElementById('kill-feed');
+            const item = document.createElement('div');
+            item.className = 'kill-item';
+            item.innerText = VIP.includes(name) ? `[GOD] ${name} IMMORTAL` : `УНИЧТОЖЕН ${name}`;
+            feed.appendChild(item);
+            if(feed.children.length > 3) feed.children[0].remove();
+            setTimeout(() => { item.style.opacity='0'; setTimeout(()=>item.remove(), 500); }, 3000);
+        }
 
         function render() {
-            particles.forEach(p => {
-                p.x += p.vx; p.y += p.vy; p.vy += p.gravity; p.opacity -= 0.005;
-                if (p.opacity <= 0 || p.y > window.innerHeight + 50) {
-                    Object.assign(p, createParticle(p.name));
-                    if(Math.random() > 0.95) log(`PARTICLE_REGEN: ${p.name}`);
+            let speedM = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--speed-m'));
+            rain.forEach(item => {
+                item.y += item.speed * speedM;
+                if(item.y > window.innerHeight) { item.y = -50; item.x = Math.random()*window.innerWidth; }
+                item.el.style.transform = `translate(${item.x}px, ${item.y}px)`;
+
+                if(!item.isSym) {
+                    const dX = item.x - window.innerWidth/2;
+                    const dY = item.y - window.innerHeight/2;
+                    if(Math.sqrt(dX*dX + dY*dY) < 80 && !item.dead && !VIP.includes(item.name) && curTheme !== 'pink') {
+                       item.dead = true; item.el.style.opacity = '0';
+                       addKill(item.name);
+                       setTimeout(() => { item.dead=false; item.el.style.opacity='1'; }, 4000);
+                    }
                 }
-                p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
-                p.el.style.opacity = p.opacity;
             });
-            const kEl = document.getElementById('killer');
-            const status = document.getElementById('kill-status');
-            if (!killer.target || killer.target.opacity < 0.2) {
-                killer.target = particles[Math.floor(Math.random()*particles.length)];
-            } else {
-                killer.x += (killer.target.x - killer.x) * 0.1;
-                killer.y += (killer.target.y - killer.y) * 0.1;
-                status.innerText = (curTheme === 'pink' ? `дарит розу ${killer.target.name} 🌹` : `убил ${killer.target.name}`);
-                if (curTheme !== 'pink' && Math.sqrt((killer.target.x-killer.x)**2 + (killer.target.y-killer.y)**2) < 25) {
-                    log(`KILL_EVENT: ${killer.target.name} deleted`);
-                    killer.target.opacity = 0; killer.target = null;
-                }
-            }
-            kEl.style.transform = `translate3d(${killer.x}px, ${killer.y}px, 0)`;
             requestAnimationFrame(render);
         }
 
+        function checkAuth() { 
+            if(document.getElementById('pass').value==='2727') nav('p-menu'); 
+            else {
+                document.body.classList.add('global-shaking');
+                setTimeout(() => document.body.classList.remove('global-shaking'), 200);
+            }
+        }
+
+        const sw = document.getElementById('sw-btn'); let sX=0;
+        sw.addEventListener('touchstart', e => sX=e.touches[0].clientX);
+        sw.addEventListener('touchend', e => { 
+            if(e.changedTouches[0].clientX - sX > 100) { 
+                sw.style.transform='translateX(100%)'; 
+                setTimeout(() => nav('p-shame'), 300); 
+            } 
+        });
+
         window.onload = () => {
-            const container = document.getElementById('rain-container');
-            USERS.forEach(name => {
-                const p = createParticle(name);
-                const el = document.createElement('div'); el.className = 'user-particle'; el.innerText = name;
-                container.appendChild(el); p.el = el; particles.push(p);
+            initInfection();
+            const c = document.getElementById('rain');
+            [...VIP, ...USERS].forEach(name => {
+                const el = document.createElement('div'); el.innerText = name;
+                el.className = 'falling-item'; el.style.fontSize = '12px';
+                c.appendChild(el);
+                rain.push({ el, x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, name, speed: 1.5+Math.random()*2, isSym: false });
             });
+            for(let i=0; i<30; i++) {
+                const el = document.createElement('div'); el.innerText = SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)];
+                el.className = 'falling-item'; el.style.opacity = '0.2'; el.style.fontSize = '11px';
+                c.appendChild(el);
+                rain.push({ el, x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, speed: 1+Math.random()*2, isSym: true });
+            }
             render();
         };
     </script>
